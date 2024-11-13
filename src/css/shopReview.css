@@ -1,0 +1,50 @@
+/* 공통 css */
+.line {
+  border-top: 1px solid gray;
+  width: 100%;
+}
+.btn-lg {
+  width: 100%;
+  flex-basis: 100%;
+
+  border: 1px solid black;
+}
+
+.content {
+  margin: 0 auto;
+}
+.content > ul > h3 {
+  flex-basis: 100%;
+}
+/* css */
+.shopInfo {
+
+}
+.shopInfo > img {
+  width: 50%;
+  margin: 0 auto;
+}
+.snsReview > p {
+  flex-basis: 100%;
+}
+.snsReview > li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.snsReview > li > img {
+  margin-bottom: 1rem;
+}
+.snsReview > li > p {
+  flex-basis: 100%;
+}
+
+/* 반응형 */
+@media (max-width:990px) {
+.shopInfo > img {
+  width: 100%;
+}
+.shopInfo > img:nth-of-type(2) {
+  display: none;
+}
+}
