@@ -1,0 +1,174 @@
+/* 기존 폰트 설정 유지 */
+@font-face {
+    font-family: 'InkLipquid';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/InkLipquid.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 전체 예약 페이지 컨테이너 */
+.reserve-container {
+    
+    margin: 2rem auto;
+    max-width: 1280px;
+    font-family: 'InkLipquid', sans-serif; /* 전체 페이지에 동일한 폰트 적용 */
+    
+}
+
+/* 캘린더 스타일 */
+.react-calendar {
+    width: 700px;
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 1, 0.1);
+}
+.react-calendar__tile{
+    padding: 20px 10px;
+}
+.react-calendar__navigation__label{
+    width: 100%;
+    padding: 15px 0px;
+}
+.react-calendar>button{
+    padding: 10px ;
+}
+
+.react-calendar__tile {
+    border-radius: 8px;
+    font-family: inherit; /* 통일된 폰트 사용 */
+}
+
+.react-calendar__tile--active {
+    background-color: #FF5733;
+    
+    
+    font-weight: bold;
+}
+
+.react-calendar__tile:hover {
+    background-color: #FF5733;
+    
+    transition: background-color 0.3s ease; /* 부드러운 효과 추가 */
+}
+
+.react-calendar__tile--weekend:nth-child(6) {
+    background-color: #FF5733; /* 토요일 배경색 */
+    color: blue;
+}
+
+/* 예약 상세 영역 스타일 */
+.reservation-details {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: inherit; /* 폰트 통일 */
+}
+
+/* 제목 스타일 */
+.reservation-details h3 {
+    font-family: 'InkLipquid', sans-serif;
+    color: #FF5733;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* 폼 스타일 */
+form .form-label {
+    color: #333;
+    font-weight: bold;
+    font-family: inherit; /* 폰트 통일 */
+}
+
+form .form-control {
+    border-radius: 5px;
+    box-shadow: none;
+    font-family: inherit; /* 폰트 통일 */
+}
+
+/* 버튼 스타일 */
+button {
+    background-color: #FF5733;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;    
+    font-family: inherit; /* 폰트 통일 */
+}
+
+button:hover {
+    background-color: #e64a28;
+    transition: background-color 0.3s ease; /* 부드러운 효과 추가 */
+}
+
+/* 레스토랑 정보 섹션 스타일 */
+.restaurant-info {
+    background-color: #FF5733;
+    color: white;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    font-family: inherit; /* 폰트 통일 */
+}
+
+.restaurant-info .restaurant-details h4 {
+    font-size: 1.5rem;
+    font-family: 'InkLipquid', sans-serif;
+    margin-bottom: 0.5rem;
+}
+
+.restaurant-info .restaurant-details p {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+/* 리뷰 섹션 스타일 */
+.reviews-col{
+    padding: 0 !important;
+    margin-top: 30px !important;
+}
+.reviews-section h3 {
+    font-family: 'InkLipquid', sans-serif;
+    color: #FF5733;
+    margin-bottom: 1rem;
+}
+
+.review-card {
+    margin-bottom: 1rem;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-card .card-title {
+    font-weight: bold;
+    color: #333;
+    font-family: inherit; /* 폰트 통일 */
+}
+
+.review-card .card-text {
+    font-family: inherit; /* 폰트 통일 */
+}
+
+/* 토요일 스타일 */
+.saturday {  
+    color: blue;  /* 텍스트 색상 */
+    font-family: inherit; /* 폰트 통일 */
+}
+.reservation-summary {
+    display: flex;
+    justify-content: space-between; /* 양쪽 끝에 배치 */
+    align-items: center; /* 수직 가운데 정렬 */
+    margin-top: 20px;
+  }
+  
+  .reservation-summary strong {
+    font-size: 20px; /* 필요 시 텍스트 크기 조정 */
+  }
+  
+  .reservation-summary button {
+    margin-left: 20px; /* 버튼과 텍스트 간격 */
+  }
+  

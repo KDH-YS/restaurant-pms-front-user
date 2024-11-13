@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'InkLipquid';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/InkLipquid.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body{
+    font-family: 'InkLipquid', sans-serif;
+}
+/* App.css */
+.App{
+  background-color: #fafafa;
+}
+body, html {  
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+
+
