@@ -1,0 +1,48 @@
+/*  */
+* {
+  margin-bottom: 0;
+}
+
+
+/*  */
+.myReview {
+}
+
+.myReview > ul {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.myReview > ul > li {
+  position: relative;
+  height: 360px;
+  margin-bottom: 2rem;
+
+  
+}
+.myReview > ul > li > div {
+  position: absolute;
+  top: 0;
+
+  width: 300px;
+  height: 360px;
+}
+.myReview > ul > li > div > p:nth-of-type(1) {
+  position: absolute;
+  top: 45%;
+  left: 40%;
+}
+.myReview > ul > li > div > p:nth-of-type(2) {
+  position: absolute;
+  left: 1rem;
+  bottom: 2rem;
+}
+.myReview > ul > li > div > p:nth-of-type(3) {
+  position: absolute;
+  left: 1rem;
+  bottom: 0;
+}
+
+.myReview > ul > li > img {
+  width: 100%;
+}

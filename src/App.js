@@ -1,11 +1,9 @@
-import { Review } from "../../YS_TeamProject_Bobjo/src/page/Review"
-import { ShopReview } from "../../YS_TeamProject_Bobjo/src/page/ShopReview"
-import './App.css';
+import { Main } from "./page/Main"
 
 function App() {
   return (
     <div className="App">
-      <ShopReview></ShopReview>
+      <Main/>
     </div>
   );
 }
