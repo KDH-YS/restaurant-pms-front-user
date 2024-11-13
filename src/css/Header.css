@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'InkLipquid';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/InkLipquid.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 헤더 배경색 */
+.navbar{
+    background-color: #FF5733;
+    font-family: 'InkLipquid', sans-serif;    
+}
+/* 헤더 폰트 설정 */
+.navbar-brand {
+    font-size: 2rem; 
+    color: black;
+  }
