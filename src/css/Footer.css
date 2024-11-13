@@ -11,7 +11,7 @@
   }
   
   .footer a:hover {
-    color: #ff5722; /* 링크에 마우스를 올렸을 때 색상 */
+    color: #ff5722 !important; /* 링크에 마우스를 올렸을 때 색상 */
   }
   
   .footer .footer-links {
