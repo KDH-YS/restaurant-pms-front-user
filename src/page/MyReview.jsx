@@ -1,3 +1,5 @@
+import React from "react";
+import "../css/main.css";
 import "../css/myreview.css";
 
 export function MyReview() {

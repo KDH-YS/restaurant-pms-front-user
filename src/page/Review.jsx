@@ -1,5 +1,7 @@
+import React from "react";
 import "../css/bootstrap.min.css"
-import "../css/Page.css";
+import "../css/review.css";
+import "../css/main.css";
 
 export function Review() {
   return (
@@ -13,7 +15,7 @@ export function Review() {
             <button type="button" class="btn btn-outline-secondary">Secondary</button>
           </div>
         </form>
-        <ul>
+        <ul className="reviewList">
           <h3>100개의 레스토랑 중</h3>
           <li className="card">
             <img src="https://via.placeholder.com/300x150" alt="그림" />

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import React from 'react';
 
-export function Header() {
+export function Header2() {
   return(
     <>
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
@@ -48,4 +48,4 @@ export function Header() {
   )
 }
 
-export default Header;
+export default Header2;
