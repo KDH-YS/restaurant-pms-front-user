@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 
 function Header() {
     return (
-        <nav className="navbar navbar-expand-lg" data-bs-theme="dark">
+        <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
                 {/* 중앙에 Rechelin Korea 텍스트 */}
                 <Link className="navbar-brand mx-auto" to="/">Rechelin Korea</Link>
