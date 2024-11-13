@@ -1,0 +1,49 @@
+/* 예약 현황 페이지 */
+.reservation-info {
+    background-color: #FF5733;
+    color: white;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    font-family: inherit; /* 폰트 통일 */
+}
+
+.reservation-info .reservation-details h4 {
+    font-size: 1.5rem;
+    font-family: 'InkLipquid', sans-serif;
+    margin-bottom: 0.5rem;
+}
+
+.reservation-info .reservation-details p {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.reservation-change-time h5 {
+    font-family: 'InkLipquid', sans-serif;
+    color: #FF5733;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+button {
+    background-color: #FF5733;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+button:hover {
+    background-color: #e64a28;
+    transition: background-color 0.3s ease;
+}
+
+.reservation-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}

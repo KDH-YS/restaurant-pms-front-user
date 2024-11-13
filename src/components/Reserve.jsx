@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
 import Calendar from 'react-calendar';
+import { useNavigate } from 'react-router-dom';
 import 'react-calendar/dist/Calendar.css';  // 캘린더 스타일
 import '../css/Reserve.css'; // 스타일 시트 추가
 
 const Reserve = () => {
+  const navigate = useNavigate();
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState('');
   const [people, setPeople] = useState(1);
@@ -47,7 +49,9 @@ const Reserve = () => {
   };
 
   const handleReserve = () => {
+    
     alert('예약이 완료되었습니다!');
+    navigate('/ReservationStatus');
   };
 
   return (
@@ -99,7 +103,7 @@ const Reserve = () => {
 
   <div className="reservation-summary">
     <strong>총 금액: {totalPrice} 원</strong>
-    <Button variant="primary" onClick={handleReserve}>
+    <Button variant="primary" onClick={handleReserve} href='/ReservationStatus'>
       예약하기
     </Button>
   </div>
