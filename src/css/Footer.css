@@ -1,0 +1,36 @@
+/* Footer.css */
+
+.footer {
+    background-color: #343a40; /* 다크 배경색 */
+    color: white; /* 텍스트 색상 */
+  }
+  
+  .footer a {
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: #ffffff; /* 링크 색상 */
+  }
+  
+  .footer a:hover {
+    color: #ff5722 !important; /* 링크에 마우스를 올렸을 때 색상 */
+  }
+  
+  .footer .footer-links {
+    margin-top: 10px;
+  }
+  
+  .footer p {
+    margin-bottom: 0;
+  }
+  
+  .footer {
+    /* 바닥에 고정 */
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+  }
