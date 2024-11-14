@@ -1,0 +1,28 @@
+ul, li {
+    list-style: none;
+}
+.menuNav {
+    /* border: 1px solid black; */
+    /* margin-bottom: 50px; */
+}
+.menuNavSearch {
+    /* border: 1px solid orange; */
+    margin: 15px 0;
+}
+
+.menuNavList {
+    /* border: 1px solid red; */
+    text-align: left;
+}
+.menuNavList li {
+    margin-right: 15px ;
+    /* float: left; */
+    display: inline-block;
+}
+.line {
+    width: 100%;
+    /* height: 1px; */
+
+    border-top: 1px solid gray;
+    margin-bottom: 50px;
+}
