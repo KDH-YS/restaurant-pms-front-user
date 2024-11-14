@@ -26,6 +26,9 @@ export function Header2() {
             <li class="nav-item">
               <Link to="/review/shopreview" class="nav-link" >가게 리뷰</Link>
             </li>
+            <li class="nav-item">
+              <Link to="/review/reviewform" class="nav-link" >작성 폼</Link>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
               <div class="dropdown-menu">
