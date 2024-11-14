@@ -14,7 +14,7 @@ function App() {
                 <Header/>
                 <Routes>
                     <Route path="/" element={<ReserveMain/>}/>
-                </Routes>\
+                </Routes>
                 <Footer/>
             </div>
         </BrowserRouter>
