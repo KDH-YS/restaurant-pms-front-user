@@ -1,0 +1,274 @@
+.main {
+    margin: 20px auto;
+    width: 1080px;
+    
+  }
+  
+  /* 전체 페이지 스타일 */
+  .restaurant-page {
+    font-family: InkLipquid, sans-serif;
+    margin: 20px;
+  }
+  
+  .restaurant-header {
+    text-align: center;
+    margin-bottom: 30px;
+    background-image: url('../img/restaurant.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 20vh;
+  }
+  
+  .restaurant-info h1 {
+    
+    text-align: center;
+    font-size: 36px;
+    margin: 0;
+  }
+  
+  .restaurant-description {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+  }
+  
+  .rating {
+    text-align: center;
+    font-size: 24px;
+    color: gold;
+  }
+  
+  /* 매장 정보 영역 */
+  .restaurant-info {
+    
+    margin-bottom: 40px;
+  }
+  
+  .restaurant-info h2 {
+    font-size: 30px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .restaurant-info p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  .restaurant-info .menu {
+    margin-bottom: 20px;
+  }
+  
+  /* 주소, 영업시간, 지도 배치 */
+  .info-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .left-info {
+    background-color: #eeeeee;
+    border-radius: 10px;
+    padding-left: 10px;
+    margin-top: 31px;
+
+    width: 65%;
+  }
+  
+  .right-info {
+    width: 30%;
+  }
+  
+  .address,
+  .business-hours {
+    margin-bottom: 20px;
+  }
+  
+  .address h3,
+  .business-hours h3 {
+    font-size: 30px;
+    color: #333;
+  }
+  
+  .address p,
+  .business-hours p {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .google-map {
+    width: 30%;
+  }
+  
+  .map-placeholder {
+    width: 100%;
+    height: 400px;
+    background-color: #e0e0e0;
+    text-align: center;
+    line-height: 400px;
+  }
+  
+  .google-map h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  /* 메뉴 스타일 */
+  .menu ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .menu li {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  /* 리뷰 구역 */
+  .reviews {
+    margin-bottom: 40px;
+  }
+  
+  .reviews h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .review {
+    background-color: #eeeeee;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .review p {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .review span {
+    font-size: 14px;
+    color: #888;
+  }
+  
+  /* 예약 구역 */
+  .reservation {
+    
+    text-align: center;
+  }
+  
+  .reservation h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .reservation input {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+  
+  .reserve-btn {
+    padding: 15px 50px;
+    font-size: 30px;
+    background-color: #f28d28; /* 주황색 계열 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .reserve-btn:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+
+/* 반응형 스타일 */
+@media screen and (max-width: 1000px) {
+    /* 전체 페이지 레이아웃 조정 */
+    .main {
+      width: 90%; /* 전체 너비를 90%로 조정 */
+      margin: 10px auto;
+    }
+  
+    .restaurant-header {
+      height: 15vh; /* 헤더 높이를 줄임 */
+      background-size: cover;
+      background-position: center;
+    }
+  
+    .info-container {
+      flex-direction: column; /* 세로 정렬 */
+      align-items: center;
+    }
+  
+    .left-info,
+    .google-map {
+      width: 100%; /* 너비를 100%로 설정 */
+      margin-top: 10px; /* 요소 간 간격 추가 */
+    }
+  
+    .left-info {
+      padding: 15px; /* 패딩 줄이기 */
+    }
+  
+    .google-map {
+      height: 300px; /* 지도 높이 줄이기 */
+    }
+  
+    /* 리뷰 섹션 */
+    .reviews {
+      padding: 10px;
+    }
+  
+    .reviews h2 {
+      font-size: 24px; /* 제목 크기 조정 */
+    }
+  
+    .review {
+      font-size: 14px; /* 리뷰 텍스트 크기 조정 */
+    }
+  
+    /* 예약 섹션 */
+    .reservation h2 {
+      font-size: 24px; /* 예약 섹션 제목 크기 조정 */
+    }
+  
+    .reserve-btn {
+      padding: 10px 40px; /* 버튼 크기 줄이기 */
+      font-size: 20px;
+    }
+  }
+  
+  @media screen and (max-width: 600px) {
+    /* 모바일 화면에서의 추가 조정 */
+    .main {
+      width: 100%; /* 모바일에서 최대 너비 */
+    }
+  
+    .restaurant-header {
+      height: 12vh;
+    }
+  
+    .info-container {
+      flex-direction: column;
+    }
+  
+    .left-info,
+    .google-map {
+      width: 100%;
+    }
+  
+    .reservation {
+      padding: 10px;
+    }
+  
+    .reserve-btn {
+      padding: 8px 20px;
+      font-size: 16px;
+    }
+  }
+  
