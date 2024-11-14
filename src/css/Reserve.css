@@ -67,7 +67,9 @@ button:hover {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 1, 0.1);
 }
-
+.calendar-section{
+    padding-left: 0 !important;
+}
 .react-calendar__tile {
     padding: 20px 10px;
     border-radius: 8px;
@@ -120,7 +122,9 @@ button:hover {
 .reviews {
     margin-top: 20px !important;
 }
-
+.reviews-section{
+    padding: 0 !important;
+}
 .reviews-col {
     padding: 0 !important;
     margin-top: 30px !important;
