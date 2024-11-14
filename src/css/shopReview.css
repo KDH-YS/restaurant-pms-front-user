@@ -1,7 +1,16 @@
-/* css */
+/* shopInfo */
 .shopInfo > img {
   width: 50%;
 }
+
+/* photo */
+.photoReview > img {
+  width: 25%;
+}
+
+/* review */
+
+/* sns */
 .snsReview > p {
   flex-basis: 100%;
 }
@@ -24,11 +33,16 @@
   }
 }
 @media (max-width:768px) {
-  
   .shopInfo > img {
     width: 100%;
   }
   .shopInfo > img:nth-of-type(2) {
+    display: none;
+  }
+  .photoReview > img {
+    width: 50%;
+  }
+  .photoReview > img:nth-of-type(3), img:nth-of-type(4) {
     display: none;
   }
 }

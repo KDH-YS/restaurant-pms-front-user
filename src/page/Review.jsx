@@ -17,98 +17,101 @@ export function Review() {
         </form>
         <ul className="reviewList">
           <h3>100개의 레스토랑 중</h3>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
+            <img src="https://via.placeholder.com/300x150" alt="그림" />
+            <h4>가게 이름</h4>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
+          </li>          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
           </li>
-          <li className="card">
+          <li>
+            <img src="https://via.placeholder.com/300x150" alt="그림" />
+            <h4>가게 이름</h4>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
+          </li>
+          <li>
+            <img src="https://via.placeholder.com/300x150" alt="그림" />
+            <h4>가게 이름</h4>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
+          </li>
+          <li>
+            <img src="https://via.placeholder.com/300x150" alt="그림" />
+            <h4>가게 이름</h4>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
+          </li>
+          <li>
             <img src="https://via.placeholder.com/300x150" alt="그림" />
             <h4>가게 이름</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
