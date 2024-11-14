@@ -4,7 +4,6 @@ import Footer from "./components/Footer"
 
 import MenuPage from "./pages/restaurants/MenuPage.js";
 import MainPage from "./pages/restaurants/MainPage.js";
-
 import {BrowserRouter, Route, Router, Routes} from "react-router-dom";
 
 // 부트스트랩 임포트
@@ -18,7 +17,7 @@ function Restaurants() {
             <Routes>
                 <Route path="/" element={<MainPage />} />
                 <Route path="/restaurant" element={<MenuPage/>} />                    
-                <Route path="/restaurant/info" element={<RestaurantsInfo/>}/>
+                <Route path="/restaurant/info" element={<RestaurantsInfo/>}/>                     
             </Routes>
             <Footer/>
         </>
