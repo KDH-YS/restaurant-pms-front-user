@@ -1,7 +1,7 @@
 
 import '../css/ReserveMain.css';
 
-function ReserveMain() {
+function RestaurantsInfo() {
 
 
   return (
@@ -87,4 +87,4 @@ function ReserveMain() {
   );
 }
 
-export default ReserveMain;
+export default RestaurantsInfo;
