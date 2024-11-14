@@ -1,5 +1,6 @@
 import React from 'react';
 import '../css/Header.css'
+import {Link} from "react-router-dom";
 
 function MyPage() {
   return (
@@ -8,23 +9,17 @@ function MyPage() {
       <div className='UserProfile'>
         {/* 유저 프로필 사진, 이름, 프로필 수정 버튼 */}
         {/* 개인 정보 수정 페이지로 이동 */}
-        <button className='EditProfileBtn'>
-          <p>프로필 수정</p>
-        </button>
+        <Link className="editUserProfile" to="/editUserProfile">프로필 수정</Link>
       </div>
 
       <div className="Reservation">
         <p>예약 현황</p>
-        <button>
-          <p>예약 이력{'>'}</p>
-        </button>
+        <Link className="reservationHistory" to="/reservationHistory">예약 이력</Link>
       </div>
 
       <div className="MyReviewList">
         <p>내 리뷰</p>
-        <button>
-          <p>전체보기{'>'}</p>
-        </button>
+        <Link className="myReviewListAll" to="/myReviewListAll">전체보기{'>'}</Link>
         <ul>
           <li>
             <p>레스토랑 이름</p>
@@ -36,9 +31,7 @@ function MyPage() {
 
       <div className="favorites">
         <p>즐겨찾기</p>
-        <button>
-          <p>전체보기{'>'}</p>
-        </button>
+        <Link className="favoritesAll" to="/favoritesAll">전체보기{'>'}</Link>
       </div>
     </div>
   );
