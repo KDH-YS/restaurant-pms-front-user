@@ -1,25 +1,39 @@
+import React from 'react';
+import { Button, Form, Nav, Row, Col } from 'react-bootstrap';
 import '../../css/restaurants/MenuPage.css';
-import "../../css/bootstrap.min.css";
 import MenuCard from '../../components/restaurants/MenuCard';
 
 function MenuPage() {
   return (
     <div className="App">
-        <div className="container">
-            <div className="menuNav">
-                <div className="menuNavSearch">
-                <input type="text" className='scInput' placeholder='가게 명 검색'/>
-                <button type="submit" className='scBtn btn btn-warning'>입력</button>
-                </div>
-                <ul className="menuNavList">
-                    <li className="btn btn-outline-warning">한식</li>
-                    <li className="btn btn-outline-warning">리스트보기</li>
-                    <li className="btn btn-outline-warning">123</li>
-                </ul>
-            </div>
+      <div className="container">
+        <div className="menuNav">
+          <div className="menuNavSearch">
+            <Form inline>
+              <Form.Control
+                type="text"
+                className='scInput'
+                placeholder='가게 명 검색'
+                style={{ width: '80%' }}
+              />
+              <Button type="submit" className='scBtn btn-warning'>입력</Button>
+            </Form>
+          </div>
+          <Nav className="menuNavList mt-3">
+            <Nav.Item>
+              <Button variant="outline-warning" className="me-2">한식</Button>
+            </Nav.Item>
+            <Nav.Item>
+              <Button variant="outline-warning" className="me-2">리스트보기</Button>
+            </Nav.Item>
+            <Nav.Item>
+              <Button variant="outline-warning" className="me-2">123</Button>
+            </Nav.Item>
+          </Nav>
         </div>
-        <div className="line"></div>
-        <MenuCard/>
+      </div>
+      <div className="line"></div>
+      <MenuCard />
     </div>
   );
 }

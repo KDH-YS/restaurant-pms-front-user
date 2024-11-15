@@ -20,7 +20,6 @@ function Header() {
                         <li><Link className="dropdown-item" to="/login">로그인</Link></li>
                         <li><Link className="dropdown-item" to="/signup">회원가입</Link></li>
                         <li><Link className="dropdown-item" to="/restaurant">레스토랑</Link></li>
-                        <li><Link className="dropdown-item" to="/review">리뷰하기</Link></li>
                         <li><Link className="dropdown-item" to="/contact">문의하기</Link></li>
                         <li><Link className="dropdown-item" to="/admin">관리자 페이지</Link></li>
                     </ul>
