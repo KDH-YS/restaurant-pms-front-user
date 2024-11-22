@@ -1,14 +1,14 @@
-.myReview > ul {
+.js_my_review > ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
 
-.myReview > ul > li {
+.js_my_review > ul > li {
   position: relative;
   margin-bottom: 2rem;
 }
-.myReview > ul > li > div {
+.js_my_review > ul > li > div {
   position: absolute;
   top: 0;
 
@@ -16,6 +16,6 @@
   height: 100%;
 }
 
-.myReview > button {
+.js_my_review > button {
   margin-bottom: 2rem;
 }

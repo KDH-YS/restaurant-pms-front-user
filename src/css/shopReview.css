@@ -1,48 +1,48 @@
 /* shopInfo */
-.shopInfo > img {
+.js_shop_info > img {
   width: 50%;
 }
 
 /* photo */
-.photoReview > img {
+.js_photo_review > img {
   width: 25%;
 }
 
 /* review */
 
 /* sns */
-.snsReview > p {
+.js_sns_review > p {
   flex-basis: 100%;
 }
-.snsReview > li {
+.js_sns_review > li {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.snsReview > li > img {
+.js_sns_review > li > img {
   margin-bottom: 1rem;
 }
-.snsReview > li > p {
+.js_sns_review > li > p {
   flex-basis: 100%;
 }
 
 /* 반응형 */
 @media (min-width:990px) {
-  .shopInfo > img {
+  .js_shop_info > img {
     width: 50%;
   }
 }
 @media (max-width:768px) {
-  .shopInfo > img {
+  .js_shop_info > img {
     width: 100%;
   }
-  .shopInfo > img:nth-of-type(2) {
+  .js_shop_info > img:nth-of-type(2) {
     display: none;
   }
-  .photoReview > img {
+  .js_photo_review > img {
     width: 50%;
   }
-  .photoReview > img:nth-of-type(3), img:nth-of-type(4) {
+  .js_photo_review > img:nth-of-type(3), img:nth-of-type(4) {
     display: none;
   }
 }

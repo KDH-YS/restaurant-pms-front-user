@@ -1,20 +1,20 @@
 import React from "react";
-import "../css/main.css";
-import "../css/shopReview.css";
+import "../../css/main.css";
+import "../../css/shopReview.css";
 
 export function ShopReview() {
   return (
     <>
     <div className="container">
       <div className="content">
-        <div className="shopInfo">
+        <div className="js_shop_info">
           <img src="https://via.placeholder.com/648x400" alt="" />
           <img src="https://via.placeholder.com/648x400" alt="" />
           <h2>부산한치모밀</h2>
           <p>서울특별시 강동구 올림픽로 682-8 1층 102호</p>
           <p>한치, 모밀</p>
         </div>
-        <div className="photoReview">
+        <div className="js_photo_review">
           <h3>사진/영상 리뷰</h3>
           <img src="https://via.placeholder.com/324x324" alt="" />
           <img src="https://via.placeholder.com/324x324" alt="" />
@@ -22,7 +22,7 @@ export function ShopReview() {
           <img src="https://via.placeholder.com/324x324" alt="" />
           <button class="btn btn-lg btn-prima ry" type="button">Block button</button>
         </div>
-        <ul className="review">
+        <ul className="js_review">
           <li>
             <div>
               <h3>리뷰</h3>
@@ -39,7 +39,7 @@ export function ShopReview() {
               <p>11.10일  1번째 방문  영수증</p>
             </div>
           </li>
-          <div className="line"></div>
+          <div className="js_line"></div>
           <li>
             <div>
               <h3>리뷰</h3>
@@ -58,7 +58,7 @@ export function ShopReview() {
           </li>
           <button class="btn btn-lg btn-prima ry" type="button">Block button</button>
         </ul>
-        <ul className="snsReview">
+        <ul className="js_sns_review">
           <h3>SNS</h3>
           <p>참고 할만한 리뷰들</p>
           <li>

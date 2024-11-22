@@ -1,12 +1,12 @@
-import React from "react";
-import "../css/main.css";
-import "../css/myreview.css";
+import React from "react"
+import "../../css/main.css"
+import "../../css/myreview.css"
 
 export function MyReview() {
   return(
     <>
     <div className="container">
-      <div className="myReview">
+      <div className="js_my_review">
         <h3>내 리뷰</h3>
           <ul>
             <li>

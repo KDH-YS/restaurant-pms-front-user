@@ -4,14 +4,14 @@ export function ReviewForm() {
   return (
     <>
     <div className="container">
-      <div className="formShop">
+      <div className="js_formShop">
         <p>한치, 모밀</p>
         <h3>부산한치모밀</h3>
         <p>2024년 11월 10일에 방문했어요.</p>
         <img src="" alt="별점" />
         <p>(10명의 평기)</p>
       </div>
-      <div className="menuReview">
+      <div className="js_menu_review">
         <h3>메뉴</h3>
         <p>한치모밀中(1~2일)</p>
         <p>계란찜</p>
@@ -19,17 +19,17 @@ export function ReviewForm() {
         <p>28,000원</p>
         <p>2,000원</p>
         <p>4,000원</p>
-        <div className="line"></div>
+        <div className="js_line"></div>
         <p>총 금액</p>
         <p>34,000원</p>
       </div>
-      <div className="keyWord">
+      <div className="js_key_word">
         <img src="" alt="맛있어요" />
         <img src="" alt="친절해요" />
         <img src="" alt="특별한 메뉴가 있어요" />
         <img src="" alt="주차하기 편해요" />
       </div>
-      <div className="reviewForm">
+      <div className="js_review_form">
         <form action="">
           <div>
             <label for="formFile" class="form-label mt-4">이미지 업로드</label>

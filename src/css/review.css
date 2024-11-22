@@ -1,19 +1,19 @@
 /* reviewList */
-.reviewList {
+.js_review_list {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.reviewList > h3 {
+.js_review_list > h3 {
   flex-basis: 100%;
 }
-.reviewList > li {
+.js_review_list > li {
   width: 300px;
   height: 360px;
   margin-bottom: 2rem;
 }
 
-.reviewList > div {
+.js_review_list > div {
   margin: 0 auto;
   margin-bottom: 2rem;
 }
