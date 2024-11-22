@@ -1,0 +1,21 @@
+.myReview > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.myReview > ul > li {
+  position: relative;
+  margin-bottom: 2rem;
+}
+.myReview > ul > li > div {
+  position: absolute;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.myReview > button {
+  margin-bottom: 2rem;
+}

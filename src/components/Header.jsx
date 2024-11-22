@@ -3,7 +3,7 @@ import menubuger from "../img/menubuger.png"
 import '../css/Header.css'
 import {Link} from "react-router-dom";
 
-function Header() {
+export function Header() {
     return (
         <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">

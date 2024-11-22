@@ -2,7 +2,7 @@ import React from 'react';
 import '../css/Footer.css';
 import {Link} from "react-router-dom";
 
-function Footer() {
+export function Footer() {
   return (
     <footer className="footer bg-dark text-white text-center py-3">
       <div className="container">

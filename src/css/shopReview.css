@@ -1,0 +1,48 @@
+/* shopInfo */
+.shopInfo > img {
+  width: 50%;
+}
+
+/* photo */
+.photoReview > img {
+  width: 25%;
+}
+
+/* review */
+
+/* sns */
+.snsReview > p {
+  flex-basis: 100%;
+}
+.snsReview > li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.snsReview > li > img {
+  margin-bottom: 1rem;
+}
+.snsReview > li > p {
+  flex-basis: 100%;
+}
+
+/* 반응형 */
+@media (min-width:990px) {
+  .shopInfo > img {
+    width: 50%;
+  }
+}
+@media (max-width:768px) {
+  .shopInfo > img {
+    width: 100%;
+  }
+  .shopInfo > img:nth-of-type(2) {
+    display: none;
+  }
+  .photoReview > img {
+    width: 50%;
+  }
+  .photoReview > img:nth-of-type(3), img:nth-of-type(4) {
+    display: none;
+  }
+}
