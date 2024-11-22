@@ -1,0 +1,26 @@
+GET https://jsonplaceholder.typicode.com/posts HTTP/1.1
+
+###
+
+POST http://localhost:8080/api/reservations
+Content-Type: application/json;
+
+{
+  "reservationTime": "2024-11-21T14:00:00",
+  "userId": 1,
+  "restaurantId": 5,
+  "request": "요청",
+  "numberOfPeople": 5
+  }
+###
+
+PUT http://localhost:8080/api/restaurants/schedule/1005
+Content-Type: application/json
+
+{
+    "startTime": "09:00:00",
+    "endTime": "18:00:00",
+    "isOpen": true,
+    "breakStart": "12:00:00",
+    "breakEnd": "13:00:00"
+}
