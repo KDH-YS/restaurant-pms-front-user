@@ -1,0 +1,39 @@
+.menuCard {
+    width: 300px;
+    height: 360px;
+    /* border: 1px solid black; */
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: left;
+    /* margin-bottomx: 30px; */
+    margin: 10px 12px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    display: inline-block;
+
+}
+.cardMain{
+    margin: 0 auto;
+    text-align: left;
+    /* display:flex; */
+    /* flex-wrap:wrap; */
+    /* justify-content: space-between; */
+}
+.menuCard img {
+    width: 300px;
+    height: 250px;
+}
+.menuCard .title {
+    margin: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.menuCard .text {
+    margin: 10px;
+
+    font-size: 13px;
+    color: gray;
+    font-weight: bold;
+}
+.card {
+    cursor: pointer;  /* 카드에 포인터 커서 추가 */
+  }
