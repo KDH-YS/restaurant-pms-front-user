@@ -3,7 +3,7 @@ import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import 'react-calendar/dist/Calendar.css';
-import '../css/Reserve.css';
+import '../../css/Reserve.css';
 
 const Reserve = () => {
   const navigate = useNavigate();
@@ -12,18 +12,14 @@ const Reserve = () => {
   const [people, setPeople] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [menu, setMenu] = useState('');
-  
+  const [request, setRequest] = useState('');
+
   const reviews = [
     { id: 1, username: '엄준식', comment: '맛있었어요! 다시 방문하고 싶습니다.', rating: 5 },
     { id: 2, username: '아무무', comment: '서비스가 좋았어요.', rating: 4 },
-    { id: 3, username: '니나브', comment: '위치는 조금 불편했지만 음식은 훌륭했습니다.', rating: 3 }
+    { id: 3, username: '니나브', comment: '위치는 조금 불편했지만 음식은 훌륭했습니다.', rating: 3 },
   ];
 
-  const MENU_OPTIONS = [
-    { value: '', label: '[서버에서 메뉴 받아오기]' },
-    { value: 'burger', label: '버거' },
-    { value: 'pizza', label: '피자' },
-  ];
 
   const TIME_OPTIONS = [
     { value: '', label: '[서버에서 받아오기]' },
@@ -35,7 +31,7 @@ const Reserve = () => {
 
   const handleDateChange = (newDate) => setDate(newDate);
 
-  const tileClassName = ({ date, view }) => view === 'month' && date.getDay() === 6 ? 'saturday' : null;
+  const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
   const updateTotalPrice = () => {
     const price = people * 20 + (menu === 'burger' ? 15 : menu === 'pizza' ? 20 : 0);
@@ -44,15 +40,43 @@ const Reserve = () => {
 
   const handleInputChange = (setter) => (event) => {
     setter(event.target.value);
-    updateTotalPrice();
+    if (setter === setMenu || setter === setPeople) updateTotalPrice();
   };
 
-  const handleReserve = () => {
-    alert('예약이 완료되었습니다!');
-    navigate('/ReservationStatus');
+  const handleReserve = async () => {
+    const userId = 1; // 임시 하드코딩된 사용자 ID
+    const restaurantId = 123; // 임시 하드코딩된 레스토랑 ID
+  
+    const reservationData = {
+      userId, // 하드코딩된 사용자 ID
+      restaurantId, // 하드코딩된 레스토랑 ID
+      reservationTime: `${date.toISOString().split('T')[0]}T${time}`,
+      request,
+      numberOfPeople: people,
+    };
+  
+    try {
+      const response = await fetch('http://localhost:8080/api/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reservationData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      alert('예약이 완료되었습니다!');
+      navigate('/ReservationStatus');
+    } catch (error) {
+      alert(`예약 요청 중 오류가 발생했습니다: ${error.message}`);
+    }
   };
+  
 
-  const renderReviews = () => (
+  const renderReviews = () =>
     reviews.map((review) => (
       <Card key={review.id} className="review-card">
         <Card.Body>
@@ -61,8 +85,7 @@ const Reserve = () => {
           <Card.Text>평점: {review.rating} / 5</Card.Text>
         </Card.Body>
       </Card>
-    ))
-  );
+    ));
 
   return (
     <Container className="reserve-container">
@@ -85,14 +108,7 @@ const Reserve = () => {
         <Col md={6} className="reservation-details">
           <h3>예약 상세 정보</h3>
           <Form>
-            <Form.Group controlId="formMenu">
-              <Form.Label>메뉴 선택</Form.Label>
-              <Form.Control as="select" value={menu} onChange={handleInputChange(setMenu)}>
-                {MENU_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+
 
             <Form.Group controlId="formTime">
               <Form.Label>시간 선택</Form.Label>
@@ -106,6 +122,11 @@ const Reserve = () => {
             <Form.Group controlId="formPeople">
               <Form.Label>인원 수</Form.Label>
               <Form.Control type="number" min="1" value={people} onChange={handleInputChange(setPeople)} />
+            </Form.Group>
+
+            <Form.Group controlId="formRequest">
+              <Form.Label>요청 사항</Form.Label>
+              <Form.Control as="textarea" rows={3} value={request} onChange={handleInputChange(setRequest)} />
             </Form.Group>
 
             <div className="reservation-summary">
