@@ -1,7 +1,5 @@
-import Reserve from "./components/Reserve";
-import ReservationStatus from "./components/ReservationStatus"
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Reserve from "./Router/Reserve";
+import ReservationStatus from "./Router/ReservationStatusPage"
 import { BrowserRouter } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import "./css/App.css";
@@ -13,12 +11,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 function App() {
   return (
     <BrowserRouter>
-    <Header></Header>
       <Routes>        
         <Route path="/" element={<Reserve />} />
         <Route path="/ReservationStatus" element={<ReservationStatus />} />        
       </Routes>
-      <Footer></Footer>
     </BrowserRouter>
   );
 }
