@@ -8,7 +8,7 @@ function ReviewCard() {
     { id: 3, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
     { id: 4, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
   ];
-
+  
   return (
     <div className="container">
       <Row xs={1} sm={2} md={2} lg={3} xl={4} className="g-4">

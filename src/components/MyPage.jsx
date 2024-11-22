@@ -18,13 +18,13 @@ function MyPage() {
       {/* 예약 현황 : 예약된 레스토랑, 예약 이력 */}
       <div className="Reservation">
         <p>예약 현황</p>
-        <Link className="reservationHistory" to="/reservationHistory">예약 이력{'>'}</Link>
+        <Link className="reservationHistory" to="/ReservationStatus">예약 이력{'>'}</Link>
       </div>
 
       {/* 내 리뷰 : 내 리뷰 리스트, 내 리뷰 전체 보기 */}
       <div className="MyReviewList">
         <p>내 리뷰</p>
-        <Link className="myReviewListAll" to="/myReviewListAll">전체보기{'>'}</Link>
+        <Link className="myReviewListAll" to="/review/myreview">전체보기{'>'}</Link>
         <ul className='myReviewList-list'>
           <li className='myReviewList-detail'>
             <p>레스토랑 이름</p>
