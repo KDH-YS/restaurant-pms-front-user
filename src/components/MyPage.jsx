@@ -1,7 +1,10 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import '../css/MyPage.css';
+<<<<<<< HEAD
 import '../css/Header.css'
+=======
+>>>>>>> 00cbf9c (마이페이지 임시 css추가)
 
 function MyPage() {
   return (
