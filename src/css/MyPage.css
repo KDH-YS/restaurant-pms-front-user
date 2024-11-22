@@ -1,0 +1,97 @@
+
+* {
+  list-style: none;
+}
+
+/* Title */
+.MypageTitle {
+  margin-left : 30px;
+}
+
+/* UserProfile */
+.UserProfile {
+  margin : 0 30px;
+  margin-bottom : 30px;
+  padding : 15px;
+  display : flex;
+}
+
+.UserProfile > .UserName {
+  margin-left : auto;
+  background-position: center;
+  background-size : cover;
+}
+
+.UserProfile > .editUserProfile {
+  margin-top : auto;
+  background-position: center;
+  background-size: cover;
+}
+
+/* Reservation */
+.Reservation {
+  border : solid 1px black;
+  border-radius : 12px;
+  margin : 0 30px;
+  margin-bottom : 30px;
+  padding : 15px;
+  display: flex;
+}
+
+.reservationHistory {
+  margin-left : auto;
+  background-position: center;
+  background-size: cover;
+}
+
+/* MyReviewList */
+.MyReviewList {
+  border : solid 1px black;
+  border-radius : 12px;
+  margin : 0 30px;
+  margin-bottom : 30px;
+  padding : 15px;
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: flex-start;
+}
+
+.myReviewListAll {
+  margin-left : auto;
+  background-position: center;
+  background-size: cover;
+}
+
+.myReviewList-list {
+  border: solid 1px black;
+  width: 100%; /* 부모의 가로 너비를 채움 */
+  padding: 5px;
+  margin-top: 10px; /* 상단 여백 추가 */
+}
+
+.myReviewList-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%; /* 부모의 가로 너비를 채움 */
+}
+
+.createDate {
+  margin-left: auto;
+}
+
+/* Favorites */
+.Favorites {
+  border : solid 1px black;
+  border-radius : 12px;
+  margin : 0 30px;
+  margin-bottom : 30px;
+  padding : 15px;
+  display: flex;
+}
+
+.favoritesAll {
+  margin-left : auto;
+  background-position: center;
+  background-size: cover;
+}
