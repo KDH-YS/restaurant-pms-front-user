@@ -1,5 +1,6 @@
-import Reserve from "./Router/Reserve";
+import Reserve from "./Router/ReservePage";
 import ReservationStatus from "./Router/ReservationStatusPage"
+import Manager from "./Router/ManagerPage";
 import { BrowserRouter } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import "./css/App.css";
@@ -13,7 +14,8 @@ function App() {
     <BrowserRouter>
       <Routes>        
         <Route path="/" element={<Reserve />} />
-        <Route path="/ReservationStatus" element={<ReservationStatus />} />        
+        <Route path="/reservationStatus" element={<ReservationStatus />} />
+        <Route path="/manager" element={<Manager/>}/>        
       </Routes>
     </BrowserRouter>
   );
