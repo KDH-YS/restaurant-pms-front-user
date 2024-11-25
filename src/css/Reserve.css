@@ -1,15 +1,5 @@
 /* 공통 폰트 설정 */
-@font-face {
-    font-family: 'InkLipquid';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/InkLipquid.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
 
-/* 폰트 통일 */
-* {
-    font-family: 'InkLipquid', sans-serif;
-}
 
 /* 전체 예약 페이지 컨테이너 */
 .reserve-container {
@@ -90,14 +80,14 @@ button:hover {
     font-weight: bold;
 }
 
-.react-calendar__tile--weekend:nth-child(6) {
-    background-color: #FF5733;
-    color: blue;
+.react-calendar__month-view__days__day--neighboringMonth{
+    color: gray !important;
 }
 
 .saturday {
     color: blue;
 }
+
 
 /* 레스토랑 정보 섹션 스타일 */
 .restaurant-info {
@@ -164,9 +154,4 @@ button:hover {
 
 .reservation-summary button {
     margin-left: 20px;
-}
-
-/* 공통 스타일 */
-* {
-    font-family: 'InkLipquid', sans-serif;
 }

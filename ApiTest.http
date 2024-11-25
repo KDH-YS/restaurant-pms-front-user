@@ -1,15 +1,1 @@
 Get http://localhost:8080/api/reservations?userId=1
-
-
-###
-
-Get http://localhost:8080/api/reservations/manager/1
-
-###
-
-    PUT http://localhost:8080/api/reservations/manager/9
-    Content-Type: application/json
-
-    {
-    "status": "NOSHOW"
-    }

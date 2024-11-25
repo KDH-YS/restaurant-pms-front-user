@@ -11,7 +11,6 @@ const Reserve = () => {
   const [time, setTime] = useState('');
   const [people, setPeople] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [menu, setMenu] = useState('');
   const [request, setRequest] = useState('');
 
   const reviews = [
@@ -34,14 +33,15 @@ const Reserve = () => {
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
   const updateTotalPrice = () => {
-    const price = people * 20 + (menu === 'burger' ? 15 : menu === 'pizza' ? 20 : 0);
+    const price = people * 10000; // 인원당 10,000원
     setTotalPrice(price);
   };
-
+  
   const handleInputChange = (setter) => (event) => {
     setter(event.target.value);
-    if (setter === setMenu || setter === setPeople) updateTotalPrice();
+    if (setter === setPeople) updateTotalPrice(); // 인원 변경 시 금액 갱신
   };
+  
 
   const handleReserve = async () => {
     const userId = 1; // 임시 하드코딩된 사용자 ID
@@ -74,7 +74,7 @@ const Reserve = () => {
       alert(`예약 요청 중 오류가 발생했습니다: ${error.message}`);
     }
   };
-  
+
 
   const renderReviews = () =>
     reviews.map((review) => (
@@ -103,13 +103,11 @@ const Reserve = () => {
 
       <Row className="main-content">
         <Col md={6} className="calendar-section">
-          <Calendar onChange={handleDateChange} value={date} tileClassName={tileClassName} />
+          <Calendar onChange={handleDateChange} value={date} tileClassName={tileClassName} prevLabel="<" nextLabel=">"/>
         </Col>
         <Col md={6} className="reservation-details">
           <h3>예약 상세 정보</h3>
           <Form>
-
-
             <Form.Group controlId="formTime">
               <Form.Label>시간 선택</Form.Label>
               <Form.Control as="select" value={time} onChange={handleInputChange(setTime)}>

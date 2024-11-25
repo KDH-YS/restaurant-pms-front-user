@@ -1,223 +1,169 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col, Card, Form, Pagination, Dropdown } from 'react-bootstrap';
+import React, { useState } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 
-const Manager = () => {
-  const [reservations, setReservations] = useState([]);
-  const [filteredReservations, setFilteredReservations] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState('ALL'); // 필터 상태
-  const [statusUpdates, setStatusUpdates] = useState({}); // 상태를 객체로 관리
+function Manager() {
+  // 날짜, 오픈 상태, 영업시간, 브레이크타임 상태 관리
+  const [date, setDate] = useState(new Date());
+  const [workingHours, setWorkingHours] = useState({});
+  const [breakTime, setBreakTime] = useState({});
+  const [isOpen, setIsOpen] = useState({});
+  const [savedSchedules, setSavedSchedules] = useState([]); // 저장된 일정 관리
 
-  const itemsPerPage = 6;
-  const statusOptions = ['ALL', 'CANCELREQUEST', 'PENDING', 'RESERVING', 'NOSHOW', 'COMPLETE'];
+  // 날짜 선택 시 처리 함수
+  const handleDateChange = (newDate) => {
+    setDate(newDate);
+  };
 
-  // 예약 데이터를 API에서 받아오는 useEffect
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/reservations/manager/5');
-        const data = await response.json();
-        setReservations(data);
-        setFilteredReservations(data);
-        setTotalPages(Math.ceil(data.length / itemsPerPage));
-      } catch (error) {
-        console.error('Error fetching reservations:', error);
-      }
+  // 영업시간 설정
+  const handleWorkingHoursChange = (e) => {
+    const { name, value } = e.target;
+    setWorkingHours({
+      ...workingHours,
+      [name]: value,
+    });
+  };
+
+  // 브레이크타임 설정
+  const handleBreakTimeChange = (e) => {
+    const { name, value } = e.target;
+    setBreakTime({
+      ...breakTime,
+      [name]: value,
+    });
+  };
+
+  // 오픈 상태 설정
+  const handleIsOpenChange = (e) => {
+    const { name, checked } = e.target;
+    setIsOpen({
+      ...isOpen,
+      [name]: checked,
+    });
+  };
+
+  // 설정 저장 시 호출되는 함수
+  const handleSaveSchedule = () => {
+    const dateKey = date.toDateString();
+    const newSchedule = {
+      date: dateKey,
+      workingStart: workingHours[`${dateKey}-start`] || '',
+      workingEnd: workingHours[`${dateKey}-end`] || '',
+      breakStart: breakTime[`${dateKey}-break-start`] || '',
+      breakEnd: breakTime[`${dateKey}-break-end`] || '',
+      isOpen: isOpen[dateKey] || false,
     };
-
-    fetchReservations();
-  }, []);
-
-  // 예약 상태 필터링 함수
-  const filterReservations = (status) => {
-    let filtered = reservations;
-    if (status !== 'ALL') {
-      filtered = reservations.filter((reservation) => reservation.status === status);
-    }
-    setFilteredReservations(filtered);
-    setCurrentPage(1);
-    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+    
+    setSavedSchedules([...savedSchedules, newSchedule]); // 새로운 일정 추가
   };
 
-  // 예약 상태 변경 함수 (PUT 요청)
-  const updateReservationStatus = async (reservationId, updatedStatus) => {
-    if (!updatedStatus) {
-      alert('상태를 선택하세요.');
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: updatedStatus }),
-      });
-
-      if (response.ok) {
-        alert('예약 상태가 변경되었습니다.');
-        const updatedReservationsResponse = await fetch('http://localhost:8080/api/reservations/manager/1');
-        const updatedReservations = await updatedReservationsResponse.json();
-        setReservations(updatedReservations);
-        setFilteredReservations(updatedReservations);
-      } else {
-        alert('예약 상태 변경에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('예약 상태 변경 오류:', error);
-      alert('예약 상태 변경 중 오류가 발생했습니다.');
-    }
-  };
-
-  // 현재 페이지에 해당하는 예약 항목을 계산
-  const currentReservations = filteredReservations.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // 상태를 예약 ID별로 설정하는 함수
-  const setReservationStatus = (reservationId, status) => {
-    setStatusUpdates((prev) => ({ ...prev, [reservationId]: status }));
-  };
-
-  // 예약 취소 함수
-  const handleCancelReservation = async (reservationId) => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (response.ok) {
-        alert('예약이 취소되었습니다.');
-        const updatedReservationsResponse = await fetch('http://localhost:8080/api/reservations/manager/1');
-        const updatedReservations = await updatedReservationsResponse.json();
-        setReservations(updatedReservations);
-        setFilteredReservations(updatedReservations);
-      } else {
-        alert('예약 취소에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('예약 취소 오류:', error);
-      alert('예약 취소 중 오류가 발생했습니다.');
-    }
-  };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const tileClassName = ({ date, view }) =>
+    view === 'month' && date.getDay() === 6 ? 'saturday' : null;
 
   return (
-    <Container className="reservation-status-container">
-      <h3>나의 레스토랑 예약 현황</h3>
+    <div className="container mt-5">
+      <h2>영업시간 및 상태 설정</h2>
 
-      {/* 예약 상태 필터 */}
-      <div className="mb-3">
-        <Dropdown>
-          <Dropdown.Toggle variant="secondary" id="status-filter">
-            {statusFilter}
-          </Dropdown.Toggle>
+      {/* 달력 컴포넌트 */}
+      <div className="row">
+        <div className="col-md-8">
+          <Calendar onChange={handleDateChange} value={date} tileClassName={tileClassName} />
+        </div>
 
-          <Dropdown.Menu>
-            {statusOptions.map((status) => (
-              <Dropdown.Item
-                key={status}
-                onClick={() => {
-                  setStatusFilter(status);
-                  filterReservations(status);
-                }}
-              >
-                {status}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+        {/* 캘린더 오른쪽에 저장된 일정 표시 */}
+        <div className="col-md-4">
+          <Card className="mt-4">
+            <Card.Body>
+              <Card.Title>{date.toDateString()} 설정</Card.Title>
+
+              {/* 오픈 상태 설정 */}
+              <Form.Group>
+                <Form.Check
+                  type="checkbox"
+                  label="오픈 상태 (열림/닫힘)"
+                  name={date.toDateString()}
+                  checked={isOpen[date.toDateString()] || false}
+                  onChange={handleIsOpenChange}
+                />
+              </Form.Group>
+
+              {/* 영업시간 설정 */}
+              <Row>
+                <Col md={6}>
+                  <Form.Group controlId="formWorkingStart">
+                    <Form.Label>영업 시작 시간</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name={`${date.toDateString()}-start`}
+                      value={workingHours[`${date.toDateString()}-start`] || ''}
+                      onChange={handleWorkingHoursChange}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group controlId="formWorkingEnd">
+                    <Form.Label>영업 종료 시간</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name={`${date.toDateString()}-end`}
+                      value={workingHours[`${date.toDateString()}-end`] || ''}
+                      onChange={handleWorkingHoursChange}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              {/* 브레이크타임 설정 */}
+              <Row>
+                <Col md={6}>
+                  <Form.Group controlId="formBreakStart">
+                    <Form.Label>브레이크타임 시작 시간</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name={`${date.toDateString()}-break-start`}
+                      value={breakTime[`${date.toDateString()}-break-start`] || ''}
+                      onChange={handleBreakTimeChange}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group controlId="formBreakEnd">
+                    <Form.Label>브레이크타임 종료 시간</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name={`${date.toDateString()}-break-end`}
+                      value={breakTime[`${date.toDateString()}-break-end`] || ''}
+                      onChange={handleBreakTimeChange}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              {/* 저장 버튼 */}
+              <Button variant="primary" className="mt-3" onClick={handleSaveSchedule}>
+                설정 저장
+              </Button>
+            </Card.Body>
+          </Card>
+        </div>
       </div>
 
-      <Row>
-        {currentReservations.map((reservation) => (
-          <Col md={6} key={reservation.reservationId} className="mb-3">
-            <Card>
-              <Card.Body>
-                <Card.Title>예약</Card.Title>
-                <Card.Text>
-                  <strong>레스토랑:</strong> {reservation.restaurantName}
-                  <br />
-                  <strong>날짜:</strong> {reservation.reservationTime.split('T')[0]}
-                  <br />
-                  <strong>시간:</strong> {reservation.reservationTime.split('T')[1].substring(0, 5)}
-                  <br />
-                  <strong>인원 수:</strong> {reservation.numberOfPeople}명
-                  <br />
-                  <strong>상태:</strong> {reservation.status}
-                  <br />
-                  <strong>이메일:</strong> {reservation.user.email}
-                  <br />
-                  <strong>전화번호:</strong> {reservation.user.phone}
-                </Card.Text>
-
-                {/* 예약 상태 변경 드롭다운 */}
-                <div className="mb-3">
-                  <Dropdown>
-                    <Dropdown.Toggle variant="info" id={`status-update-${reservation.reservationId}`}>
-                      {statusUpdates[reservation.reservationId] || '상태 변경'}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {statusOptions.map((status) => (
-                        <Dropdown.Item
-                          key={status}
-                          onClick={() => setReservationStatus(reservation.reservationId, status)}
-                        >
-                          {status}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </div>
-
-                <div className="d-flex justify-content-between">
-                  <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>
-                    예약 취소
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() =>
-                      updateReservationStatus(
-                        reservation.reservationId,
-                        statusUpdates[reservation.reservationId]
-                      )
-                    }
-                  >
-                    예약 변경
-                  </Button>
-                </div>
-
-                <Form className="mt-3">
-                  <Form.Group>
-                    <Form.Label>요청 사항</Form.Label>
-                    <Card.Text>{reservation.request}</Card.Text>
-                  </Form.Group>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-
-      {/* 페이지네이션 */}
-      <Pagination>
-        {[...Array(totalPages)].map((_, index) => (
-          <Pagination.Item
-            key={index + 1}
-            active={index + 1 === currentPage}
-            onClick={() => handlePageChange(index + 1)}
-          >
-            {index + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
-    </Container>
+      {/* 저장된 일정 표시 */}
+      <div className="mt-5">
+        <h3>저장된 일정</h3>
+        <ul>
+          {savedSchedules.map((schedule, index) => (
+            <li key={index}>
+              <strong>{schedule.date}</strong>: {schedule.isOpen ? '열림' : '닫힘'}, 
+              영업시간: {schedule.workingStart} - {schedule.workingEnd}, 
+              브레이크타임: {schedule.breakStart} - {schedule.breakEnd}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
-};
+}
 
 export default Manager;
