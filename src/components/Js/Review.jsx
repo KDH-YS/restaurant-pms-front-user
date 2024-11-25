@@ -1,166 +1,52 @@
-import React from "react";
-import "../../css/bootstrap.min.css"
+import React, { useEffect, useState } from "react";
+import "../../css/bootstrap.min.css";
 import "../../css/review.css";
 import "../../css/main.css";
 
 export function Review() {
+  const [reviews, setReviews] = useState([]);
+
+  // restaurantId는 필요한 값으로 변경하거나 props로 전달받을 수 있습니다.
+  const restaurantId = 1;
+
+  useEffect(() => {
+    // fetch로 리뷰 목록을 가져옵니다.
+    fetch(`http://localhost:8080/api/restaurants/${restaurantId}/reviews`, {  // 서버에서 정의한 경로와 일치하도록 수정
+      method: 'GET', // GET 방식으로 요청
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('리뷰 데이터를 가져오는 중 오류 발생');
+        }
+        return response.json(); // JSON 응답을 파싱
+      })
+      .then(data => {
+        console.log(data);
+        setReviews(data); // 상태 업데이트
+      })
+      .catch(error => console.error('Error:', error)); // 에러 처리
+  }, [restaurantId]);
+
   return (
-    <>
     <div className="container">
       <div className="content">
-        <form action="">
-          <input type="text" class="form-control" placeholder="Default input" id="inputDefault" />
-          <div>
-            <button type="button" class="btn btn-outline-secondary">Secondary</button>
-            <button type="button" class="btn btn-outline-secondary">Secondary</button>
-          </div>
-        </form>
         <ul className="js_review_list">
-          <h3>100개의 레스토랑 중</h3>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <li>
-            <img src="https://via.placeholder.com/300x150" alt="그림" />
-            <h4>가게 이름</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam quae est odit, numquam neque sunt sed necessitatibus id. Iusto nemo quos velit</p>
-          </li>
-          <div>
-            <ul class="pagination">
-              <li class="page-item disabled">
-                <a class="page-link" href="#">&laquo;</a>
-              </li>
-              <li class="page-item active">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">3</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">4</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">5</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">6</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">7</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">8</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">9</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">10</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">&raquo;</a>
-              </li>
-            </ul>
-          </div>
+          <h3>{reviews.length}개의 리뷰</h3>
+          {reviews.map((review) => (
+            <li key={review.review_id}>
+              <img src="https://via.placeholder.com/300x150" alt="그림" />
+              <h4>{review.restaurantName}</h4>
+              <p>{review.reviewContent}</p>
+            </li>
+          ))}
         </ul>
+        {/* 페이지네이션 등 추가 UI */}
       </div>
     </div>
-    </>
-  )
+  );
 }
 
 export default Review;

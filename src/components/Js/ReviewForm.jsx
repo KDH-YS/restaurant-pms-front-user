@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "../../css/bootstrap.min.css";
+import "../../css/review.css";
+import "../../css/main.css";
 
-export function ReviewForm() {
+export function Review() {
   const [reviewContent, setReviewContent] = useState(""); // 리뷰 내용
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일
   const [tasteRating, setTasteRating] = useState(0); // 맛 평점
@@ -10,7 +13,29 @@ export function ReviewForm() {
 
   const [userId] = useState(1); // 미리 지정된 userId
   const [restaurantId] = useState(1); // 미리 지정된 restaurantId
+  const [restaurant, setRestaurant] = useState(null); // 가게 정보 상태
 
+  // 가게 정보를 가져오는 함수
+  const fetchRestaurant = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setRestaurant(data); // 받은 데이터를 가게 정보 상태에 설정
+      } else {
+        console.error("가게 정보를 가져오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("가게 정보를 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  // 페이지 로드 시 가게 정보와 리뷰 목록 가져오기
+  useEffect(() => {
+    fetchRestaurant();
+  }, [restaurantId]); // restaurantId가 변경될 때마다 가게 정보와 리뷰를 다시 가져옴
+
+  // 리뷰 제출 핸들러
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -47,25 +72,21 @@ export function ReviewForm() {
 
   return (
     <div className="container">
-      <div className="js_formShop">
-        <p>한치, 모밀</p>
-        <h3>부산한치모밀</h3>
-        <p>2024년 11월 10일에 방문했어요.</p>
-        <img src="" alt="별점" />
-        <p>(10명의 평기)</p>
-      </div>
-
-      <div className="js_menu_review">
-        <h3>메뉴</h3>
-        <p>한치모밀中(1~2일)</p>
-        <p>계란찜</p>
-        <p>맥주</p>
-        <p>28,000원</p>
-        <p>2,000원</p>
-        <p>4,000원</p>
-        <div className="js_line"></div>
-        <p>총 금액</p>
-        <p>34,000원</p>
+      {/* 가게 정보 표시 */}
+      <div className="js_restaurant_info">
+        {restaurant ? (
+          <div>
+            <h2>{restaurant.name}</h2>
+            <img src={restaurant.mainImageUrl} alt="가게 대표 사진" />
+            <p>주소: {restaurant.address}</p>
+            <p>전화번호: {restaurant.phone}</p>
+            <p>음식 종류: {restaurant.foodType}</p>
+            <p>평균 평가: {restaurant.averageRating}</p>
+            <p>상세 설명: {restaurant.description}</p>
+          </div>
+        ) : (
+          <p>가게 정보를 불러오는 중입니다...</p>
+        )}
       </div>
 
       <div className="js_key_word">
@@ -75,6 +96,7 @@ export function ReviewForm() {
         <img src="" alt="주차하기 편해요" />
       </div>
 
+      {/* 리뷰 제출 폼 */}
       <div className="js_review_form">
         <form onSubmit={handleSubmit}>
           {/* 이미지 업로드 */}
@@ -188,4 +210,4 @@ export function ReviewForm() {
   );
 }
 
-export default ReviewForm;
+export default Review;
