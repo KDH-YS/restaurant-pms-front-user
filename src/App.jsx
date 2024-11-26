@@ -5,6 +5,7 @@ import RestaurantInfo from "./Router/RestaurantInfo.jsx"
 import ReservePage from "./Router/Reserve.jsx"
 import ReservationStatusPage from "./Router/ReservationStatusPage.jsx";
 import ReserveMainPage from "./Router/ReserveMainPage.jsx"
+import Login from "./Router/Login.jsx"
 import Mypage from "./Router/Mypage.jsx"
 import Review from "./Router/Review.jsx"
 import MyReview from "./Router/MyReview.jsx"
@@ -24,6 +25,7 @@ function App() {
           <Route path="/Reserve" element={<ReservePage />} />
           <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
           <Route path="/Reservemain" element={<ReserveMainPage/>} />
+          <Route path="/Login" element={<Login/>} />
           <Route path="/Mypage" element={<Mypage/>} />
           <Route path="/review" element={<Review/>}></Route>
           <Route path="/review/myreview" element={<MyReview/>}></Route>

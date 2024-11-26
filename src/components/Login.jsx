@@ -14,7 +14,7 @@ function Login() {
           <div className='HjInputBox'>
             <p className='HjInputEmail'>
               아이디 : 
-              <input type='email' id='HjEmail' value={email} placeholder='이메일을 입력하세요.'/>
+              <input type='email' id='HjEmail' placeholder='이메일을 입력하세요.'/>
             </p>
             <p className='HjInputPassword'>
               비밀번호 : 
@@ -34,3 +34,5 @@ function Login() {
     </div>
   );
 }
+
+export default Login;
