@@ -57,7 +57,6 @@ export function MyReview() {
         <ul>
           {reviews.map((review) => (
             <li key={review.review_id}>
-              {/* 리뷰 이미지 */}
               <img src={review.image_url || "https://via.placeholder.com/300x360"} alt={review.restaurant_name} />
               <div>
                 <p>{review.review_content}</p>
@@ -67,10 +66,7 @@ export function MyReview() {
             </li>
           ))}
         </ul>
-        {/* 버튼 */}
-        <button className="btn btn-lg btn-primary" type="button">
-          Block button
-        </button>
+        <button className="btn btn-lg btn-primary" type="button">더보기</button>
       </div>
     </div>
   );
