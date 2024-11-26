@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';  // useNavigate 임포트
 import axios from 'axios';
 import { fetchRestaurants } from './api';  // api.js에서 import
 import { searchRestaurants } from './api';  // api.js에서 import
+import Pagination from '../../components/restaurants/Pagination';
 
 const MenuPage = () => {
   const [restaurants, setRestaurants] = useState([]);  // 레스토랑 목록 상태
@@ -22,28 +23,53 @@ const MenuPage = () => {
     parkingAvailable: false, // 주차 가능 여부
     reservationAvailable: false, // 예약 가능 여부
   });
-  
+   // 페이지네이션 관련 상태
+   const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지
+   const [totalPages, setTotalPages] = useState(1);  // 총 페이지 수
+   const [pageRange, setPageRange] = useState([1, 10]); // 페이지 번호 범위
+
   // 컴포넌트가 마운트될 때 API 호출
   useEffect(() => {
     const getRestaurants = async () => {
-        setLoading(true);  // 로딩 시작
-        setError(null);     // 이전 에러 초기화
+      setLoading(true);  // 로딩 시작
+      setError(null);     // 이전 에러 초기화
   
-        try {
-            const data = await fetchRestaurants();  // API 호출 (전체 레스토랑 불러오기)
-            setRestaurants(data);  // 받은 데이터로 상태 업데이트
-          } catch (err) {
-            setError('레스토랑을 불러오는 데 실패했습니다.');
-          } finally {
-            setLoading(false);  // 로딩 종료
-          }
-        };
+      try {
+        // fetchRestaurants 호출
+        const response = await fetchRestaurants(currentPage, 24);
+  
+        // 응답 데이터가 정상적으로 반환된 경우
+        if (response && response.content) {
+          console.log('fetchRestaurants 응답 데이터:', response); // 응답 데이터 확인용
+          setRestaurants(response.content);  // 레스토랑 목록만 상태로 설정
+          setTotalPages(response.totalPages); // 총 페이지 수 설정
+        } else {
+          setRestaurants([]); // content가 없으면 빈 배열
+        }
+      } catch (err) {
+        setError('레스토랑을 불러오는 데 실패했습니다.');
+      } finally {
+        setLoading(false);  // 로딩 종료
+      }
+    };
+  
+    getRestaurants();  // 함수 호출
+  }, [currentPage]);  // currentPage가 변경될 때마다 호출
     
-        getRestaurants();
-      }, []);  // 처음 로드 시, 모든 레스토랑 불러오기
-    
+    // 페이지 범위 계산
+    const calculatePageRange = (currentPage, totalPages) => {
+      const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+      const endPage = Math.min(startPage + 9, totalPages);
+      return [startPage, endPage];
+    };
   const navigate = useNavigate();  // navigate 훅을 사용하여 페이지 이동
 
+    // 페이지 버튼 클릭 시 페이지 변경
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);  // 새로운 페이지로 이동
+    }
+  };
 
   const handleCardClick = () => {
     navigate('/reservemain');  // 클릭 시 '/reservemain' 경로로 이동
@@ -120,6 +146,15 @@ const MenuPage = () => {
     } catch (error) {
       console.error('검색 오류:', error);
     }
+    // 페이지네이션 버튼을 렌더링
+  const renderPagination = () => {
+    const [startPage, endPage] = calculatePageRange(currentPage, totalPages);
+
+    // 페이지 번호 목록 생성
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }}
   };
   
   
@@ -193,7 +228,7 @@ const MenuPage = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <Row xs={1} sm={2} md={3} lg={3} xl={3} className="g-4">
         
-        {restaurants.length > 0 ? (
+        {restaurants && restaurants.length > 0 ? (
         restaurants.map((restaurant) => (
           <Col key={restaurant.restaurantId}>
             <Card onClick={handleCardClick}> {/* Card 클릭 시 handleCardClick 호출 */}
@@ -233,7 +268,12 @@ const MenuPage = () => {
     )
         }
       </Row>
-
+          {/* 페이지네이션 컴포넌트 사용 */}
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        onPageChange={handlePageChange} 
+      />
     </div>
   );
 };
