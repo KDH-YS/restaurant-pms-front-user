@@ -1,4 +1,7 @@
 /* 예약 현황 페이지 */
+.reservation-status-container{
+    margin: 20px auto !important;
+}
 .reservation-info {
     background-color: #FF5733;
     color: white;

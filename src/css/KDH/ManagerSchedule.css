@@ -2,3 +2,9 @@
     height: 100% !important;
     margin: 0px !important;
 }
+.schedulecontainer{
+    margin-bottom: 40px;
+}
+.schedulecard>.card-body>div{
+    margin-top: 20px !important;
+}

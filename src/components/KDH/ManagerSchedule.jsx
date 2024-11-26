@@ -4,6 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import 'css/KDH/ManagerSchedule.css';
 
+// 시간 옵션 생성 함수
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
 const Manager = () => {
@@ -13,8 +14,10 @@ const Manager = () => {
   const [savedSchedules, setSavedSchedules] = useState([]);
   const timeOptions = generateTimeOptions();
 
+  // 토요일에 특별한 스타일을 적용하는 함수
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
+  // 입력값 변경 시 스케줄 업데이트
   const handleInputChange = (key, value) => {
     const dateKey = date.toDateString();
     setSchedules((prev) => ({
@@ -26,6 +29,7 @@ const Manager = () => {
     }));
   };
 
+  // 저장된 스케줄을 불러오는 함수
   const fetchSavedSchedules = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/restaurants/schedule?restaurantId=123');
@@ -37,6 +41,7 @@ const Manager = () => {
     }
   };
 
+  // 스케줄 저장 함수
   const handleSaveSchedule = async () => {
     const dateKey = date.toISOString().split('T')[0];
     const schedule = schedules[date.toDateString()] || {};
@@ -65,6 +70,7 @@ const Manager = () => {
     }
   };
 
+  // 스케줄 삭제 함수
   const handleDeleteSchedule = async () => {
     if (!selectedScheduleId) return alert('삭제할 일정을 선택해주세요.');
 
@@ -82,14 +88,15 @@ const Manager = () => {
     fetchSavedSchedules();
   }, []);
 
+  // 현재 선택된 날짜의 스케줄 정보
   const currentSchedule = schedules[date.toDateString()] || {};
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 schedulecontainer">
       <h2>영업시간 및 상태 설정</h2>
-      <div className="row">
+      <div className="row ">
         <div className="col-md-6">
-          <Calendar onChange={setDate} value={date} tileClassName={tileClassName}/>
+          <Calendar onChange={setDate} value={date} tileClassName={tileClassName} />
         </div>
         <div className="col-md-6">
           <Card className="schedulecard mt-4">
@@ -102,12 +109,11 @@ const Manager = () => {
                 onChange={(e) => handleInputChange('isOpen', e.target.checked)}
               />
               <Row>
-                {['startTime', 'endTime', 'breakStart', 'breakEnd'].map((field, idx) => (
+                {['startTime', 'endTime', 'breakStart', 'breakEnd'].map((field) => (
                   <Col key={field} md={6}>
                     <Form.Group controlId={`form${field}`}>
                       <Form.Label>
-                        {field === 'startTime' ? '영업 시작' : field === 'endTime' ? '영업 종료' : field === 'breakStart' ? '브레이크 시작' : '브레이크 종료'}{' '}
-                        시간
+                        {field === 'startTime' ? '영업 시작' : field === 'endTime' ? '영업 종료' : field === 'breakStart' ? '브레이크 시작' : '브레이크 종료'} 시간
                       </Form.Label>
                       <Form.Control
                         as="select"
@@ -132,31 +138,30 @@ const Manager = () => {
           </Card>
         </div>
       </div>
-      <div className="mt-5">
-  <h3>저장된 일정</h3>
-  <div>
-    {savedSchedules.map((schedule) => (
-      <Card
-        key={schedule.id}
-        className={`mb-3 ${selectedScheduleId === schedule.scheduleId ? 'border-primary' : ''}`} // 선택된 카드에 border-primary 추가
-        onClick={() => setSelectedScheduleId(schedule.scheduleId)} // 클릭 시 selectedScheduleId를 업데이트
-        style={{ cursor: 'pointer' }}
-      >
-        <Card.Body>
-          <Card.Title>{schedule.openDate}</Card.Title>
-          <Card.Text>
-            {schedule.startTime} ~ {schedule.endTime} 브레이크타임 {schedule.breakStart} ~ {schedule.breakEnd}
-          </Card.Text>
-        </Card.Body>
-      </Card>
-    ))}
-  </div>
-  <Button variant="danger" onClick={handleDeleteSchedule} disabled={!selectedScheduleId}>
-    삭제
-  </Button>
-</div>
 
-
+      <div className="mt-5 savedschedule">
+        <h3>저장된 일정</h3>
+        <div>
+          {savedSchedules.map((schedule) => (
+            <Card
+              key={schedule.id}
+              className={`mb-3 ${selectedScheduleId === schedule.scheduleId ? 'border-primary' : ''}`}
+              onClick={() => setSelectedScheduleId(schedule.scheduleId)}
+              style={{ cursor: 'pointer' }}
+            >
+              <Card.Body>
+                <Card.Title>{schedule.openDate}</Card.Title>
+                <Card.Text>
+                  {schedule.startTime} ~ {schedule.endTime} 브레이크타임 {schedule.breakStart} ~ {schedule.breakEnd}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          ))}
+        </div>
+        <Button variant="danger" onClick={handleDeleteSchedule} disabled={!selectedScheduleId}>
+          삭제
+        </Button>
+      </div>
     </div>
   );
 };

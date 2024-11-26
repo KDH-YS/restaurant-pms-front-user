@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card, Form, Modal, Pagination } from 'react-bootstrap';
+import 'css/KDH/ReservationStatus.css';
 
 const ReservationStatus = () => {
   const [reservations, setReservations] = useState([]);
