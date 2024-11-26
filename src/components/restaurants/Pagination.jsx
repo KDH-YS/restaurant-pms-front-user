@@ -1,15 +1,13 @@
-// src/components/Pagination.js
-
 import React from 'react';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  // 현재 페이지와 총 페이지 수를 받아서 페이지 버튼을 렌더링하는 함수
+  // 페이지 범위 계산 (최대 10개 페이지 버튼을 보여주기 위한 함수)
   const calculatePageRange = (currentPage, totalPages) => {
     const pagesToShow = 10;  // 최대 10개까지 페이지를 보이게 한다
-    const leftRange = 4; //왼 4
-    const rightRange = 5; //오른 5  
-    let startPage = currentPage - leftRange; //시작은 현재 왼쪽 4
-    let endPage = currentPage + rightRange; //끝은 현재 오른쪽 5
+    const leftRange = 4; // 왼쪽 4 페이지
+    const rightRange = 5; // 오른쪽 5 페이지
+    let startPage = currentPage - leftRange; // 시작은 현재에서 왼쪽 4
+    let endPage = currentPage + rightRange; // 끝은 현재에서 오른쪽 5
 
     if (startPage <= 0) {
       startPage = 1;
@@ -23,6 +21,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     return [startPage, endPage];
   };
 
+  // 페이지 범위 계산
   const [startPage, endPage] = calculatePageRange(currentPage, totalPages);
   const pageNumbers = [];
 
@@ -30,20 +29,45 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     pageNumbers.push(i);
   }
 
+  // 페이지네이션이 한 페이지일 때는 비활성화
+  if (totalPages <= 1) {
+    return null; // 페이지네이션이 필요 없으면 null 반환
+  }
+
   return (
     <ul className="pagination">
+      {/* 이전 페이지 버튼 */}
       <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button className="page-link" onClick={() => onPageChange(currentPage - 1)}>&laquo;</button>
+        <button
+          className="page-link"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;
+        </button>
       </li>
 
+      {/* 페이지 번호 버튼 */}
       {pageNumbers.map((pageNumber) => (
         <li key={pageNumber} className={`page-item ${currentPage === pageNumber ? 'active' : ''}`}>
-          <button className="page-link" onClick={() => onPageChange(pageNumber)}>{pageNumber}</button>
+          <button
+            className="page-link"
+            onClick={() => onPageChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
         </li>
       ))}
 
+      {/* 다음 페이지 버튼 */}
       <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button className="page-link" onClick={() => onPageChange(currentPage + 1)}>&raquo;</button>
+        <button
+          className="page-link"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;
+        </button>
       </li>
     </ul>
   );

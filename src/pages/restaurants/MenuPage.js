@@ -22,12 +22,13 @@ const MenuPage = () => {
     foodType: '',            // 음식 종류
     parkingAvailable: false, // 주차 가능 여부
     reservationAvailable: false, // 예약 가능 여부
+    page: 1,
+    size: 24,
   });
    // 페이지네이션 관련 상태
    const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지
    const [totalPages, setTotalPages] = useState(1);  // 총 페이지 수
-   const [pageRange, setPageRange] = useState([1, 10]); // 페이지 번호 범위
-
+   
   // 컴포넌트가 마운트될 때 API 호출
   useEffect(() => {
     const getRestaurants = async () => {
@@ -63,7 +64,42 @@ const MenuPage = () => {
       return [startPage, endPage];
     };
   const navigate = useNavigate();  // navigate 훅을 사용하여 페이지 이동
+  
+  useEffect(() => {
+    const fetchRestaurantsData = async () => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        // 페이지, 검색 조건에 맞는 레스토랑 가져오기
+        const response = await searchRestaurants({
+          page: currentPage,
+          size: 24,  // 페이지당 레스토랑 수
+          ...searchParams, // 검색 조건
+        });
+  
+        // API 응답이 잘 왔다면
+        if (response) {
+          setRestaurants(response.restaurants || []);  // 레스토랑 목록 업데이트
+          
+          // 검색된 레스토랑 수와 페이지당 항목 수를 기반으로 페이지 수 계산
+        const totalRestaurants = response.restaurants.length;
+        const totalPages = Math.ceil(totalRestaurants / 24);  // 24개씩 나누어 페이지 수 계산
+        setTotalPages(totalPages);  // 총 페이지 수 업데이트
 
+        console.log("페이지수:", totalPages);  // 총 페이지 수 출력
+        }
+      } catch (error) {
+        setError('레스토랑을 불러오는 데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchRestaurantsData();
+  }, [currentPage]); // currentPage나 searchParams가 바뀔 때마다 실행
+  
+  
     // 페이지 버튼 클릭 시 페이지 변경
   const handlePageChange = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
@@ -81,16 +117,6 @@ const MenuPage = () => {
     setSearchParams({
       ...searchParams,
       [name]: value,
-    });
-  };
-
-  // 셀렉트 박스 변경 시 상태 업데이트
-  const handleSelectChange = (e) => {
-    const { name, value } = e.target;
-    setSearchParams({
-      ...searchParams,
-      [name]: value,
-      query: '',  // 'searchOption'이 변경되면 query 값을 초기화
     });
   };
 
@@ -146,6 +172,8 @@ const MenuPage = () => {
     } catch (error) {
       console.error('검색 오류:', error);
     }
+    
+    
     // 페이지네이션 버튼을 렌더링
   const renderPagination = () => {
     const [startPage, endPage] = calculatePageRange(currentPage, totalPages);
