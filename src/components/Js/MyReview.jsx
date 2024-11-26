@@ -4,26 +4,54 @@ import "../../css/myreview.css";
 
 export function MyReview() {
   const [reviews, setReviews] = useState([]); // 내 리뷰 상태
+  const [User, setUser] = useState([]); // 내 리뷰 상태
 
-  useEffect(() => {
-    // useEffect를 사용하여 내 리뷰 데이터를 가져옵니다.
-    const userId = 1;  // 로그인한 유저의 ID (예시로 1을 사용)
-    fetchReviews(userId);
-  }, []);
-
-  const fetchReviews = async (userId) => {
+  // 서버에서 내 리뷰를 가져오는 API 요청
+  const fetchUser = async () => {
     try {
-      // 서버에서 내 리뷰를 가져오는 API 요청
-      const response = await fetch(`http://localhost:8080/mypage/${userId}/reviews`);
-      const data = await response.json();
-      setReviews(data);  // 가져온 데이터를 상태에 저장
+      const response = await fetch(`http://localhost:8080/api/js/user/1`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUser(data);
+      } else {
+        console.error("유저 정보를 가져오는 데 실패했습니다.");
+      }
     } catch (error) {
-      console.error("내 리뷰를 불러오는 데 실패했습니다", error);
+      console.error("유저 정보를 가져오는 중 오류 발생:", error);
     }
   };
 
+  // 내 리뷰 데이터를 가져옵니다.
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  // 내 리뷰를 가져오는 API
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/mypage/1/reviews`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data);
+      } else {
+        console.error("리뷰 정보를 가져오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("리뷰 정보를 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  // 내 리뷰 데이터를 가져옵니다.
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
   return (
     <div className="container">
+      <div className="js_user_info">
+        {}
+      </div>
       <div className="js_my_review">
         <h3>내 리뷰</h3>
         <ul>
