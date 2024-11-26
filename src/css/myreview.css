@@ -1,0 +1,21 @@
+.js_my_review > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.js_my_review > ul > li {
+  position: relative;
+  margin-bottom: 2rem;
+}
+.js_my_review > ul > li > div {
+  position: absolute;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.js_my_review > button {
+  margin-bottom: 2rem;
+}

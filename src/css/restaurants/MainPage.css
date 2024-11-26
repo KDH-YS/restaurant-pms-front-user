@@ -1,0 +1,39 @@
+.image img {
+    margin: 0 auto;
+    width: 100%;
+    height: 600px;
+    /* border: 1px solid black; */
+    line-height: 500px;
+    position: relative;
+}
+.image {
+    height: 600px;
+}
+.searchBtn {
+    width: 40%;
+    height: 50px;
+    /* border: 1px solid red; */
+    position: absolute;
+    top: 275px;
+    left: 5%;
+}
+.scInput {
+    /* position: absolute; */
+    border: none;
+    width: 100%;
+    height: 50px;
+    top: 25%;
+    padding-left: 20px;
+    font-size: 20px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5)
+    ;
+
+}
+.scBtn{
+    height: 40px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}

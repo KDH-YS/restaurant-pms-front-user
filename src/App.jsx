@@ -1,25 +1,43 @@
-import Reserve from "./Router/ReservePage";
-import ReservationStatus from "./Router/ReservationStatusPage"
-import ManagerReserve from "./Router/ManagerReservePage";
-import Schedule from "./Router/SchedulePage"
-import { BrowserRouter } from 'react-router-dom';
-import { Route, Routes } from 'react-router-dom';
-import "./css/App.css";
-
-// 부트스트랩 임포트
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import User from "./Router/User.jsx";
+import Contact from "./Router/Contact.jsx";
+import Restaurant from "./Router/Restaurant.jsx"
+import RestaurantInfo from "./Router/RestaurantInfo.jsx"
+import ReservePage from "./Router/Reserve.jsx"
+import ReservationStatusPage from "./Router/ReservationStatusPage.jsx";
+import ReserveMainPage from "./Router/ReserveMainPage.jsx"
+import Mypage from "./Router/Mypage.jsx"
+import MyReview from "./Router/MyReview.jsx"
+import ShopReview from "./Router/ShopReview.jsx"
+import ReviewForm from "./Router/ReviewForm.jsx"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>        
-      <Route path="/" element={< Schedule/>} />
-      <Route path="/reserve" element={<Reserve />} />
-        <Route path="/reservationStatus" element={<ReservationStatus />} />
-        <Route path="/manager" element={<ManagerReserve/>}/>        
-      </Routes>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<User />} />
+          <Route path="/Contact" element={<Contact />} />
+          <Route path="/Restaurant" element={<Restaurant />} />
+          <Route path="/Restaurant/info" element={<RestaurantInfo />} />
+          <Route path="/Reserve" element={<ReservePage />} />
+          <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
+          <Route path="/Reservemain" element={<ReserveMainPage/>} />
+          <Route path="/Mypage" element={<Mypage/>} />
+          <Route path="/review/myreview" element={<MyReview/>}></Route>
+          <Route path="/review/shopreview" element={<ShopReview/>}></Route>
+          <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
+                
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }
+
 export default App;
+{/* <Routes>        
+<Route path="/" element={< Schedule/>} />
+<Route path="/reserve" element={<Reserve />} />
+  <Route path="/reservationStatus" element={<ReservationStatus />} />
+  <Route path="/manager" element={<ManagerReserve/>}/>        
+</Routes> */}

@@ -1,0 +1,24 @@
+/* 공용 css */
+* {
+  margin: 0;
+  padding: 0;
+}
+ul,li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+
+/*  */
+.js_line {
+  border-top: 1px solid gray;
+  width: 100%;
+}
+
+.btn-lg {
+  width: 100%;
+  flex-basis: 100%;
+
+  border: 1px solid black;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Nav,  } from 'react-bootstrap';
+import { Button, Form, Nav, Row, Col } from 'react-bootstrap';
 import '../../css/restaurants/MenuPage.css';
 import MenuCard from '../../components/restaurants/MenuCard';
 

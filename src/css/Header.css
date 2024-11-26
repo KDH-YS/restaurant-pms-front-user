@@ -14,4 +14,13 @@
 .navbar-brand {
     font-size: 2rem; 
     color: black;
+    cursor: pointer;
   }
+  /* 드롭다운 메뉴 */
+.dropdown-menu {
+    left: -100px !important;
+}
+/* 드롭다운 아이템 설정 */
+.dropdown-item {
+    cursor: pointer;
+}

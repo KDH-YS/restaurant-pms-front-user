@@ -1,0 +1,48 @@
+/* shopInfo */
+.js_shop_info > img {
+  width: 50%;
+}
+
+/* photo */
+.js_photo_review > img {
+  width: 25%;
+}
+
+/* review */
+
+/* sns */
+.js_sns_review > p {
+  flex-basis: 100%;
+}
+.js_sns_review > li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.js_sns_review > li > img {
+  margin-bottom: 1rem;
+}
+.js_sns_review > li > p {
+  flex-basis: 100%;
+}
+
+/* 반응형 */
+@media (min-width:990px) {
+  .js_shop_info > img {
+    width: 50%;
+  }
+}
+@media (max-width:768px) {
+  .js_shop_info > img {
+    width: 100%;
+  }
+  .js_shop_info > img:nth-of-type(2) {
+    display: none;
+  }
+  .js_photo_review > img {
+    width: 50%;
+  }
+  .js_photo_review > img:nth-of-type(3), img:nth-of-type(4) {
+    display: none;
+  }
+}
