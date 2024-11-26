@@ -14,6 +14,7 @@ export function Review() {
   const [userId] = useState(1); // 미리 지정된 userId
   const [restaurantId] = useState(1); // 미리 지정된 restaurantId
   const [restaurant, setRestaurant] = useState(null); // 가게 정보 상태
+  const [reservation, setReservation] = useState(null); // 가게 정보 상태
 
   // 가게 정보를 가져오는 함수
   const fetchRestaurant = async () => {
@@ -34,6 +35,27 @@ export function Review() {
   useEffect(() => {
     fetchRestaurant();
   }, [restaurantId]); // restaurantId가 변경될 때마다 가게 정보와 리뷰를 다시 가져옴
+
+  // 예약정보 가져오기
+  const fetchReservation = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/js/reservation/1`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setReservation(data); // 받은 데이터를 가게 정보 상태에 설정
+      } else {
+        console.error("예약 정보를 가져오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("예약 정보를 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  // 페이지 로드 시 예약정보 가져오기
+  useEffect(() => {
+    fetchReservation();
+  }, [restaurantId]); // restaurantId가 변경될 때마다 예약정보 가져옴
 
   // 리뷰 제출 핸들러
   const handleSubmit = async (event) => {
