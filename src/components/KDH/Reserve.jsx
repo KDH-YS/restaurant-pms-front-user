@@ -3,14 +3,14 @@ import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import 'react-calendar/dist/Calendar.css';
-import '../../css/Reserve.css';
+import 'css/KDH/Reserve.css';
 
 const Reserve = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState('');
   const [people, setPeople] = useState(1);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(10000); // 초기 금액은 10,000원 (1명 기준)
   const [request, setRequest] = useState('');
 
   const reviews = [
@@ -18,7 +18,6 @@ const Reserve = () => {
     { id: 2, username: '아무무', comment: '서비스가 좋았어요.', rating: 4 },
     { id: 3, username: '니나브', comment: '위치는 조금 불편했지만 음식은 훌륭했습니다.', rating: 3 },
   ];
-
 
   const TIME_OPTIONS = [
     { value: '', label: '[서버에서 받아오기]' },
@@ -32,29 +31,26 @@ const Reserve = () => {
 
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
-  const updateTotalPrice = () => {
-    const price = people * 10000; // 인원당 10,000원
-    setTotalPrice(price);
+  const handlePeopleChange = (e) => {
+    const numberOfPeople = parseInt(e.target.value, 10);
+    setPeople(numberOfPeople);
+    setTotalPrice(numberOfPeople * 10000); // 인원 수가 변경될 때마다 금액 갱신
   };
-  
-  const handleInputChange = (setter) => (event) => {
-    setter(event.target.value);
-    if (setter === setPeople) updateTotalPrice(); // 인원 변경 시 금액 갱신
-  };
-  
+
+  const handleInputChange = (setter) => (event) => setter(event.target.value);
 
   const handleReserve = async () => {
     const userId = 1; // 임시 하드코딩된 사용자 ID
     const restaurantId = 123; // 임시 하드코딩된 레스토랑 ID
-  
+
     const reservationData = {
-      userId, // 하드코딩된 사용자 ID
-      restaurantId, // 하드코딩된 레스토랑 ID
+      userId,
+      restaurantId,
       reservationTime: `${date.toISOString().split('T')[0]}T${time}`,
       request,
       numberOfPeople: people,
     };
-  
+
     try {
       const response = await fetch('http://localhost:8080/api/reservations', {
         method: 'POST',
@@ -63,18 +59,17 @@ const Reserve = () => {
         },
         body: JSON.stringify(reservationData),
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       alert('예약이 완료되었습니다!');
       navigate('/ReservationStatus');
     } catch (error) {
       alert(`예약 요청 중 오류가 발생했습니다: ${error.message}`);
     }
   };
-
 
   const renderReviews = () =>
     reviews.map((review) => (
@@ -103,7 +98,7 @@ const Reserve = () => {
 
       <Row className="main-content">
         <Col md={6} className="calendar-section">
-          <Calendar onChange={handleDateChange} value={date} tileClassName={tileClassName} prevLabel="<" nextLabel=">"/>
+          <Calendar onChange={handleDateChange} value={date} tileClassName={tileClassName} prevLabel="<" nextLabel=">" />
         </Col>
         <Col md={6} className="reservation-details">
           <h3>예약 상세 정보</h3>
@@ -119,7 +114,12 @@ const Reserve = () => {
 
             <Form.Group controlId="formPeople">
               <Form.Label>인원 수</Form.Label>
-              <Form.Control type="number" min="1" value={people} onChange={handleInputChange(setPeople)} />
+              <Form.Control
+                type="number"
+                min="1"
+                value={people}
+                onChange={handlePeopleChange} // 인원 수가 변경될 때마다 handlePeopleChange 호출
+              />
             </Form.Group>
 
             <Form.Group controlId="formRequest">
@@ -148,3 +148,4 @@ const Reserve = () => {
 };
 
 export default Reserve;
+
