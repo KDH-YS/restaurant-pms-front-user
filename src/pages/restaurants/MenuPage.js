@@ -40,7 +40,7 @@ const MenuPage = () => {
   
         // 응답 데이터가 정상적으로 반환된 경우
         if (response && response.content) {
-          console.log('fetchRestaurants 응답 데이터:', response); // 응답 데이터 확인용
+          // console.log('fetchRestaurants 응답 데이터:', response); // 응답 데이터 확인용
           setRestaurants(response.content);  // 레스토랑 목록만 상태로 설정
           setTotalPages(response.totalPages); // 총 페이지 수 설정
         } else {
@@ -136,7 +136,7 @@ const MenuPage = () => {
     apiUrl.search = new URLSearchParams(params).toString();
   
     // 콘솔로 확인
-    console.log('axios로 전송할 URL:', apiUrl.toString());
+    // console.log('axios로 전송할 URL:', apiUrl.toString());
   
     try {
       // API 호출

@@ -13,7 +13,7 @@ export const fetchRestaurants = async (page = 1, size = 24) => {
         size   // 페이지 크기
       }
     });
-    console.log('fetchRestaurants 응답 데이터:', response.data);  // 응답 데이터 확인용
+    // console.log('fetchRestaurants 응답 데이터:', response.data);  // 응답 데이터 확인용
     // 응답 형식에 맞게 데이터를 반환
     return response.data;  // 만약 response.data가 { content: [...] } 형식이면 return response.data.content;
   } catch (error) {
