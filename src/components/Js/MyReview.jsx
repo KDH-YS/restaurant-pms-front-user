@@ -4,9 +4,9 @@ import "../../css/myreview.css";
 
 export function MyReview() {
   const [reviews, setReviews] = useState([]); // 내 리뷰 상태
-  const [User, setUser] = useState([]); // 내 리뷰 상태
+  const [User, setUser] = useState([]); // 유저정보 상태
 
-  // 서버에서 내 리뷰를 가져오는 API 요청
+  // 유저정보를 가져오는 API 요청
   const fetchUser = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/js/user/1`);
@@ -22,13 +22,13 @@ export function MyReview() {
     }
   };
 
-  // 내 리뷰 데이터를 가져옵니다.
+  // 유저정보를 가져옵니다.
   useEffect(() => {
     fetchUser();
   }, []);
 
   // 내 리뷰를 가져오는 API
-  const fetchReviews = async () => {
+  const fetchMyReviews = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/mypage/1/reviews`);
       if (response.ok) {
@@ -44,7 +44,7 @@ export function MyReview() {
 
   // 내 리뷰 데이터를 가져옵니다.
   useEffect(() => {
-    fetchReviews();
+    fetchMyReviews();
   }, []);
 
   return (
