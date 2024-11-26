@@ -1,5 +1,1 @@
 Get http://localhost:8080/api/reservations?userId=1
-
-###
-
-GET http://localhost:8080/api/restaurants/schedule?restaurantId=123 
