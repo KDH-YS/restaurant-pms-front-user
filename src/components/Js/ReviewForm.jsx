@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import "../../css/bootstrap.min.css";
-import "../../css/main.css";
+import React, { useState, useEffect } from "react"
+import "../../css/bootstrap.min.css"
+import "../../css/main.css"
+import "../../css/ReviewForm.css"
 
 export function Review() {
   const [reviewContent, setReviewContent] = useState(""); // 리뷰 내용

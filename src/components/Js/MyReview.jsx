@@ -4,7 +4,8 @@ import "../../css/myreview.css";
 
 export function MyReview() {
   const [reviews, setReviews] = useState([]); // 내 리뷰 상태
-  const [User, setUser] = useState([]); // 유저정보 상태
+  const [reviewImg, setReviewImg] = useState([]); // 리뷰 이미지 상태
+  const [user, setUser] = useState({}); // 유저정보 상태
   const [showMoreReviews, setShowMoreReviews] = useState(false); // 더보기 상태
 
   // 유저정보를 가져오는 API 요청
@@ -22,11 +23,6 @@ export function MyReview() {
     }
   };
 
-  // 유저정보를 가져옵니다.
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
   // 내 리뷰를 가져오는 API
   const fetchMyReviews = async () => {
     try {
@@ -34,7 +30,8 @@ export function MyReview() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setReviews(data);
+        setReviews(data.reviews);
+        setReviewImg(data.reviewImages);
       } else {
         console.error("리뷰 정보를 가져오는 데 실패했습니다.");
       }
@@ -43,8 +40,9 @@ export function MyReview() {
     }
   };
 
-  // 내 리뷰 데이터를 가져옵니다.
+  // 유저정보와 내 리뷰 데이터를 가져옴
   useEffect(() => {
+    fetchUser();
     fetchMyReviews();
   }, []);
 
@@ -57,23 +55,35 @@ export function MyReview() {
     <div className="container">
       <div className="js_my_review">
         <div className="js_user_info">
-          <img src="https://via.placeholder.com/40x40" alt="" />
-          <p>{User.name}</p>
+          <img src={user.profileImageUrl || "https://via.placeholder.com/40x40"} alt="User Profile" />
+          <p>{user.name}</p>
         </div>
+
         <ul>
-        <h3>내 리뷰</h3>
+          <h3>내 리뷰</h3>
           {/* 리뷰 목록을 조건에 맞게 보여줌 */}
-          {reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review) => (
-            <li key={review.review_id}>
-              <img src={review.image_url || "https://via.placeholder.com/300x360"} alt={review.restaurant_name} />
-              <div>
-                <p>{review.review_content}</p>
-                <p>{review.restaurant_address}</p>
-                <p>{review.restaurant_name}</p>
-              </div>
-            </li>
-          ))}
+          {Array.isArray(reviews) && reviews.length > 0 ? (
+            reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review) => {
+              const image = reviewImg.find((img) => img.reviewId === review.reviewId);
+              return (
+                <li key={review.reviewId}>
+                  <img
+                    src={image ? image.imageUrl : "https://via.placeholder.com/300x360"}
+                    alt={review.restaurantName}
+                  />
+                  <div>
+                    <p>{review.reviewContent}</p>
+                    <p>{review.restaurantAddress}</p>
+                    <p>{review.restaurantName}</p>
+                  </div>
+                </li>
+              );
+            })
+          ) : (
+            <p>리뷰가 없습니다.</p>
+          )}
         </ul>
+
         {/* 더보기 버튼 */}
         <button className="btn btn-lg btn-primary" type="button" onClick={handleShowMoreReviews}>
           {showMoreReviews ? "줄이기" : "더보기"}
