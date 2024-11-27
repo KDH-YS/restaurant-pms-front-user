@@ -15,7 +15,8 @@ const MenuPage = () => {
   // 검색 조건 상태
   const [searchParams, setSearchParams] = useState({
     query: '',               // 검색어
-    searchOption: 'city',    // 검색 조건 (기본값: 도시)
+    searchOption: 'name',    // 검색 조건 (기본값: 도시)
+    name: '',
     city: '',                // 도시
     district: '',            // 구
     neighborhood: '',        // 동
@@ -91,7 +92,7 @@ const fetchRestaurantsData = async (page = 1) => {
     setError(null); // 이전 에러 초기화
 
     // searchParams에서 필요한 값들을 추출합니다.
-    const { query, searchOption, city, district, foodType,neighborhood, parkingAvailable, reservationAvailable } = searchParams;
+    const { query, searchOption, name, city, district, foodType,neighborhood, parkingAvailable, reservationAvailable } = searchParams;
   
     // 요청에 포함할 파라미터들을 저장할 params 객체를 준비합니다.
     const params = {
@@ -101,7 +102,9 @@ const fetchRestaurantsData = async (page = 1) => {
   
     // query를 searchOption에 맞는 파라미터로 설정
     if (query && searchOption) {
-      if (searchOption === 'city') {
+      if (searchOption === 'name') {
+        params.name = query;  // 도시 검색
+      } else if (searchOption === 'city') {
         params.city = query;  // 도시 검색
       } else if (searchOption === 'district') {
         params.district = query;  // 동 검색
@@ -113,6 +116,7 @@ const fetchRestaurantsData = async (page = 1) => {
     }
   
     // 다른 필터 조건들을 params에 추가
+    if (name) params.name = name;  // 도시
     if (city) params.city = city;  // 도시
     if (district) params.district = district;  // 구
     if (foodType) params.foodType = foodType;  // 음식 종류
@@ -139,18 +143,19 @@ const fetchRestaurantsData = async (page = 1) => {
 
   // 전체 목록 보기 버튼 클릭 시, 검색 상태 초기화하고 전체 레스토랑 가져오기
   const handleViewAll = () => {
-    setSearchParams({
-      query: '',
-      searchOption: 'city',
-      city: '',
-      district: '',
-      neighborhood: '',
-      foodType: '',
-      parkingAvailable: false,
-      reservationAvailable: false,
-      page: 1,
-      size: 24,
-    });
+    // setSearchParams({
+    //   query: '',
+    //   searchOption: 'name',
+    //   name: '',
+    //   city: '',
+    //   district: '',
+    //   neighborhood: '',
+    //   foodType: '',
+    //   parkingAvailable: false,
+    //   reservationAvailable: false,
+    //   page: 1,
+    //   size: 24,
+    // });
     setCurrentPage(1);  // 첫 페이지로 이동
     fetchRestaurantsData(1);  // 전체 레스토랑 목록 가져오기
   };
@@ -207,6 +212,7 @@ const fetchRestaurantsData = async (page = 1) => {
           value={searchParams.searchOption}
           onChange={handleInputChange}
         >
+          <option value="name">가게명</option>
           <option value="city">도시</option>
           <option value="district">구</option>
           <option value="neighborhood">동</option>
@@ -253,7 +259,7 @@ const fetchRestaurantsData = async (page = 1) => {
         restaurants.map((restaurant) => (
           <Col key={restaurant.restaurantId}>
             <Card onClick={()=>handleCardClick(restaurant.restaurantId)}> {/* Card 클릭 시 handleCardClick 호출 */}
-              {/* <Card.Img variant="top" src={item.imgSrc} /> */}
+              <Card.Img variant="top" src={restaurant.image} />
               <Card.Body>
                 <Card.Title>{restaurant.name}</Card.Title>
                 <Card.Text>

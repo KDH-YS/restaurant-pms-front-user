@@ -39,7 +39,7 @@ GET http://localhost:8080/api/restaurant
 Content-Type: application/json
 
 ### 레스토랑검색
-GET http://localhost:8080/api/restaurant/search?foodType=한식&city=경상북도
+GET http://localhost:8080/api/restaurant/search?name=본점
 Content-Type: application/json
 
 ### 레스토랑 등록
