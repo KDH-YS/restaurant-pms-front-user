@@ -6,3 +6,7 @@
 .ratings > div > label {
   flex-basis: 100%;
 }
+
+.image-preview-container > div > img {
+  width: 100px;
+}
