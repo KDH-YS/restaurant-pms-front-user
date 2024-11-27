@@ -3,7 +3,9 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
-
+.js_my_review > ul > h3 {
+  flex-basis: 100%;
+}
 .js_my_review > ul > li {
   position: relative;
   margin-bottom: 2rem;

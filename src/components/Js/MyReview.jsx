@@ -5,6 +5,7 @@ import "../../css/myreview.css";
 export function MyReview() {
   const [reviews, setReviews] = useState([]); // 내 리뷰 상태
   const [User, setUser] = useState([]); // 유저정보 상태
+  const [showMoreReviews, setShowMoreReviews] = useState(false); // 더보기 상태
 
   // 유저정보를 가져오는 API 요청
   const fetchUser = async () => {
@@ -12,7 +13,6 @@ export function MyReview() {
       const response = await fetch(`http://localhost:8080/api/js/user/1`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setUser(data);
       } else {
         console.error("유저 정보를 가져오는 데 실패했습니다.");
@@ -33,6 +33,7 @@ export function MyReview() {
       const response = await fetch(`http://localhost:8080/api/mypage/1/reviews`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setReviews(data);
       } else {
         console.error("리뷰 정보를 가져오는 데 실패했습니다.");
@@ -47,15 +48,22 @@ export function MyReview() {
     fetchMyReviews();
   }, []);
 
+  // 더보기 버튼 클릭 시 추가 리뷰 불러오기
+  const handleShowMoreReviews = () => {
+    setShowMoreReviews(!showMoreReviews);
+  };
+
   return (
     <div className="container">
-      <div className="js_user_info">
-        {}
-      </div>
       <div className="js_my_review">
-        <h3>내 리뷰</h3>
+        <div className="js_user_info">
+          <img src="https://via.placeholder.com/40x40" alt="" />
+          <p>{User.name}</p>
+        </div>
         <ul>
-          {reviews.map((review) => (
+        <h3>내 리뷰</h3>
+          {/* 리뷰 목록을 조건에 맞게 보여줌 */}
+          {reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review) => (
             <li key={review.review_id}>
               <img src={review.image_url || "https://via.placeholder.com/300x360"} alt={review.restaurant_name} />
               <div>
@@ -66,7 +74,10 @@ export function MyReview() {
             </li>
           ))}
         </ul>
-        <button className="btn btn-lg btn-primary" type="button">더보기</button>
+        {/* 더보기 버튼 */}
+        <button className="btn btn-lg btn-primary" type="button" onClick={handleShowMoreReviews}>
+          {showMoreReviews ? "줄이기" : "더보기"}
+        </button>
       </div>
     </div>
   );
