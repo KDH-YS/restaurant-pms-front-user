@@ -174,8 +174,9 @@ const fetchRestaurantsData = async (page = 1) => {
   }, [currentPage]); // currentPage가 변경될 때마다 실행
 
 
-  const handleCardClick = () => {
-    navigate('/reservemain');  // 클릭 시 '/reservemain' 경로로 이동
+  const handleCardClick = (restaurantId) => {
+    console.log('Clicked restaurantId:', restaurantId);  // 값 확인
+    navigate(`/restaurant/info/${restaurantId}`);  // 클릭 시 '/reservemain' 경로로 이동
   };
 
  
@@ -251,7 +252,7 @@ const fetchRestaurantsData = async (page = 1) => {
         {restaurants.length > 0 ? (
         restaurants.map((restaurant) => (
           <Col key={restaurant.restaurantId}>
-            <Card onClick={handleCardClick}> {/* Card 클릭 시 handleCardClick 호출 */}
+            <Card onClick={()=>handleCardClick(restaurant.restaurantId)}> {/* Card 클릭 시 handleCardClick 호출 */}
               {/* <Card.Img variant="top" src={item.imgSrc} /> */}
               <Card.Body>
                 <Card.Title>{restaurant.name}</Card.Title>
