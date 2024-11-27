@@ -247,7 +247,7 @@ const fetchRestaurantsData = async (page = 1) => {
     
       {loading && <p>로딩 중...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Row xs={1} sm={2} md={3} lg={3} xl={3} className="g-4">
+      <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-4">
         
         {restaurants.length > 0 ? (
         restaurants.map((restaurant) => (
@@ -270,9 +270,6 @@ const fetchRestaurantsData = async (page = 1) => {
                 </Card.Text>
                 <Card.Text>
                   <strong>예약 가능:</strong> {restaurant.reservationAvailable ? '가능' : '불가능'}
-                </Card.Text>
-                <Card.Text>
-                  <strong>총 좌석 수:</strong> {restaurant.totalSeats}
                 </Card.Text>
                 <Card.Text>
                   <strong>평균 평점:</strong> {restaurant.averageRating || '없음'}

@@ -50,3 +50,25 @@ export const fetchRestaurantMenu = async (restaurantId) => {
     throw new Error('레스토랑 메뉴를 가져오는 데 실패했습니다.');
   }
 }
+
+//레스토랑 등록하
+
+const registerRestaurant = async (restaurantData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/restaurant/create`, restaurantData);
+    console.log(response.data.message);
+  } catch (error) {
+    console.error('레스토랑 등록 실패:', error.response?.data?.error || error.message);
+  }
+};
+
+//레스토랑 수정하기
+
+const updateRestaurant = async (restaurantId, updatedData) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/restaurant/update/${restaurantId}`, updatedData);
+    console.log(response.data.message);
+  } catch (error) {
+    console.error('레스토랑 수정 실패:', error.response?.data?.error || error.message);
+  }
+};
