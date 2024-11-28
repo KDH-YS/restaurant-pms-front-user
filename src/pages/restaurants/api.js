@@ -72,3 +72,14 @@ const updateRestaurant = async (restaurantId, updatedData) => {
     console.error('레스토랑 수정 실패:', error.response?.data?.error || error.message);
   }
 };
+
+//레스토랑 지우기 삭제
+
+export const deleteRestaurant = async (restaurantId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/restaurant/delete/${restaurantId}`);
+    console.log(response.data.message);
+  } catch (error) {
+    console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
+  }
+};

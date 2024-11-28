@@ -11,6 +11,7 @@ import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminPage from "./Router/AdminPage.jsx";
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
           <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
-                
+          <Route path="/admin/restaurant" element={<AdminPage/>}></Route>
+
         </Routes>
       </div>
     </BrowserRouter>

@@ -36,6 +36,17 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <ul className="pagination">
+      {/* 첫 페이지 버튼 */}
+      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <button
+          className="page-link"
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;&laquo; {/* 두 개의 화살표로 첫 페이지 */}
+        </button>
+      </li>
+
       {/* 이전 페이지 버튼 */}
       <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
         <button
@@ -43,7 +54,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          &laquo;
+          이전
         </button>
       </li>
 
@@ -66,7 +77,18 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          &raquo;
+          다음
+        </button>
+      </li>
+
+      {/* 마지막 페이지 버튼 */}
+      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <button
+          className="page-link"
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;&raquo; {/* 두 개의 화살표로 마지막 페이지 */}
         </button>
       </li>
     </ul>
