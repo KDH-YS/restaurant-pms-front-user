@@ -20,3 +20,20 @@ Content-Type: application/json
   "email": "test@example.com",
   "password": "1234"
 }
+
+###
+
+
+POST https://api.portone.io/payments/payment-c1d5cf1f-519b-4fc3-9354-0f933b2bc241
+Content-Type: application/json
+portone-api-secret:9KkNmhCpW7FPZbASLLR4XI6azUxKGpM5tusNmRUbAHC0pLu1iOR4C7pOCv5pVfKuekYzZ1BP5WxfNUfL
+
+{
+  "storeId": "store-69e65e79-61d9-4e6c-a0da-a06c6e32e37b",
+  "channelKey": "channel-key-5e0eb0b0-5c03-4514-85a3-38dbc688666c",
+  "paymentId": "payment-c1d5cf1f-519b-4fc3-9354-0f933b2bc241", // 매번 유니크한 값 생성
+  "orderName": "밥조레스토랑예약",
+  "totalAmount": 15000, // 총 결제 금액 (예제 값)
+  "currency": "CURRENCY_KRW",
+  "payMethod": "EASY_PAY"
+}
