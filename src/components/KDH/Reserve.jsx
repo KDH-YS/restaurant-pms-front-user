@@ -4,7 +4,6 @@ import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import 'react-calendar/dist/Calendar.css';
 import 'css/KDH/Reserve.css';
-import * as PortOne from '@portone/browser-sdk/v2';
 
 const Reserve = () => {
   const navigate = useNavigate();
@@ -41,47 +40,19 @@ const Reserve = () => {
   const handleInputChange = (setter) => (event) => setter(event.target.value);
 
   const handleReserve = async () => {
-    const restaurantName = "밥조레스토랑";
-    const storeId = "store-69e65e79-61d9-4e6c-a0da-a06c6e32e37b";  // 상점 ID
-    const channelKey = "channel-key-5e0eb0b0-5c03-4514-85a3-38dbc688666c";  // 채널 키
-    const paymentId = `payment-${crypto.randomUUID()}`;  // 고유한 결제 ID
-    const orderName = `${restaurantName}예약`;  // 주문명
-    const totalAmount = totalPrice;  // 결제 금액
-    const currency = "CURRENCY_KRW";  // 결제 통화 (원화)
-    const payMethod = "EASY_PAY";  // 결제 수단
-  
-    try {
-      // 결제 요청
-      const response = await PortOne.requestPayment({
-        storeId,
-        channelKey,
-        paymentId,
-        orderName,
-        totalAmount,
-        currency,
-        payMethod,  // 결제 수단을 EASY_PAY로 변경
-      });
-  
-      // 결제 응답 확인
-      if (response.code !== undefined) {
-        // 오류 발생 시, 오류 메시지를 알림으로 출력
-        return alert(response.message);
-      }
-  
-      // 결제 성공 후 결제 상태 확인
+    const restaurantName = "밥조레스토랑";  // 레스토랑 이름
+    const userId = 1; // 임시 하드코딩된 사용자 ID
+    const restaurantId = 123; // 임시 하드코딩된 레스토랑 ID
 
-      // 예약 정보 처리
-      const userId = 1; // 임시 하드코딩된 사용자 ID
-      const restaurantId = 123; // 임시 하드코딩된 레스토랑 ID
-  
-      const reservationData = {
-        userId,
-        restaurantId,
-        reservationTime: `${date.toISOString().split('T')[0]}T${time}`,
-        request,
-        numberOfPeople: people,
-      };
-  
+    const reservationData = {
+      userId,
+      restaurantId,
+      reservationTime: `${date.toISOString().split('T')[0]}T${time}`,
+      request,
+      numberOfPeople: people,
+    };
+
+    try {
       // 예약 API 호출
       const reservationResponse = await fetch('http://localhost:8080/api/reservations', {
         method: 'POST',
@@ -90,28 +61,10 @@ const Reserve = () => {
         },
         body: JSON.stringify(reservationData),
       });
-  
+
       if (!reservationResponse.ok) {
         throw new Error(`예약 요청 중 오류가 발생했습니다: ${reservationResponse.status}`);
       }
-
-      // 예약 응답 본문에서 예약 ID 추출
-      const reservationJson = await reservationResponse.json();
-      const reservationId = reservationJson.reservationId;  // 예약 ID는 서버 응답에서 받음
-
-      // 결제가 성공적으로 완료되면, 결제 완료 정보를 서버에 전달
-       await fetch(`http://localhost:8080/payment/complete`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          paymentId,           // 결제 ID 
-          reservationId,       // 예약 ID
-          amount: totalAmount, // 결제 금액
-        }),
-      });
-  
 
       alert('예약이 완료되었습니다!');
       navigate('/ReservationStatus');
@@ -119,9 +72,6 @@ const Reserve = () => {
       alert(`예약 요청 중 오류가 발생했습니다: ${error.message}`);
     }
   };
-  
-  
-  
 
   const renderReviews = () =>
     reviews.map((review) => (
@@ -200,4 +150,3 @@ const Reserve = () => {
 };
 
 export default Reserve;
-
