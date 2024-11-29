@@ -100,7 +100,7 @@ const Reserve = () => {
       const reservationId = reservationJson.reservationId;  // 예약 ID는 서버 응답에서 받음
 
       // 결제가 성공적으로 완료되면, 결제 완료 정보를 서버에 전달
-      const notified = await fetch(`http://localhost:8080/payment/complete`, {
+       await fetch(`http://localhost:8080/payment/complete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

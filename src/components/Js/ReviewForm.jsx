@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../css/bootstrap.min.css";
+
 import "../../css/main.css";
 
 export function Review() {
