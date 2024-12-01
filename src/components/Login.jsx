@@ -3,7 +3,7 @@ import React from 'react';
 function Login() {
   return (
     <div className='HjLogin'>
-      <div className='HjContent'>
+      <div className='HjLoginContent'>
         <form className='HjLoginForm'>
           {/* 로고 들어갈 곳(삭제해도 무관) */}
           <img src='#'/>
