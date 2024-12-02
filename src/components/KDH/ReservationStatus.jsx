@@ -32,6 +32,7 @@ const ReservationStatus = () => {
   
     useEffect(() => {
       fetchReservations();
+      setCurrentPage((pageGroup - 1) * 5 + 1);
       console.log(pageGroup);
     }, [pageGroup]);
 
@@ -159,41 +160,43 @@ const ReservationStatus = () => {
     }
   };
 
-    const currentReservations = reservations.slice(
-      ((currentPage - 1) % 5) * itemsPerPage, 
-      ((currentPage - 1) % 5 + 1) * itemsPerPage
-    );
+  const currentReservations = reservations.slice(
+    ((currentPage - 1) % 5) * itemsPerPage, 
+    ((currentPage - 1) % 5 + 1) * itemsPerPage
+  );
 
-    const handlePagination = () => {
-      const pageStart = (pageGroup - 1) * 5 + 1;
-      const pageEnd = Math.min(pageStart + 4, totalPages);
+  const handlePagination = () => {
+    const pageStart = (pageGroup - 1) * 5 + 1;
+    const pageEnd = Math.min(pageStart + 4, totalPages);
 
-      const handlePrevGroup = () => {
-        if (pageGroup > 1) {
-          setPageGroup(pageGroup - 1);
-          setCurrentPage((pageGroup - 2) * 5 + 1);
-        }
-      };
+    const handlePrevGroup = () => {
+      if (pageGroup > 1) {
+        const newPageGroup = pageGroup - 1;
+        setPageGroup(newPageGroup);
+        setCurrentPage(newPageGroup * 5);
+      }
+    };
 
-      const handleNextGroup = () => {
-        if (pageGroup * 5 < totalPages) {
-          setPageGroup(pageGroup + 1);
-          setCurrentPage((pageGroup - 1) * 5 + 1);
-        }
-      };
+    const handleNextGroup = () => {
+      if (pageGroup * 5 < totalPages) {
+        const newPageGroup = pageGroup + 1;
+        setPageGroup(newPageGroup);
+        setCurrentPage((newPageGroup - 1) * 5 + 1);
+      }
+    };
 
-      return (
-        <>
-          <Pagination.Prev
-            disabled={pageGroup === 1}
-            onClick={handlePrevGroup}
-          />
-          {[...Array(pageEnd - pageStart + 1)].map((_, index) => (
-            <Pagination.Item
-              key={pageStart + index}
-              active={pageStart + index === currentPage}
-              onClick={() => setCurrentPage(pageStart + index)}
-            >
+    return (
+      <>
+        <Pagination.Prev
+          disabled={pageGroup === 1}
+          onClick={handlePrevGroup}
+        />
+        {[...Array(pageEnd - pageStart + 1)].map((_, index) => (
+          <Pagination.Item
+            key={pageStart + index}
+            active={pageStart + index === currentPage}
+            onClick={() => setCurrentPage(pageStart + index)}
+          >
             {pageStart + index}
           </Pagination.Item>
         ))}
@@ -204,6 +207,7 @@ const ReservationStatus = () => {
       </>
     );
   };
+
   
 
   return (

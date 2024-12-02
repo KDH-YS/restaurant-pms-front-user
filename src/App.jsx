@@ -37,9 +37,3 @@ function App() {
 }
 
 export default App;
-{/* <Routes>        
-<Route path="/" element={< Schedule/>} />
-<Route path="/reserve" element={<Reserve />} />
-  <Route path="/reservationStatus" element={<ReservationStatus />} />
-  <Route path="/manager" element={<ManagerReserve/>}/>        
-</Routes> */}
