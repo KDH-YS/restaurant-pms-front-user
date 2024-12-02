@@ -34,9 +34,10 @@ export function ReviewForm() {
   // 예약 정보를 가져오는 함수
   const fetchReservation = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/js/reservation/1`);
+      const response = await fetch(`http://localhost:8080/api/js/reservation/77`); // @@@예약ID 수정 필요@@@
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setReservation(data); // 받은 데이터를 예약 정보 상태에 설정
       } else {
         console.error("예약 정보를 가져오는 데 실패했습니다.");
@@ -56,6 +57,12 @@ export function ReviewForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // reservation이 로드되지 않았으면, 폼 제출을 막음
+    if (!reservation) {
+      alert("예약 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("user_id", userId); // user_id 추가
     formData.append("review_content", reviewContent); // 리뷰 내용
@@ -64,6 +71,7 @@ export function ReviewForm() {
     formData.append("service_rating", serviceRating); // 서비스 평점 추가
     formData.append("atmosphere_rating", atmosphereRating); // 분위기 평점 추가
     formData.append("value_rating", valueRating); // 가성비 평점 추가
+    formData.append("reservation_id", reservation.reservationId); // 예약 ID 추가
 
     // 여러 파일을 FormData에 추가
     selectedFiles.forEach(file => {
@@ -112,21 +120,23 @@ export function ReviewForm() {
     setImagePreviews(updatedPreviews);
   };
 
+  if (!reservation || !restaurant) {
+    return <div>Loading...</div>; // 예약 정보나 가게 정보가 로드되지 않았을 때 로딩 중 표시
+  }
+
   return (
     <div className="container">
       {/* 가게 정보 표시 */}
       <div className="js_restaurant_info">
-        {restaurant && (
-          <div>
-            <h2>{restaurant.name}</h2>
-            <img src={restaurant.mainImageUrl} alt="가게 대표 사진" />
-            <p>주소: {restaurant.address}</p>
-            <p>전화번호: {restaurant.phone}</p>
-            <p>음식 종류: {restaurant.foodType}</p>
-            <p>평균 평가: {restaurant.averageRating}</p>
-            <p>상세 설명: {restaurant.description}</p>
-          </div>
-        )}
+        <div>
+          <h2>{restaurant.name}</h2>
+          <img src={restaurant.mainImageUrl} alt="가게 대표 사진" />
+          <p>주소: {restaurant.address}</p>
+          <p>전화번호: {restaurant.phone}</p>
+          <p>음식 종류: {restaurant.foodType}</p>
+          <p>평균 평가: {restaurant.averageRating}</p>
+          <p>상세 설명: {restaurant.description}</p>
+        </div>
       </div>
 
       {/* 리뷰 제출 폼 */}
@@ -135,6 +145,7 @@ export function ReviewForm() {
           {/* 이미지 업로드 */}
           <div>
             <label htmlFor="formFile" className="form-label mt-4">이미지 업로드</label>
+            <input type="hidden" name="reservation_id" value={reservation.reservationId} />
             <input
               className="form-control"
               type="file"
@@ -252,6 +263,7 @@ export function ReviewForm() {
           </div>
 
           {/* 제출 버튼 */}
+          <p>{reservation.reservationTime}</p>
           <button type="submit" className="btn btn-primary mt-4">리뷰 제출</button>
         </form>
       </div>
