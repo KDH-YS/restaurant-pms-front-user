@@ -144,7 +144,7 @@ const Manager = () => {
         <div>
           {savedSchedules.map((schedule) => (
             <Card
-              key={schedule.id}
+              key={schedule.scheduleId}
               className={`mb-3 ${selectedScheduleId === schedule.scheduleId ? 'border-primary' : ''}`}
               onClick={() => setSelectedScheduleId(schedule.scheduleId)}
               style={{ cursor: 'pointer' }}

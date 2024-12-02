@@ -20,7 +20,7 @@ const Reserve = () => {
   ];
 
   const TIME_OPTIONS = [
-    { value: '', label: '[서버에서 받아오기]' },
+    { value: '', label: '[예약 시간 선택]' },
     { value: '12:00', label: '12:00 PM' },
     { value: '14:00', label: '2:00 PM' },
     { value: '18:00', label: '6:00 PM' },
@@ -40,7 +40,6 @@ const Reserve = () => {
   const handleInputChange = (setter) => (event) => setter(event.target.value);
 
   const handleReserve = async () => {
-    const restaurantName = "밥조레스토랑";  // 레스토랑 이름
     const userId = 1; // 임시 하드코딩된 사용자 ID
     const restaurantId = 123; // 임시 하드코딩된 레스토랑 ID
 

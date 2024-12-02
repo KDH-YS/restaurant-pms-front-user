@@ -1,4 +1,4 @@
-Get http://localhost:8080/api/reservations?userId=1
+Get http://localhost:8080/api/reservations?userId=1&page=2&size=30
 ###
 
 POST http://localhost:8080/api/auth/signup 
