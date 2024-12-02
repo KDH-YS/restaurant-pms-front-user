@@ -92,3 +92,15 @@ export const deleteRestaurant = async (restaurantId) => {
     console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
   }
 };
+
+//스케줄 가져옥api
+export const fetchRestaurantSchedule = async (restaurantId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/schedule/${restaurantId}`, {
+     });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching restaurants:', error);
+    throw new Error('레스토랑 스케줄을 가져오는 데 실패했습니다.');
+  }
+}

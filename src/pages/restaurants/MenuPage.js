@@ -181,7 +181,7 @@ const fetchRestaurantsData = async (page = 1) => {
 
   const handleCardClick = (restaurantId) => {
     console.log('Clicked restaurantId:', restaurantId);  // 값 확인
-    navigate(`/restaurant/info/${restaurantId}`);  // 클릭 시 '/reservemain' 경로로 이동
+    navigate(`/restaurant/${restaurantId}`);  // 클릭 시 '/reservemain' 경로로 이동
   };
 
  
@@ -280,9 +280,9 @@ const fetchRestaurantsData = async (page = 1) => {
                 <Card.Text>
                   <strong>평균 평점:</strong> {restaurant.averageRating || '없음'}
                 </Card.Text>
-                <Card.Text>
+                {/* <Card.Text>
                   <strong>설명:</strong> {restaurant.description}
-                </Card.Text>
+                </Card.Text> */}
               </Card.Body>
             </Card>
           </Col>

@@ -69,3 +69,7 @@ Content-Type: application/json
   "parkingAvailable": true,
   "totalSeats": 37
 }
+
+### 스케쥴 가져오기
+GET http://localhost:8080/api/schedule/1
+Content-Type: application/json

@@ -5,12 +5,12 @@
     padding: 1rem;
     margin-bottom: 2rem;
     border-radius: 10px;
-    font-family: inherit; /* 폰트 통일 */
+    /* font-family: inherit; 폰트 통일 */
 }
 
 .reservation-info .reservation-details h4 {
     font-size: 1.5rem;
-    font-family: 'InkLipquid', sans-serif;
+    /* font-family: 'InkLipquid', sans-serif; */
     margin-bottom: 0.5rem;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .reservation-change-time h5 {
-    font-family: 'InkLipquid', sans-serif;
+    /* font-family: 'InkLipquid', sans-serif; */
     color: #FF5733;
     font-size: 1.5rem;
     margin-bottom: 1rem;
@@ -33,7 +33,7 @@ button {
     border-radius: 5px;
     font-size: 1rem;
     font-weight: bold;
-    font-family: inherit;
+    /* font-family: inherit; */
 }
 
 button:hover {
