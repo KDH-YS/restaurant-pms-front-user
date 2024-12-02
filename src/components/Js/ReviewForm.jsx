@@ -37,7 +37,7 @@ export function ReviewForm() {
       const response = await fetch(`http://localhost:8080/api/js/reservation/77`); // @@@예약ID 수정 필요@@@
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setReservation(data); // 받은 데이터를 예약 정보 상태에 설정
       } else {
         console.error("예약 정보를 가져오는 데 실패했습니다.");
@@ -100,7 +100,8 @@ export function ReviewForm() {
         alert(`리뷰 제출에 실패했습니다: ${errorData.message || '서버 오류'}`);
       }
     } catch (error) {
-      alert("리뷰 제출 중 오류가 발생했습니다.");
+      // error.message를 통해 에러 메시지를 추출
+      console.error("Error message:", error.message);
     }
   };
 
