@@ -3,6 +3,8 @@ import { Table, Button } from 'react-bootstrap';  // Bootstrap Table, Button 컴
 import { fetchRestaurants } from '../pages/restaurants/api.js';
 import { deleteRestaurant } from '../pages/restaurants/api.js';
 import Pagination from '../components/restaurants/Pagination';
+import { useNavigate } from 'react-router-dom'; // navigate 사용
+
 
 const AdminRestaurantTable = () => {
   const [restaurants, setRestaurants] = useState([]);  // API에서 받아온 레스토랑 목록 상태 관리
@@ -11,7 +13,7 @@ const AdminRestaurantTable = () => {
   // 페이지네이션 관련 상태
   const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지
   const [totalPages, setTotalPages] = useState(1);  // 총 페이지 수
-
+  const navigate = useNavigate();
   const fetchRestaurantsData = async (page = 1) => {
     setLoading(true); // 로딩 시작
     setError(null); // 이전 에러 초기화
@@ -59,6 +61,17 @@ const AdminRestaurantTable = () => {
 
   }, [currentPage]);
 
+
+  const handleEditClick = (restaurantId) => {
+    // 수정 버튼 클릭 시 update 페이지로 이동
+    navigate(`/restaurant/update/${restaurantId}`);
+  };
+
+  const handleAddClick = () => {
+    // 등록 버튼 클릭 시 add 페이지로 이동
+    navigate('/restaurant/add');
+  };
+
   return (
     <div>
       <h2>레스토랑 목록</h2>
@@ -86,7 +99,9 @@ const AdminRestaurantTable = () => {
               <td>{restaurant.reservationAvailable ? '가능' : '불가능'}</td>
               <td>{restaurant.phone}</td>
               <td>
-                <Button variant="warning" size="sm">수정</Button>{' '}
+                <Button variant="warning" size="sm"
+                onClick={() => handleEditClick(restaurant.restaurantId)}
+                >수정</Button>{' '}
                 <Button variant="danger" size="sm"
                 onClick={() => deleteRestaurantsData(restaurant.restaurantId)} 
                 >삭제</Button>
@@ -100,6 +115,12 @@ const AdminRestaurantTable = () => {
       totalPages={totalPages} 
       onPageChange={handlePageChange} 
       />
+      {/* 레스토랑 등록 버튼 */}
+      <div className="d-flex justify-content-end mt-3">
+        <Button variant="primary" onClick={handleAddClick}>
+          레스토랑 등록
+        </Button>
+      </div>
     </div>
   );
 };
