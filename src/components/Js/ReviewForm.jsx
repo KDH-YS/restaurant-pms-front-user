@@ -57,6 +57,15 @@ export function ReviewForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!reviewContent.trim()) {
+      alert("리뷰 내용을 작성해주세요.");
+      return;
+    }
+    if (tasteRating === 0 || serviceRating === 0 || atmosphereRating === 0 || valueRating === 0) {
+      alert("모든 평점을 선택해주세요.");
+      return;
+    }
+
     // reservation이 로드되지 않았으면, 폼 제출을 막음
     if (!reservation) {
       alert("예약 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
