@@ -12,6 +12,8 @@ import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminPage from "./Router/AdminPage.jsx";
+import RestaurantAdd from "./pages/restaurants/Add.jsx";
+import Update from "./pages/restaurants/Update.jsx";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
           <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
           <Route path="/admin/restaurant" element={<AdminPage/>}></Route>
+          <Route path="/restaurant/update/:restaurantId" element={<Update/>}></Route>
+          <Route path="/restaurant/add" element={<RestaurantAdd/>}></Route>
 
         </Routes>
       </div>

@@ -53,10 +53,11 @@ export const fetchRestaurantMenu = async (restaurantId) => {
 
 //레스토랑 등록하
 
-const registerRestaurant = async (restaurantData) => {
+export const registerRestaurant = async (restaurantData) => {
   try {
     const response = await axios.post(`${BASE_URL}/restaurant/create`, restaurantData);
     console.log(response.data.message);
+    return response.data;
   } catch (error) {
     console.error('레스토랑 등록 실패:', error.response?.data?.error || error.message);
   }
@@ -64,14 +65,22 @@ const registerRestaurant = async (restaurantData) => {
 
 //레스토랑 수정하기
 
-const updateRestaurant = async (restaurantId, updatedData) => {
+export const updateRestaurant = async (restaurantId, updatedData) => {
   try {
     const response = await axios.put(`${BASE_URL}/restaurant/update/${restaurantId}`, updatedData);
-    console.log(response.data.message);
+
+    // 응답에서 message를 안전하게 반환
+    if (response && response.data && response.data.message) {
+      return response.data; // 응답 데이터 반환
+    } else {
+      throw new Error('서버에서 message를 반환하지 않았습니다.');
+    }
   } catch (error) {
     console.error('레스토랑 수정 실패:', error.response?.data?.error || error.message);
+    throw error; // 에러를 외부로 던져서 상위에서 처리하도록 함
   }
 };
+
 
 //레스토랑 지우기 삭제
 

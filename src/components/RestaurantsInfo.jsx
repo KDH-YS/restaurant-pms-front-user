@@ -72,7 +72,7 @@ function RestaurantsInfo() {
                 <h3>주소</h3>
                 <p>{restaurant?.address}</p>
               </div>
-                <p><strong>총 좌석 수:</strong> {restaurant.totalSeats}</p>
+                <p><strong>총 좌석 수:</strong> {restaurant?.totalSeats}</p>
 
               <div className="business-hours">
                 <h3>영업시간</h3>

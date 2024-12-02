@@ -34,9 +34,19 @@ const AdminRestaurantTable = () => {
   };
 
   const deleteRestaurantsData = async (restaurantId) => {
-    await deleteRestaurant(restaurantId);
-    fetchRestaurantsData(currentPage);
-
+     // 확인 팝업
+     const isConfirmed = window.confirm("정말로 삭제하시겠습니까?");
+     if (!isConfirmed) return;  // "아니오"를 클릭하면 아무 일도 하지 않음
+ 
+     try {
+      await deleteRestaurant(restaurantId);  // 레스토랑 삭제 요청
+      // 삭제 후 레스토랑 목록 갱신
+      setRestaurants((prevRestaurants) =>
+        prevRestaurants.filter((restaurant) => restaurant.id !== restaurantId)
+      );
+    } catch (error) {
+      console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
+    }
   }
     // 페이지 변경 시 호출되는 함수
     const handlePageChange = async (page) => {

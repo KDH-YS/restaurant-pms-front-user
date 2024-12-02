@@ -212,7 +212,7 @@ const fetchRestaurantsData = async (page = 1) => {
           value={searchParams.searchOption}
           onChange={handleInputChange}
         >
-          <option value="name">가게명</option>
+                    <option value="name">가게명</option>
           <option value="city">도시</option>
           <option value="district">구</option>
           <option value="neighborhood">동</option>
