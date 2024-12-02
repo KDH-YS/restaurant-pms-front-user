@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../css/bootstrap.min.css";
+import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/ReviewForm.css";
 
@@ -37,7 +37,6 @@ export function ReviewForm() {
       const response = await fetch(`http://localhost:8080/api/js/reservation/77`); // @@@예약ID 수정 필요@@@
       if (response.ok) {
         const data = await response.json();
-        // console.log(data);
         setReservation(data); // 받은 데이터를 예약 정보 상태에 설정
       } else {
         console.error("예약 정보를 가져오는 데 실패했습니다.");
@@ -100,7 +99,6 @@ export function ReviewForm() {
         alert(`리뷰 제출에 실패했습니다: ${errorData.message || '서버 오류'}`);
       }
     } catch (error) {
-      // error.message를 통해 에러 메시지를 추출
       console.error("Error message:", error.message);
     }
   };
@@ -135,149 +133,88 @@ export function ReviewForm() {
   }
 
   return (
-    <div className="container">
+    <Container className="mt-4">
       {/* 가게 정보 표시 */}
-      <div className="js_restaurant_info">
-        <div>
-          <h2>{restaurant.name}</h2>
-          <img src={restaurant.mainImageUrl} alt="가게 대표 사진" />
-          <p>주소: {restaurant.address}</p>
-          <p>전화번호: {restaurant.phone}</p>
-          <p>음식 종류: {restaurant.foodType}</p>
-          <p>평균 평가: {restaurant.averageRating}</p>
-          <p>상세 설명: {restaurant.description}</p>
-        </div>
-      </div>
+      <Card className="mb-4">
+        <Card.Body>
+          <Card.Title>{restaurant.name}</Card.Title>
+          <Card.Img variant="top" src={restaurant.mainImageUrl} alt="가게 대표 사진" />
+          <Card.Text>주소: {restaurant.address}</Card.Text>
+          <Card.Text>전화번호: {restaurant.phone}</Card.Text>
+          <Card.Text>음식 종류: {restaurant.foodType}</Card.Text>
+          <Card.Text>평균 평가: {restaurant.averageRating}</Card.Text>
+          <Card.Text>상세 설명: {restaurant.description}</Card.Text>
+        </Card.Body>
+      </Card>
 
       {/* 리뷰 제출 폼 */}
-      <div className="js_review_form">
-        <form onSubmit={handleSubmit}>
-          {/* 이미지 업로드 */}
-          <div>
-            <label htmlFor="formFile" className="form-label mt-4">이미지 업로드</label>
-            <input type="hidden" name="reservation_id" value={reservation.reservationId} />
-            <input
-              className="form-control"
-              type="file"
-              id="formFile"
-              multiple
-              onChange={handleFileChange}
-            />
-            <div className="image-preview-container">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="preview-image">
-                  <img src={preview} alt={`미리보기 ${index + 1}`} className="img-thumbnail mt-3" />
-                  <button 
-                    type="button" 
-                    className="btn btn-danger mt-2" 
-                    onClick={() => handleRemoveImage(index)}>이미지 제거</button>
-                </div>
-              ))}
-            </div>
-          </div>
+      <Card>
+        <Card.Body>
+          <Form onSubmit={handleSubmit}>
+            {/* 이미지 업로드 */}
+            <Form.Group controlId="formFile" className="mt-4">
+              <Form.Label>이미지 업로드</Form.Label>
+              <Form.Control
+                type="file"
+                multiple
+                onChange={handleFileChange}
+              />
+              <div className="image-preview-container mt-3">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="preview-image mb-2">
+                    <img src={preview} alt={`미리보기 ${index + 1}`} className="img-thumbnail" />
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => handleRemoveImage(index)}>이미지 제거</Button>
+                  </div>
+                ))}
+              </div>
+            </Form.Group>
 
-          {/* 리뷰 내용 */}
-          <div>
-            <label htmlFor="exampleTextarea" className="form-label mt-4">리뷰 내용</label>
-            <textarea
-              className="form-control"
-              id="exampleTextarea"
-              rows="3"
-              value={reviewContent}
-              onChange={(e) => setReviewContent(e.target.value)}
-              placeholder="리뷰를 작성해주세요"
-            />
-          </div>
+            {/* 리뷰 내용 */}
+            <Form.Group controlId="reviewContent" className="mt-4">
+              <Form.Label>리뷰 내용</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={reviewContent}
+                onChange={(e) => setReviewContent(e.target.value)}
+                placeholder="리뷰를 작성해주세요"
+              />
+            </Form.Group>
 
-          {/* 평점 항목 */}
-          <div className="ratings">
-            <div>
-              <label className="form-label mt-4">맛 평가 (1-5)</label>
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <div key={rating} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    id={`tasteRating${rating}`}
-                    name="tasteRating"
-                    value={rating}
-                    checked={tasteRating === rating}
-                    onChange={handleRatingChange(setTasteRating)}
-                  />
-                  <label className="form-check-label" htmlFor={`tasteRating${rating}`}>
-                    {rating}
-                  </label>
-                </div>
-              ))}
-            </div>
+            {/* 평점 항목 */}
+            <div className="ratings mt-4">
+              {["맛", "서비스", "분위기", "가성비"].map((label, index) => {
+                const rating = [tasteRating, serviceRating, atmosphereRating, valueRating][index];
+                const setter = [setTasteRating, setServiceRating, setAtmosphereRating, setValueRating][index];
 
-            <div>
-              <label className="form-label mt-4">서비스 평가 (1-5)</label>
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <div key={rating} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    id={`serviceRating${rating}`}
-                    name="serviceRating"
-                    value={rating}
-                    checked={serviceRating === rating}
-                    onChange={handleRatingChange(setServiceRating)}
-                  />
-                  <label className="form-check-label" htmlFor={`serviceRating${rating}`}>
-                    {rating}
-                  </label>
-                </div>
-              ))}
+                return (
+                  <Form.Group key={label} className="mt-3">
+                    <Form.Label>{label} 평가 (1-5)</Form.Label>
+                    {[1, 2, 3, 4, 5].map((ratingValue) => (
+                      <Form.Check
+                        key={ratingValue}
+                        type="radio"
+                        label={ratingValue}
+                        value={ratingValue}
+                        checked={rating === ratingValue}
+                        onChange={handleRatingChange(setter)}
+                      />
+                    ))}
+                  </Form.Group>
+                );
+              })}
             </div>
 
-            <div>
-              <label className="form-label mt-4">분위기 평가 (1-5)</label>
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <div key={rating} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    id={`atmosphereRating${rating}`}
-                    name="atmosphereRating"
-                    value={rating}
-                    checked={atmosphereRating === rating}
-                    onChange={handleRatingChange(setAtmosphereRating)}
-                  />
-                  <label className="form-check-label" htmlFor={`atmosphereRating${rating}`}>
-                    {rating}
-                  </label>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <label className="form-label mt-4">가성비 평가 (1-5)</label>
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <div key={rating} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    id={`valueRating${rating}`}
-                    name="valueRating"
-                    value={rating}
-                    checked={valueRating === rating}
-                    onChange={handleRatingChange(setValueRating)}
-                  />
-                  <label className="form-check-label" htmlFor={`valueRating${rating}`}>
-                    {rating}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 제출 버튼 */}
-          <p>{reservation.reservationTime}</p>
-          <button type="submit" className="btn btn-primary mt-4">리뷰 제출</button>
-        </form>
-      </div>
-    </div>
+            <p className="mt-3">{reservation.reservationTime}</p>
+            <Button type="submit" variant="primary" className="mt-4">리뷰 제출</Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
 

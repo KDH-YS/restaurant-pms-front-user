@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Button, Card, ListGroup } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/myreview.css";
 
@@ -52,44 +53,61 @@ export function MyReview() {
   };
 
   return (
-    <div className="container">
-      <div className="js_my_review">
-        <div className="js_user_info">
-          <img src={user.profileImageUrl || "https://via.placeholder.com/40x40"} alt="User Profile" />
-          <p>{user.name}</p>
-        </div>
-
-        <ul>
+    <Container className="mt-4">
+      <Row className="mb-4">
+        <Col md={4}>
+          <div className="js_user_info text-center">
+            <img
+              src={user.profileImageUrl || "https://via.placeholder.com/100x100"}
+              alt="User Profile"
+              className="img-fluid rounded-circle"
+            />
+            <p>{user.name}</p>
+          </div>
+        </Col>
+        <Col md={8}>
           <h3>내 리뷰</h3>
-          {/* 리뷰 목록을 조건에 맞게 보여줌 */}
-          {Array.isArray(reviews) && reviews.length > 0 ? (
-            reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review) => {
-              const image = reviewImg.find((img) => img.reviewId === review.reviewId);
-              return (
-                <li key={review.reviewId}>
-                  <img
-                    src={image ? image.imageUrl : "https://via.placeholder.com/300x360"}
-                    alt={review.restaurantName}
-                  />
-                  <div>
-                    <p>{review.reviewContent}</p>
-                    <p>{review.restaurantAddress}</p>
-                    <p>{review.restaurantName}</p>
-                  </div>
-                </li>
-              );
-            })
-          ) : (
-            <p>리뷰가 없습니다.</p>
-          )}
-        </ul>
+          <ListGroup>
+            {/* 리뷰 목록을 조건에 맞게 보여줌 */}
+            {Array.isArray(reviews) && reviews.length > 0 ? (
+              reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review) => {
+                const image = reviewImg.find((img) => img.reviewId === review.reviewId);
+                return (
+                  <ListGroup.Item key={review.reviewId} className="d-flex align-items-center">
+                    <div className="review-img-container me-3">
+                      <img
+                        src={image ? image.imageUrl : "https://via.placeholder.com/300x360"}
+                        alt={review.restaurantName}
+                        className="img-fluid"
+                        style={{ maxWidth: "150px", maxHeight: "150px" }}
+                      />
+                    </div>
+                    <div>
+                      <p>{review.reviewContent}</p>
+                      <p><strong>{review.restaurantName}</strong></p>
+                      <p>{review.restaurantAddress}</p>
+                    </div>
+                  </ListGroup.Item>
+                );
+              })
+            ) : (
+              <p>리뷰가 없습니다.</p>
+            )}
+          </ListGroup>
 
-        {/* 더보기 버튼 */}
-        <button className="btn btn-lg btn-primary" type="button" onClick={handleShowMoreReviews}>
-          {showMoreReviews ? "줄이기" : "더보기"}
-        </button>
-      </div>
-    </div>
+          {/* 더보기 버튼 */}
+          <Button
+            variant="primary"
+            size="lg"
+            block
+            onClick={handleShowMoreReviews}
+            className="mt-3"
+          >
+            {showMoreReviews ? "줄이기" : "더보기"}
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Button, Card, ListGroup } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/shopReview.css";
 
@@ -54,18 +55,19 @@ export function ShopReview() {
   };
 
   return (
-    <div className="container">
-      <div className="content">
+    <Container className="mt-4">
+      <Row className="mb-4">
         {/* 가게 정보 섹션 */}
-        <div className="js_shop_info">
-          <>
+        <Col md={4} className="text-center">
+          <div className="js_shop_info">
             {/* 가게 이미지 동적으로 최대 2개만 표시 */}
             {restaurantImg.length > 0 ? (
-              restaurantImg.slice(0, 2).map((img, index) => ( // 최대 2개 이미지만 표시
+              restaurantImg.slice(0, 2).map((img, index) => (
                 <img
                   key={index}
                   src={img.imageUrl || "https://via.placeholder.com/648x400"}
                   alt={`가게 이미지 ${index + 1}`}
+                  className="img-fluid mb-3"
                 />
               ))
             ) : (
@@ -74,74 +76,99 @@ export function ShopReview() {
             <h2>{restaurant.name}</h2>
             <p>{restaurant.address}</p>
             <p>{restaurant.foodType}</p>
-          </>
-        </div>
-
-        {/* 사진/영상 리뷰 섹션 */}
-        <div className="js_photo_review">
-          <h3>사진/영상 리뷰</h3>
-          {/* 동적으로 사진 리뷰 표시 */}
-          {reviews.length > 0 ? (
-            reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review, index) => (
-              <div key={index}>
-                <img
-                  src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/324x324"}
-                  alt={`사진 리뷰 ${index + 1}`}
-                />
-              </div>
-            ))
-          ) : (
-            <p>사진 리뷰가 없습니다.</p>
-          )}
-          <button className="btn btn-lg btn-prima ry" type="button" onClick={handleShowMoreReviews}>
-            {showMoreReviews ? "줄이기" : "더보기"}
-          </button>
-        </div>
+          </div>
+        </Col>
 
         {/* 리뷰 섹션 */}
-        <ul className="js_review">
-          <h3>리뷰</h3>
-          {reviews.length > 0 ? (
-            reviews.slice(0, showMoreReviews ? reviews.length : 3).map((review) => (
-              <li key={review.reviewId}>
-                <div>
-                  <p>{review.reviewerName}</p>
+        <Col md={8}>
+          {/* 사진/영상 리뷰 섹션 */}
+          <div className="js_photo_review mb-4">
+            <h3>사진/영상 리뷰</h3>
+            {reviews.length > 0 ? (
+              reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review, index) => (
+                <div key={index} className="mb-3">
                   <img
-                    src={review.imageUrl || "https://via.placeholder.com/100x100"}
-                    alt="음식 이미지"
+                    src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/324x324"}
+                    alt={`사진 리뷰 ${index + 1}`}
+                    className="img-fluid"
                   />
-                  <p>{review.reviewContent}</p>
-                  <p>더보기</p>
-                  <img src="https://via.placeholder.com/40x40" alt="반응 아이콘" />
-                  <p>반응 남기기</p>
-                  <p>{review.reviewDate} {review.visitOrder} 영수증</p>
                 </div>
-                <div className="js_line"></div>
-              </li>
-            ))
-          ) : (
-            <p>리뷰가 없습니다.</p>
-          )}
-          <button className="btn btn-lg btn-prima ry" type="button" onClick={handleShowMoreReviews}>
-            {showMoreReviews ? "줄이기" : "더보기"}
-          </button>
-        </ul>
+              ))
+            ) : (
+              <p>사진 리뷰가 없습니다.</p>
+            )}
+            <Button
+              variant="primary"
+              size="lg"
+              block
+              onClick={handleShowMoreReviews}
+            >
+              {showMoreReviews ? "줄이기" : "더보기"}
+            </Button>
+          </div>
 
-        {/* SNS 리뷰 섹션 */}
-        <ul className="js_sns_review">
-          <h3>SNS</h3>
-          <p>참고할만한 리뷰들</p>
-          <li>
-            {/* SNS 리뷰 아이콘들 */}
-            <img src="https://via.placeholder.com/220x220" alt="SNS 이미지 1" />
-            <img src="https://via.placeholder.com/220x220" alt="SNS 이미지 2" />
-            <img src="https://via.placeholder.com/220x220" alt="SNS 이미지 3" />
-            <img src="https://via.placeholder.com/220x220" alt="SNS 이미지 4" />
-            <img src="https://via.placeholder.com/220x220" alt="SNS 이미지 5" />
-          </li>
-        </ul>
-      </div>
-    </div>
+          {/* 리뷰 리스트 */}
+          <h3>리뷰</h3>
+          <ListGroup>
+            {reviews.length > 0 ? (
+              reviews.slice(0, showMoreReviews ? reviews.length : 3).map((review) => (
+                <ListGroup.Item key={review.reviewId}>
+                  <Row>
+                    <Col md={2} className="text-center">
+                      <img
+                        src={review.imageUrl || "https://via.placeholder.com/100x100"}
+                        alt="음식 이미지"
+                        className="img-fluid rounded-circle"
+                      />
+                    </Col>
+                    <Col md={10}>
+                      <p><strong>{review.reviewerName}</strong></p>
+                      <p>{review.reviewContent}</p>
+                      <Button variant="link">더보기</Button>
+                      <p className="text-muted">
+                        {review.reviewDate} {review.visitOrder} 영수증
+                      </p>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))
+            ) : (
+              <p>리뷰가 없습니다.</p>
+            )}
+          </ListGroup>
+          <Button
+            variant="primary"
+            size="lg"
+            block
+            onClick={handleShowMoreReviews}
+            className="mt-3"
+          >
+            {showMoreReviews ? "줄이기" : "더보기"}
+          </Button>
+        </Col>
+      </Row>
+
+      {/* SNS 리뷰 섹션 */}
+      <Row className="mt-4">
+        <Col>
+          <div className="js_sns_review">
+            <h3>SNS</h3>
+            <p>참고할만한 리뷰들</p>
+            <Row>
+              {[...Array(5)].map((_, index) => (
+                <Col md={2} key={index} className="mb-3">
+                  <img
+                    src="https://via.placeholder.com/220x220"
+                    alt={`SNS 이미지 ${index + 1}`}
+                    className="img-fluid"
+                  />
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

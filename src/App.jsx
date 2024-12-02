@@ -1,3 +1,6 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import User from "./Router/User.jsx";
 import Contact from "./Router/Contact.jsx";
 import Restaurant from "./Router/Restaurant.jsx"
@@ -9,7 +12,6 @@ import Mypage from "./Router/Mypage.jsx"
 import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
