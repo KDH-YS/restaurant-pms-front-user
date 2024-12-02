@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, Card, ListGroup } from "react-bootstrap";
+import { Container, Row, Col, Button, ListGroup } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/shopReview.css";
 
@@ -9,7 +9,8 @@ export function ShopReview() {
   const [reviewImages, setReviewImages] = useState({}); // 리뷰 이미지 상태 (리뷰 ID를 키로)
   const [restaurant, setRestaurant] = useState({}); // 가게 정보 상태
   const [restaurantImg, setRestaurantImg] = useState([]); // 가게 이미지 상태
-  const [showMoreReviews, setShowMoreReviews] = useState(false); // 더보기 상태
+  const [showReviewsCount, setShowReviewsCount] = useState(4); // 보여줄 리뷰 개수
+  const [showPhotosCount, setShowPhotosCount] = useState(4); // 보여줄 사진/영상 리뷰 개수
 
   // 가게 정보를 가져오는 함수
   const fetchRestaurant = async () => {
@@ -49,9 +50,14 @@ export function ShopReview() {
     fetchReviews();
   }, [restaurantId]);
 
-  // 더보기 버튼 클릭 시 추가 리뷰 불러오기
+  // 리뷰 더보기 버튼 클릭 시 리뷰 개수 4개씩 증가
   const handleShowMoreReviews = () => {
-    setShowMoreReviews(!showMoreReviews);
+    setShowReviewsCount(showReviewsCount + 4);
+  };
+
+  // 사진/영상 리뷰 더보기 버튼 클릭 시 사진/영상 리뷰 개수 4개씩 증가
+  const handleShowMorePhotos = () => {
+    setShowPhotosCount(showPhotosCount + 4);
   };
 
   return (
@@ -85,7 +91,7 @@ export function ShopReview() {
           <div className="js_photo_review mb-4">
             <h3>사진/영상 리뷰</h3>
             {reviews.length > 0 ? (
-              reviews.slice(0, showMoreReviews ? reviews.length : 4).map((review, index) => (
+              reviews.slice(0, showPhotosCount).map((review, index) => (
                 <div key={index} className="mb-3">
                   <img
                     src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/324x324"}
@@ -101,9 +107,9 @@ export function ShopReview() {
               variant="primary"
               size="lg"
               block
-              onClick={handleShowMoreReviews}
+              onClick={handleShowMorePhotos}
             >
-              {showMoreReviews ? "줄이기" : "더보기"}
+              더보기
             </Button>
           </div>
 
@@ -111,7 +117,7 @@ export function ShopReview() {
           <h3>리뷰</h3>
           <ListGroup>
             {reviews.length > 0 ? (
-              reviews.slice(0, showMoreReviews ? reviews.length : 3).map((review) => (
+              reviews.slice(0, showReviewsCount).map((review) => (
                 <ListGroup.Item key={review.reviewId}>
                   <Row>
                     <Col md={2} className="text-center">
@@ -143,7 +149,7 @@ export function ShopReview() {
             onClick={handleShowMoreReviews}
             className="mt-3"
           >
-            {showMoreReviews ? "줄이기" : "더보기"}
+            더보기
           </Button>
         </Col>
       </Row>

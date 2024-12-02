@@ -138,10 +138,10 @@ export function ReviewForm() {
       <Card className="mb-4">
         <Card.Body>
           <Card.Title>{restaurant.name}</Card.Title>
+          <Card.Text>{restaurant.foodType}</Card.Text>
           <Card.Img variant="top" src={restaurant.mainImageUrl} alt="가게 대표 사진" />
-          <Card.Text>주소: {restaurant.address}</Card.Text>
-          <Card.Text>전화번호: {restaurant.phone}</Card.Text>
-          <Card.Text>음식 종류: {restaurant.foodType}</Card.Text>
+          <Card.Text>{restaurant.address}</Card.Text>
+          <Card.Text>{restaurant.phone}</Card.Text>
           <Card.Text>평균 평가: {restaurant.averageRating}</Card.Text>
           <Card.Text>상세 설명: {restaurant.description}</Card.Text>
         </Card.Body>
