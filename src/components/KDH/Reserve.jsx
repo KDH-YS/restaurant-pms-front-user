@@ -6,6 +6,15 @@ import 'react-calendar/dist/Calendar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'css/KDH/Reserve.css';
 import restaurantimg from "img/restaurant.jpg";
+import styled from 'styled-components';
+const StyledCard = styled.div`
+  .form-control { 
+    resize: none;
+  }
+  .card {
+    cursor: default;
+  }
+`;
 
 const Reserve = () => {
   const navigate = useNavigate();
@@ -14,12 +23,6 @@ const Reserve = () => {
   const [people, setPeople] = useState(1);
   const [totalPrice, setTotalPrice] = useState(10000); // 초기 금액은 10,000원 (1명 기준)
   const [request, setRequest] = useState('');
-
-  const reviews = [
-    { id: 1, username: '엄준식', comment: '맛있었어요! 다시 방문하고 싶습니다.', rating: 5 },
-    { id: 2, username: '아무무', comment: '서비스가 좋았어요.', rating: 4 },
-    { id: 3, username: '니나브', comment: '위치는 조금 불편했지만 음식은 훌륭했습니다.', rating: 3 },
-  ];
 
   const TIME_OPTIONS = [
     { value: '', label: '[예약 시간 선택]' },
@@ -34,7 +37,7 @@ const Reserve = () => {
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
   const handlePeopleChange = (e) => {
-    const numberOfPeople = parseInt(e.target.value, 10);
+    const numberOfPeople = parseInt(e.target.value);
     setPeople(numberOfPeople);
     setTotalPrice(numberOfPeople * 10000); // 인원 수가 변경될 때마다 금액 갱신
   };
@@ -74,18 +77,8 @@ const Reserve = () => {
     }
   };
 
-  const renderReviews = () =>
-    reviews.map((review) => (
-      <Card key={review.id} className="mb-3">
-        <Card.Body>
-          <Card.Title>{review.username}</Card.Title>
-          <Card.Text>{review.comment}</Card.Text>
-          <Card.Text>평점: {review.rating} / 5</Card.Text>
-        </Card.Body>
-      </Card>
-    ));
-
   return (
+    <StyledCard>
     <Container className="py-4">
       <Card className="mb-4">
         <Card.Img variant="top" src={restaurantimg} style={{ height: '400px', objectFit: 'cover' }} />
@@ -129,6 +122,23 @@ const Reserve = () => {
 
       <Card className="mb-4">
         <Card.Body>
+          <Card.Title className="h5 mb-3">인원 수</Card.Title>
+          <Form.Control
+            as="select"
+            value={people}
+            onChange={handlePeopleChange}
+          >
+            {[...Array(5).keys()].map((i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}명
+              </option>
+            ))}
+          </Form.Control>
+        </Card.Body>
+      </Card>
+
+      <Card className="mb-4">
+        <Card.Body>
           <Card.Title className="h5 mb-3">요청사항</Card.Title>
           <Form.Control
             as="textarea"
@@ -155,8 +165,8 @@ const Reserve = () => {
         </Card.Body>
       </Card>
     </Container>
+    </StyledCard>
   );
 };
 
 export default Reserve;
-

@@ -30,8 +30,7 @@ function App() {
           <Route path="/Mypage" element={<Mypage/>} />
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
-          <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
-                
+          <Route path="/review/reviewform" element={<ReviewForm/>}></Route>                
         </Routes>
       </div>
     </BrowserRouter>
