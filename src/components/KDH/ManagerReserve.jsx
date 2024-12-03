@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col, Card, Form, Dropdown } from 'react-bootstrap';
-
+import { Button, Container, Row, Col, Card, Dropdown } from 'react-bootstrap';
 import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
 
@@ -15,8 +14,7 @@ const ManagerReserve = () => {
   const itemsPerGroup = 30;
   const statusOptions = ['ALL', 'CANCELREQUEST', 'PENDING', 'RESERVING', 'NOSHOW', 'COMPLETE'];
 
-
-  const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
+  const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
 
   useEffect(() => {
     fetchReservations();
@@ -92,21 +90,26 @@ const ManagerReserve = () => {
     setStatusUpdates((prev) => ({ ...prev, [reservationId]: status }));
   };
 
-
-
+  const statusLabels = {
+    CANCELREQUEST: '취소 요청',
+    COMPLETE: '방문 완료',
+    RESERVING: '예약 중',
+    PENDING: '결제 대기중',
+    NOSHOW: '노쇼',
+  };
 
   const currentReservations = filteredReservations.slice(
     ((currentPage - 1) % 5) * itemsPerPage, 
     ((currentPage - 1) % 5 + 1) * itemsPerPage
   );
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    // 필요한 경우 여기서 새로운 데이터를 불러올 수 있습니다.
   };
+
   return (
     <Container className="reservation-status-container">
       <h3>나의 레스토랑 예약 현황</h3>
-
       <div className="mb-3">
         <Dropdown>
           <Dropdown.Toggle variant="secondary" id="status-filter">
@@ -122,36 +125,44 @@ const ManagerReserve = () => {
                   filterReservations(status);
                 }}
               >
-                {status}
+                {statusLabels[status] || status}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
       </div>
 
+      {/* 예약 정보 부분 */}
       <Row>
         {currentReservations.map((reservation) => (
           <Col md={6} key={reservation.reservationId} className="mb-3">
             <Card>
-              <Card.Body>
-                <Card.Title>예약</Card.Title>
-                <Card.Text>
-                  <strong>레스토랑:</strong> {reservation.restaurantName}
-                  <br />
-                  <strong>날짜:</strong> {reservation.reservationTime.split('T')[0]}
-                  <br />
-                  <strong>시간:</strong> {reservation.reservationTime.split('T')[1].substring(0, 5)}
-                  <br />
-                  <strong>인원 수:</strong> {reservation.numberOfPeople}명
-                  <br />
-                  <strong>상태:</strong> {reservation.status}
-                  <br />
-                  <strong>이메일:</strong> {reservation.user?.email}
-                  <br />
-                  <strong>전화번호:</strong> {reservation.user?.phone}
-                </Card.Text>
-
-                <div className="mb-3">
+              <Card.Header className="fs-5">예약</Card.Header>
+              <Card.Body style={{ cursor: 'default' }}>
+                <div className="d-flex">
+                  {/* 이미지 부분 */}
+                  <img
+                    src={reservation.user?.profileImageUrl} // 주스탠드에서 받아올 이미지 URL
+                    alt={reservation.user?.userName}
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      objectFit: 'cover',
+                      borderRadius: '50%',
+                      border: '1px solid black',
+                      marginRight: '20px',
+                    }}
+                  />
+                  <Card.Text>
+                    <strong>{statusLabels[reservation.status] || reservation.status}</strong><br />
+                    {reservation.reservationTime.split('T')[0]} / {reservation.reservationTime.split('T')[1].substring(0, 5)} / {reservation.numberOfPeople}명<br />
+                    <strong>이메일 : </strong> {reservation.user?.email}
+                    <br />
+                    <strong>전화번호 : </strong> {reservation.user?.phone}<br />
+                    <strong>요청 사항 : </strong>{reservation.request}
+                  </Card.Text>
+                </div>
+                <div className="d-flex justify-content-end p-3">
                   <Dropdown>
                     <Dropdown.Toggle variant="info" id={`status-update-${reservation.reservationId}`}>
                       {statusUpdates[reservation.reservationId] || '상태 변경'}
@@ -162,36 +173,21 @@ const ManagerReserve = () => {
                           key={status}
                           onClick={() => setReservationStatus(reservation.reservationId, status)}
                         >
-                          {status}
+                          {statusLabels[status] || status}
                         </Dropdown.Item>
                       ))}
                     </Dropdown.Menu>
-                  </Dropdown>
-                </div>
-
-                <div className="d-flex justify-content-between">
+                  </Dropdown>&ensp;
+                  <Button
+                    variant="primary"
+                    onClick={() => updateReservationStatus(reservation.reservationId, statusUpdates[reservation.reservationId])}
+                  >
+                    예약 변경
+                  </Button>&ensp;
                   <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>
                     예약 취소
                   </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() =>
-                      updateReservationStatus(
-                        reservation.reservationId,
-                        statusUpdates[reservation.reservationId]
-                      )
-                    }
-                  >
-                    예약 변경
-                  </Button>
                 </div>
-
-                <Form className="mt-3">
-                  <Form.Group>
-                    <Form.Label>요청 사항</Form.Label>
-                    <Card.Text>{reservation.request}</Card.Text>
-                  </Form.Group>
-                </Form>
               </Card.Body>
             </Card>
           </Col>
@@ -204,4 +200,3 @@ const ManagerReserve = () => {
 };
 
 export default ManagerReserve;
-

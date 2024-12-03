@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col, Card, Form, Modal } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form, Modal, Dropdown } from 'react-bootstrap';
 import 'css/KDH/ReservationStatus.css';
 import * as PortOne from '@portone/browser-sdk/v2';
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +18,8 @@ const ReservationStatus = () => {
 
     const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
 
-    const itemsPerPage = 6;  //  한 페이지에 보여줄 아이템 수
-    const itemsPerGroup = 30; // 한 그룹당 보여줄 아이템 수
+    const itemsPerPage = 8;  //  한 페이지에 보여줄 아이템 수
+    const itemsPerGroup = 40; // 한 그룹당 보여줄 아이템 수
     const history = useNavigate();
 
 
@@ -178,76 +178,121 @@ const ReservationStatus = () => {
   };
 
   return (
-    <Container className="reservation-status-container">
+<Container className="reservation-status-container">
+  {/* 예약 현황 제목 오른쪽 끝 정렬 */}
+  <Row className="mb-3">
+    <Col className="text-start">
       <h3>예약 현황</h3>
-      <Row>
-        {currentReservations.map((reservation) => (
-          <Col md={6} key={reservation.reservationId} className="mb-3">
-            <Card>
-              <Card.Body style={{ cursor: "default" }}>
-                <Card.Title>예약 정보</Card.Title>
+    </Col>
+  </Row>
+
+  {/* 드롭다운 추가 */}
+  <Row className="mb-3">
+    <Col>
+    <Button>방문예정</Button>&ensp;
+    <Button>방문완료</Button>&ensp;
+    <Button>취소/노쇼</Button>
+    </Col>
+    <Col className="text-end">
+      <Dropdown>
+        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+          정렬
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item href="#/action-1">최신 순</Dropdown.Item>
+          <Dropdown.Item href="#/action-2">오래된 순</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </Col>
+  </Row>
+
+  <Row>
+    {currentReservations.map((reservation) => (
+      <Col md={6} key={reservation.reservationId} className="mb-3">
+        <Card>
+          <Card.Header className="fs-5">예약</Card.Header>
+          <Card.Body style={{ cursor: "default" }}>
+            {/* 상단 이미지와 예약 정보 나란히 배치 */}
+            <div className="d-flex">
+              {/* 이미지 부분 */}
+              <img
+                src={reservation.restaurantImage} // 주스탠드에서 받아올 이미지 URL
+                alt={reservation.restaurantName}
+                style={{
+                  width: '120px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '5px',
+                  marginRight: '20px'
+                }}/>
+
+              {/* 예약 정보 부분 */}
+              <div>
                 <Card.Text>
                   <strong>레스토랑:</strong> {reservation.restaurantName}<br />
-                  <strong>날짜:</strong> {reservation.reservationTime.split('T')[0]}<br />
-                  <strong>시간:</strong> {reservation.reservationTime.split('T')[1].substring(0, 5)}<br />
-                  <strong>인원:</strong> {reservation.numberOfPeople}명<br />
-                  <strong>상태:</strong> {reservation.status}
+                  {reservation.reservationTime.split('T')[0]} / {reservation.reservationTime.split('T')[1].substring(0, 5)} / {reservation.numberOfPeople}명<br />
+                  <strong>{reservation.status === "CANCELREQUEST" && "취소 요청"}
+                  {reservation.status === "COMPLETE" && "방문 완료"}
+                  {reservation.status === "RESERVING" && "예약 중"}
+                  {reservation.status === "PENDING" && "결제 대기중"}
+                  {reservation.status === "NOSHOW" && "노쇼"}</strong><br />
+                  <strong>요청 사항 :</strong> {reservation.request}
                 </Card.Text>
-                <div className="d-flex justify-content-between">
-                  <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>예약 취소</Button>
-                  <Button variant="secondary" onClick={() => handleOpenChangeModal(reservation)}>예약 변경</Button>
-                </div>
-                <Form className="mt-3">
-                  <Form.Group>
-                    <Form.Label>요청 사항</Form.Label>
-                    <Card.Text>{reservation.request}</Card.Text>
-                  </Form.Group>
-                  {reservation.status === "PENDING" && (
-                    <Button variant="primary" className="mt-2" onClick={() => handlePay(reservation)}>결제</Button>
-                  )}
-                  {reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && (
-                    <Button variant="success" className="mt-2" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>
-                  )}
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+              </div>
+            </div>
+          </Card.Body>
 
-      <PaginationComponent onPageChange={handlePageChange} />
+          {/* 예약 취소 및 예약 변경 버튼을 오른쪽 아래로 배치 */}
+          <div className="d-flex justify-content-end p-3">
+            <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>예약 취소</Button>&ensp;
+            <Button variant="secondary" onClick={() => handleOpenChangeModal(reservation)}>예약 변경</Button>&ensp;
+            {/* 결제 및 리뷰 버튼 */}
+            {reservation.status === "PENDING" && (
+              <Button variant="primary" onClick={() => handlePay(reservation)}>결제</Button>)}
+            {reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && (
+              <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>)}
+          </div>
+        </Card>
+      </Col>
+    ))}
+  </Row>
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>예약 변경</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="formDate">
-              <Form.Label>날짜</Form.Label>
-              <Form.Control type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
-            </Form.Group>
-            <Form.Group controlId="formTime">
-              <Form.Label>시간</Form.Label>
-              <Form.Control type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
-            </Form.Group>
-            <Form.Group controlId="formPeople">
-              <Form.Label>인원</Form.Label>
-              <Form.Control type="number" value={newPeople} onChange={(e) => setNewPeople(e.target.value)} />
-            </Form.Group>
-            <Form.Group controlId="formRequest">
-              <Form.Label>요청 사항</Form.Label>
-              <Form.Control type="text" value={newRequest} onChange={(e) => setNewRequest(e.target.value)} />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>닫기</Button>
-          <Button variant="primary" onClick={handleSaveChanges}>저장</Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
-  );
+  {/* 페이지네이션 컴포넌트 */}
+  <PaginationComponent onPageChange={handlePageChange} />
+
+  {/* 예약 변경 Modal */}
+  <Modal show={showModal} onHide={handleCloseModal}>
+    <Modal.Header closeButton>
+      <Modal.Title>예약 변경</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <Form>
+        <Form.Group controlId="formDate">
+          <Form.Label>날짜</Form.Label>
+          <Form.Control type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+        </Form.Group>
+        <Form.Group controlId="formTime">
+          <Form.Label>시간</Form.Label>
+          <Form.Control type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+        </Form.Group>
+        <Form.Group controlId="formPeople">
+          <Form.Label>인원</Form.Label>
+          <Form.Control type="number" value={newPeople} onChange={(e) => setNewPeople(e.target.value)} />
+        </Form.Group>
+        <Form.Group controlId="formRequest">
+          <Form.Label>요청 사항</Form.Label>
+          <Form.Control type="text" value={newRequest} onChange={(e) => setNewRequest(e.target.value)} />
+        </Form.Group>
+      </Form>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={handleCloseModal}>닫기</Button>
+      <Button variant="primary" onClick={handleSaveChanges}>저장</Button>
+    </Modal.Footer>
+  </Modal>
+</Container>
+);    
 };
 
 export default ReservationStatus;
