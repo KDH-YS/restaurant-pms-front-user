@@ -1,54 +1,97 @@
-/* shopInfo */
-.js_shop_info > img {
-  width: 50%;
+#root {
+  margin: 0;
+  padding: 0;
 }
 
-/* photo */
-.js_photo_review > div {
-  display: inline-block;
-  width: 25%;
-  height: 25%;
+/* 가게 정보 스타일 */
+.js-shop-info {
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
 }
-.js_photo_review > div > img {
+
+.js-shop-info .js-address {
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.js-shop-info .js-food-type {
+  font-size: 1rem;
+  color: #888;
+}
+
+/* 평점 섹션 스타일 */
+.js-rating-section {
+  text-align: center;
+}
+
+.js-star-rating {
+  padding: 15px;
+}
+
+.js-star-rating span {
+  margin-right: 5px;
+}
+
+/* 사진/영상 리뷰 섹션 */
+.js-photo-review > div > div{
+  margin: 0;
+}
+.js-photo-review > div > div > div {
+  margin: 0;
+  padding: 0;
+  width: 33.3%;
+  height: 300px;
+}
+.js-photo-review > div > div > div > img {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
 }
 
-/* review */
-
-/* sns */
-.js_sns_review > p {
-  flex-basis: 100%;
-}
-.js_sns_review > li {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.js_sns_review > li > img {
-  margin-bottom: 1rem;
-}
-.js_sns_review > li > p {
-  flex-basis: 100%;
+.js-section-title {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-/* 반응형 */
-@media (min-width:990px) {
-  .js_shop_info > img {
-    width: 50%;
-  }
+.js-img {
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
 }
-@media (max-width:768px) {
-  .js_shop_info > img {
-    width: 100%;
-  }
-  .js_shop_info > img:nth-of-type(2) {
-    display: none;
-  }
-  .js_photo_review > img {
-    width: 50%;
-  }
-  .js_photo_review > img:nth-of-type(3), img:nth-of-type(4) {
-    display: none;
-  }
+
+.js-img:hover {
+  transform: scale(1.05);
 }
+
+/* 리뷰 아이템 */
+.js-reviews > div >  {
+
+}
+
+.js-review-item {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  padding: 15px;
+}
+
+.js-review-item > div >img {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin-bottom: 10px;
+}
+.js-review-item > div > div.row > img {
+  width: 100px;
+  height: 100px;
+  padding: 0;
+}
+
+/* 버튼 */
+.js-more-btn {
+  width: 100%;
+  margin-bottom: 40px;
+} 

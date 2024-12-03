@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, ListGroup } from "react-bootstrap";
+import { Container, Row, Col, Button, ListGroup, ProgressBar } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/shopReview.css";
+import { useIsRTL } from "react-bootstrap/esm/ThemeProvider";
 
 export function ShopReview() {
-  const [restaurantId] = useState(1); // 미리 지정된 restaurantId
-  const [reviews, setReviews] = useState([]); // 리뷰 상태
-  const [reviewImages, setReviewImages] = useState({}); // 리뷰 이미지 상태 (리뷰 ID를 키로)
-  const [restaurant, setRestaurant] = useState({}); // 가게 정보 상태
-  const [restaurantImg, setRestaurantImg] = useState([]); // 가게 이미지 상태
-  const [showReviewsCount, setShowReviewsCount] = useState(4); // 보여줄 리뷰 개수
-  const [showPhotosCount, setShowPhotosCount] = useState(4); // 보여줄 사진/영상 리뷰 개수
+  const [restaurantId] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [reviewImages, setReviewImages] = useState({});
+  const [restaurant, setRestaurant] = useState({});
+  const [restaurantImg, setRestaurantImg] = useState([]);
+  const [showReviewsCount, setShowReviewsCount] = useState(3);
+  const [showPhotosCount, setShowPhotosCount] = useState(3);
 
-  // 가게 정보를 가져오는 함수
   const fetchRestaurant = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}`);
       if (response.ok) {
         const data = await response.json();
-        setRestaurant(data.restaurant); // 받은 데이터에서 가게 정보만 설정
-        setRestaurantImg(data.restaurantImg); // 받은 데이터에서 가게 이미지 정보 설정
+        setRestaurant(data.restaurant);
+        setRestaurantImg(data.restaurantImg);
       } else {
         console.error("가게 정보를 가져오는 데 실패했습니다.");
       }
@@ -28,14 +28,14 @@ export function ShopReview() {
     }
   };
 
-  // 리뷰와 이미지 데이터를 가져오는 함수
   const fetchReviews = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}/reviews`);
       if (response.ok) {
         const data = await response.json();
-        setReviews(data.reviews); // 리뷰 데이터를 상태에 저장
-        setReviewImages(data.reviewImages); // 리뷰 이미지 데이터를 상태에 저장
+        console.log(data.reviews);
+        setReviews(data.reviews);
+        setReviewImages(data.reviewImages);
       } else {
         console.error("리뷰 정보를 가져오는 데 실패했습니다.");
       }
@@ -44,134 +44,112 @@ export function ShopReview() {
     }
   };
 
-  // 가게 정보와 리뷰 데이터를 가져옴
   useEffect(() => {
     fetchRestaurant();
     fetchReviews();
   }, [restaurantId]);
 
-  // 리뷰 더보기 버튼 클릭 시 리뷰 개수 4개씩 증가
   const handleShowMoreReviews = () => {
-    setShowReviewsCount(showReviewsCount + 4);
+    setShowReviewsCount(showReviewsCount + 3);
   };
 
-  // 사진/영상 리뷰 더보기 버튼 클릭 시 사진/영상 리뷰 개수 4개씩 증가
   const handleShowMorePhotos = () => {
-    setShowPhotosCount(showPhotosCount + 4);
+    setShowPhotosCount(showPhotosCount + 3);
   };
 
   return (
     <Container className="mt-4">
-      <Row className="mb-4">
-        {/* 가게 정보 섹션 */}
-        <Col md={4} className="text-center">
-          <div className="js_shop_info">
-            {/* 가게 이미지 동적으로 최대 2개만 표시 */}
+      {/* 가게 정보 섹션 */}
+      <Row className="justify-content-center mb-4">
+        <Col md={8} className="text-center">
+          <div className="js-shop-info">
             {restaurantImg.length > 0 ? (
-              restaurantImg.slice(0, 2).map((img, index) => (
-                <img
-                  key={index}
-                  src={img.imageUrl || "https://via.placeholder.com/648x400"}
-                  alt={`가게 이미지 ${index + 1}`}
-                  className="img-fluid mb-3"
-                />
-              ))
+              <img
+                src={restaurantImg[0].imageUrl || "https://via.placeholder.com/648x400"}
+                alt="가게 이미지"
+                className="img-fluid mb-3 rounded"
+              />
             ) : (
               <p>가게 이미지가 없습니다.</p>
             )}
-            <h2>{restaurant.name}</h2>
-            <p>{restaurant.address}</p>
-            <p>{restaurant.foodType}</p>
+            <h2 className="fw-bold">{restaurant.name}</h2>
+            <p className="js-address">{restaurant.address}</p>
+            <p className="js-food-type">{restaurant.foodType}</p>
           </div>
         </Col>
+      </Row>
 
-        {/* 리뷰 섹션 */}
-        <Col md={8}>
-          {/* 사진/영상 리뷰 섹션 */}
-          <div className="js_photo_review mb-4">
-            <h3>사진/영상 리뷰</h3>
-            {reviews.length > 0 ? (
-              reviews.slice(0, showPhotosCount).map((review, index) => (
-                <div key={index} className="mb-3">
-                  <img
-                    src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/324x324"}
-                    alt={`사진 리뷰 ${index + 1}`}
-                    className="img-fluid"
-                  />
-                </div>
-              ))
-            ) : (
-              <p>사진 리뷰가 없습니다.</p>
-            )}
-            <Button
-              variant="primary"
-              size="lg"
-              block
-              onClick={handleShowMorePhotos}
-            >
-              더보기
-            </Button>
-          </div>
+      {/* 평점 섹션 */}
+      <Row className="mb-4">
+        <Row md={12} className="text-center js-rating-section">
+          <Col md={4} className="js-star-rating">
+            <span className="fs-1 text-warning">★</span>
+            <span className="fs-3 fw-bold">4.5</span>
+          </Col>
+          <Col>
+            <ProgressBar now={80} label="5점 (100개)" className="mb-2" />
+            <ProgressBar now={10} label="4점 (10개)" className="mb-2" />
+            <ProgressBar now={5} label="3점 (5개)" className="mb-2" />
+            <ProgressBar now={2} label="2점 (2개)" className="mb-2" />
+            <ProgressBar now={1} label="1점 (1개)" />
+          </Col>
+        </Row>
+      </Row>
 
-          {/* 리뷰 리스트 */}
-          <h3>리뷰</h3>
-          <ListGroup>
-            {reviews.length > 0 ? (
-              reviews.slice(0, showReviewsCount).map((review) => (
-                <ListGroup.Item key={review.reviewId}>
-                  <Row>
-                    <Col md={2} className="text-center">
-                      <img
-                        src={review.imageUrl || "https://via.placeholder.com/100x100"}
-                        alt="음식 이미지"
-                        className="img-fluid rounded-circle"
-                      />
-                    </Col>
-                    <Col md={10}>
-                      <p><strong>{review.reviewerName}</strong></p>
-                      <p>{review.reviewContent}</p>
-                      <Button variant="link">더보기</Button>
-                      <p className="text-muted">
-                        {review.reviewDate} {review.visitOrder} 영수증
-                      </p>
-                    </Col>
-                  </Row>
-                </ListGroup.Item>
-              ))
-            ) : (
-              <p>리뷰가 없습니다.</p>
-            )}
-          </ListGroup>
-          <Button
-            variant="primary"
-            size="lg"
-            block
-            onClick={handleShowMoreReviews}
-            className="mt-3"
-          >
+      {/* 사진/영상 리뷰 섹션 */}
+      <Row className="mb-4 js-photo-review">
+        <Col>
+          <h3 className="js-section-title">사진/영상 리뷰</h3>
+          <Row>
+            {reviews.slice(0, showPhotosCount).map((review, index) => (
+              <Col md={4} className="mb-3" key={index}>
+                <img
+                  src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/200x200"}
+                  alt={`리뷰 이미지 ${index + 1}`}
+                  className="img-fluid rounded shadow-sm"
+                />
+              </Col>
+            ))}
+          </Row>
+          <Button variant="primary" onClick={handleShowMorePhotos} className="js-more-btn">
             더보기
           </Button>
         </Col>
       </Row>
 
-      {/* SNS 리뷰 섹션 */}
-      <Row className="mt-4">
+      {/* 리뷰 섹션 */}
+      <Row className="js-reviews">
         <Col>
-          <div className="js_sns_review">
-            <h3>SNS</h3>
-            <p>참고할만한 리뷰들</p>
-            <Row>
-              {[...Array(5)].map((_, index) => (
-                <Col md={2} key={index} className="mb-3">
-                  <img
-                    src="https://via.placeholder.com/220x220"
-                    alt={`SNS 이미지 ${index + 1}`}
-                    className="img-fluid"
-                  />
-                </Col>
-              ))}
-            </Row>
-          </div>
+          <h3 className="js-section-title">리뷰</h3>
+          <ListGroup>
+            {reviews.slice(0, showReviewsCount).map((review) => (
+              <ListGroup.Item key={review.reviewId} className="js-review-item">
+                <Row>
+                    <img
+                      src={review.imageUrl || "https://via.placeholder.com/40x40"}
+                      alt="리뷰 프로필 이미지"
+                      className="img-fluid rounded-circle"
+                    />
+                  <Col xs={10}>
+                    {/* <p className="fw-bold">{users.userName}</p> */}
+                    <p className="text-muted small">{review.reviewDate}</p>
+                  </Col>
+                  <Col>
+                    <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
+                  </Col>
+                  <Row>
+                    <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
+                    <Col>
+                      <p>{review.reviewContent}</p>
+                    </Col>
+                  </Row>
+                </Row>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+          <Button variant="primary" onClick={handleShowMoreReviews} className="js-more-btn mt-3">
+            더보기
+          </Button>
         </Col>
       </Row>
     </Container>
