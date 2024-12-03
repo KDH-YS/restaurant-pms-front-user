@@ -83,10 +83,7 @@ const Reserve = () => {
 
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
-  // 날짜가 오늘보다 이전일 경우 비활성화
-  const isValidDate = (date) => {
-    return date >= currentDateTime;
-  };
+
 
   // 예약 시간 선택 제한
   const isValidTime = (timeOption) => {

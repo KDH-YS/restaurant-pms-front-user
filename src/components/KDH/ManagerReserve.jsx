@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col, Card, Form, Pagination, Dropdown } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form, Dropdown } from 'react-bootstrap';
+
+import usePaginationStore from 'store/pagination';
+import PaginationComponent from './PaginationComponent';
 
 const ManagerReserve = () => {
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [statusUpdates, setStatusUpdates] = useState({});
-  const [pageGroup, setPageGroup] = useState(1);
   const [restaurantId, setRestaurantId] = useState(123);
 
   const itemsPerPage = 6;
   const itemsPerGroup = 30;
   const statusOptions = ['ALL', 'CANCELREQUEST', 'PENDING', 'RESERVING', 'NOSHOW', 'COMPLETE'];
+
+
+  const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
 
   useEffect(() => {
     fetchReservations();
@@ -90,54 +93,16 @@ const ManagerReserve = () => {
   };
 
 
-  const handlePagination = () => {
-    const pageStart = (pageGroup - 1) * 5 + 1;
-    const pageEnd = Math.min(pageStart + 4, totalPages);
 
-    const handlePrevGroup = () => {
-      if (pageGroup > 1) {
-        const newPageGroup = pageGroup - 1;
-        setPageGroup(newPageGroup);
-        setCurrentPage(newPageGroup * 5);
-      }
-    };
-
-    const handleNextGroup = () => {
-      if (pageGroup * 5 < totalPages) {
-        const newPageGroup = pageGroup + 1;
-        setPageGroup(newPageGroup);
-        setCurrentPage((newPageGroup - 1) * 5 + 1);
-      }
-    };
-
-    return (
-      <>
-        <Pagination.Prev
-          disabled={pageGroup === 1}
-          onClick={handlePrevGroup}
-        />
-        {[...Array(pageEnd - pageStart + 1)].map((_, index) => (
-          <Pagination.Item
-            key={pageStart + index}
-            active={pageStart + index === currentPage}
-            onClick={() => setCurrentPage(pageStart + index)}
-          >
-            {pageStart + index}
-          </Pagination.Item>
-        ))}
-        <Pagination.Next
-          disabled={pageGroup * 5 >= totalPages}
-          onClick={handleNextGroup}
-        />
-      </>
-    );
-  };
 
   const currentReservations = filteredReservations.slice(
     ((currentPage - 1) % 5) * itemsPerPage, 
     ((currentPage - 1) % 5 + 1) * itemsPerPage
   );
-
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    // 필요한 경우 여기서 새로운 데이터를 불러올 수 있습니다.
+  };
   return (
     <Container className="reservation-status-container">
       <h3>나의 레스토랑 예약 현황</h3>
@@ -233,9 +198,7 @@ const ManagerReserve = () => {
         ))}
       </Row>
 
-      <Pagination>
-        {handlePagination()}
-      </Pagination>
+      <PaginationComponent onPageChange={handlePageChange} />
     </Container>
   );
 };

@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col, Card, Form, Modal, Pagination } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form, Modal } from 'react-bootstrap';
 import 'css/KDH/ReservationStatus.css';
 import * as PortOne from '@portone/browser-sdk/v2';
 import { useNavigate } from 'react-router-dom';
-import RSstate from 'store/RSstate'; 
+import usePaginationStore from 'store/pagination';
+import PaginationComponent from './PaginationComponent';
 
 const ReservationStatus = () => {
-  const { reservations, setReservations, selectedReservation, setSelectedReservation, showModal, setShowModal,
-    newDate, setNewDate, newTime, setNewTime, newPeople, setNewPeople, newRequest, setNewRequest,
-    currentPage, setCurrentPage, totalPages, setTotalPages } = RSstate();
+  const [reservations, setReservations] = useState([]); // 예약 리스트
+  const [selectedReservation, setSelectedReservation] = useState(null); // 선택된 예약
+  const [showModal, setShowModal] = useState(false); // 모달 표시 여부
+  const [newDate, setNewDate] = useState(''); // 새로 입력된 날짜
+  const [newTime, setNewTime] = useState(''); // 새로 입력된 시간
+  const [newPeople, setNewPeople] = useState(''); // 새로 입력된 인원수
+  const [newRequest, setNewRequest] = useState(''); // 새로 입력된 요청사항
 
-    const [pageGroup, setPageGroup] = useState(1);
-    const itemsPerPage = 6;
+
+    const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
+
+    const itemsPerPage = 6;  //  한 페이지에 보여줄 아이템 수
     const itemsPerGroup = 30; // 한 그룹당 보여줄 아이템 수
     const history = useNavigate();
 
@@ -21,8 +28,6 @@ const ReservationStatus = () => {
       try {
         const response = await fetch(`http://localhost:8080/api/reservations?userId=1&page=${pageGroup}&size=${itemsPerGroup}`);
         const data = await response.json();
-        console.log("겟요청실행");
-        console.log(data);
         setReservations(data.list);
         setTotalPages(Math.ceil(data.total / itemsPerPage));
       } catch (error) {
@@ -32,8 +37,6 @@ const ReservationStatus = () => {
   
     useEffect(() => {
       fetchReservations();
-      setCurrentPage((pageGroup - 1) * 5 + 1);
-      console.log(pageGroup);
     }, [pageGroup]);
 
   const handleOpenChangeModal = (reservation) => {
@@ -71,9 +74,11 @@ const ReservationStatus = () => {
 
   const handleSaveChanges = async () => {
     const updatedReservation = {
+      restaurantName: selectedReservation.restaurantName,
       reservationTime: `${newDate}T${newTime}:00`,
       numberOfPeople: newPeople,
       request: newRequest,
+      status:selectedReservation.status,
       reservationId: selectedReservation.reservationId,
     };
 
@@ -165,50 +170,12 @@ const ReservationStatus = () => {
     ((currentPage - 1) % 5 + 1) * itemsPerPage
   );
 
-  const handlePagination = () => {
-    const pageStart = (pageGroup - 1) * 5 + 1;
-    const pageEnd = Math.min(pageStart + 4, totalPages);
 
-    const handlePrevGroup = () => {
-      if (pageGroup > 1) {
-        const newPageGroup = pageGroup - 1;
-        setPageGroup(newPageGroup);
-        setCurrentPage(newPageGroup * 5);
-      }
-    };
 
-    const handleNextGroup = () => {
-      if (pageGroup * 5 < totalPages) {
-        const newPageGroup = pageGroup + 1;
-        setPageGroup(newPageGroup);
-        setCurrentPage((newPageGroup - 1) * 5 + 1);
-      }
-    };
-
-    return (
-      <>
-        <Pagination.Prev
-          disabled={pageGroup === 1}
-          onClick={handlePrevGroup}
-        />
-        {[...Array(pageEnd - pageStart + 1)].map((_, index) => (
-          <Pagination.Item
-            key={pageStart + index}
-            active={pageStart + index === currentPage}
-            onClick={() => setCurrentPage(pageStart + index)}
-          >
-            {pageStart + index}
-          </Pagination.Item>
-        ))}
-        <Pagination.Next
-          disabled={pageGroup * 5 >= totalPages}
-          onClick={handleNextGroup}
-        />
-      </>
-    );
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    // 필요한 경우 여기서 새로운 데이터를 불러올 수 있습니다.
   };
-
-  
 
   return (
     <Container className="reservation-status-container">
@@ -248,9 +215,7 @@ const ReservationStatus = () => {
         ))}
       </Row>
 
-      <Pagination>
-        {handlePagination()}
-      </Pagination>
+      <PaginationComponent onPageChange={handlePageChange} />
 
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
