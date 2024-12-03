@@ -1,34 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
-import ReviewCard from '../../components/restaurants/ReviewCard.js';
 
 function MainPage() {
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (query) {
+      // 검색어를 URL 쿼리 파라미터로 전달하여 MenuPage로 이동
+      navigate(`/restaurant?query=${query}`);
+    }
+  };
+
   return (
     <div className="App">
       <div className="imageContainer">
         <div className="image">
           <img src="/foodimg1.jpg" alt="Food" className="img-fluid" />
           <div className="searchBtn">
-            <Form className="d-flex">
+            <Form className="d-flex" onSubmit={handleSearch}>
               <Form.Control
                 type="text"
-                className='scInput'
-                placeholder='가게 명 검색'
+                className="scInput"
+                placeholder="전체 검색"
+                value={query}
+                onChange={handleInputChange}
                 style={{ width: '80%' }}
               />
-              <Button type="submit" className='scBtn btn-warning ms-2'>입력</Button>
+              <Button type="submit" className="scBtn btn-warning ms-2">
+                검색
+              </Button>
             </Form>
           </div>
         </div>
       </div>
 
       <Container>
-        <h1 className='reviewHd mt-4'>Review</h1>
-        <ReviewCard />
-
-        <h1 className='reviewHd mt-4'>Magazine</h1>
-        {/* <Review/> */}
+        <h1 className="reviewHd mt-4">Review</h1>
       </Container>
     </div>
   );

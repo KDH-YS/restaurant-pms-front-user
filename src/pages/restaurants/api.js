@@ -14,18 +14,23 @@ export const fetchRestaurants = async (page = 1, size = 24) => {
   }
 };
 
-//레스토랑 검색 api
+// 레스토랑 검색 및 전체 검색 API 통합
 export const searchRestaurants = async (searchParams) => {
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant/search`, { 
-      params: searchParams,
-     });
+    // query가 존재하면 전체 검색을, 없으면 일반 검색을 처리
+    const endpoint = `${BASE_URL}/restaurant/search`;
+
+    const response = await axios.get(endpoint, {
+      params: searchParams,  // 검색 조건을 params로 전달
+    });
+
     return response.data;
   } catch (error) {
     console.error('Error searching restaurants:', error);
     throw new Error('레스토랑 검색에 실패했습니다.');
   }
 };
+
 
 // 레스토랑 상세 정보를 가져오는 함수
 export const fetchRestaurantDetail = async (restaurantId) => {
