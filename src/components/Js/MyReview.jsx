@@ -4,10 +4,10 @@ import "../../css/main.css";
 import "../../css/myreview.css";
 
 export function MyReview() {
-  const [reviews, setReviews] = useState([]); // 내 리뷰 상태
-  const [reviewImg, setReviewImg] = useState([]); // 리뷰 이미지 상태
-  const [user, setUser] = useState({}); // 유저정보 상태
-  const [reviewsToShow, setReviewsToShow] = useState(2); // 표시할 리뷰 수 상태
+  const [reviews, setReviews] = useState([]);
+  const [reviewImg, setReviewImg] = useState([]);
+  const [user, setUser] = useState({});
+  const [reviewsToShow, setReviewsToShow] = useState(2);
 
   // 유저정보를 가져오는 API 요청
   const fetchUser = async () => {
@@ -30,8 +30,8 @@ export function MyReview() {
       const response = await fetch(`http://localhost:8080/api/mypage/1/reviews`);
       if (response.ok) {
         const data = await response.json();
-        setReviews(data.reviews); // 리뷰 데이터 설정
-        setReviewImg(data.reviewImages); // 리뷰 이미지 설정
+        setReviews(data.reviews);
+        setReviewImg(data.reviewImages);
       } else {
         console.error("리뷰 정보를 가져오는 데 실패했습니다.");
       }
@@ -40,52 +40,50 @@ export function MyReview() {
     }
   };
 
-  // 유저정보와 내 리뷰 데이터를 가져옴
   useEffect(() => {
     fetchUser();
     fetchMyReviews();
   }, []);
 
-  // 더보기 버튼 클릭 시 추가 리뷰 불러오기
   const handleShowMoreReviews = () => {
-    setReviewsToShow(reviewsToShow + 2); // 2개씩 추가로 불러오기
+    setReviewsToShow(reviewsToShow + 2);
   };
 
   return (
     <Container className="mt-4">
-      <Row className="mb-4">
-        <Col md={4}>
-          <div className="js_user_info text-center">
+      <Row className="mb-4 justify-content-center">
+        <Col md={8} className="text-center">
+          <div className="js-user-info">
             <img
               src={user.profileImageUrl || "https://via.placeholder.com/100x100"}
               alt="User Profile"
-              className="img-fluid rounded-circle"
+              className="img-fluid rounded-circle js-user-profile-img"
             />
-            <p>{user.name}</p>
+            <h2 className="js-user-name">{user.name}</h2>
           </div>
         </Col>
-        <Col md={8}>
-          <h3>내 리뷰</h3>
-          <ListGroup>
-            {/* 리뷰 목록을 조건에 맞게 보여줌 */}
+      </Row>
+      <Row className="mb-4">
+        <Col md={12}>
+          <h3 className="js-section-title">내 리뷰</h3>
+          <ListGroup className="js-review-list">
             {Array.isArray(reviews) && reviews.length > 0 ? (
               reviews.slice(0, reviewsToShow).map((review) => {
                 const image = reviewImg.find((img) => img.reviewId === review.reviewId);
                 return (
-                  <ListGroup.Item key={review.reviewId} className="d-flex align-items-center">
-                    <div className="review-img-container me-3">
-                      <img
-                        src={image ? image.imageUrl : "https://via.placeholder.com/300x360"}
-                        alt={review.restaurantName}
-                        className="img-fluid"
-                        style={{ maxWidth: "150px", maxHeight: "150px" }}
-                      />
-                    </div>
-                    <div>
-                      <p>{review.reviewContent}</p>
-                      <p><strong>{review.restaurantName}</strong></p>
-                      <p>{review.restaurantAddress}</p>
-                    </div>
+                  <ListGroup.Item key={review.reviewId} className="js-review-item mb-3">
+                    <Row classNam e="align-items-center">
+                      <Col md={2} xs={3} className="text-center">
+                        <img
+                          src={image ? image.imageUrl : "https://via.placeholder.com/100x100"}
+                          alt={review.restaurantName}
+                          className="img-fluid rounded js-review-image"
+                        />
+                      </Col>
+                      <Col md={10} xs={9}>
+                        <p className="js-review-content">{review.reviewContent}</p>
+                      </Col>
+                    </Row>
                   </ListGroup.Item>
                 );
               })
@@ -93,15 +91,12 @@ export function MyReview() {
               <p>리뷰가 없습니다.</p>
             )}
           </ListGroup>
-
-          {/* 더보기 버튼 */}
           {reviews.length > reviewsToShow && (
             <Button
               variant="primary"
               size="lg"
-              block
+              className="js-more-btn mt-3 w-100"
               onClick={handleShowMoreReviews}
-              className="mt-3"
             >
               더보기
             </Button>
