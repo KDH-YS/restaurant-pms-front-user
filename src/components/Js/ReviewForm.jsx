@@ -171,7 +171,6 @@ export function ReviewForm() {
               <Form.Label>리뷰 내용</Form.Label>
               <Form.Control
                 as="textarea"
-                style={{ height: "200px" }}
                 value={reviewContent}
                 onChange={(e) => setReviewContent(e.target.value)}
                 placeholder="리뷰를 작성해주세요"

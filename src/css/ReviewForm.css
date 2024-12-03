@@ -32,13 +32,13 @@
 }
 
 /* 카드에 마우스 오버 제거 */
-.no-hover {
-  transition: none;
+.no-hover:hover {
+  cursor: default;
 }
 
-.no-hover:hover {
-  transform: none;
-  box-shadow: none;
+#reviewContent {
+  height: 200px;
+  resize: none;
 }
 
 /* 반응형 스타일 */
