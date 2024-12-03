@@ -10,6 +10,7 @@ import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
 import SchedulePage from "Router/SchedulePage.jsx";
+import ManagerReservePage from "Router/ManagerReservePage.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/Schedule" element={< SchedulePage/>} />
           <Route path="/Restaurant/info" element={<RestaurantInfo />} />
           <Route path="/Reserve" element={<ReservePage />} />
+          <Route path="/manager/reserve" element={<ManagerReservePage />} />
           <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
           <Route path="/Reservemain" element={<ReserveMainPage/>} />
           <Route path="/Mypage" element={<Mypage/>} />
