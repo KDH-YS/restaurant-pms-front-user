@@ -12,10 +12,11 @@ import Mypage from "./Router/Mypage.jsx"
 import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
+import InquiryPage from "./Router/Inquiry.jsx"
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter> 
       <div className="App">
         <Routes>
           <Route path="/" element={<User />} />
@@ -29,6 +30,7 @@ function App() {
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
           <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
+          <Route path="/Inquiry" element={<InquiryPage/>}></Route>
                 
         </Routes>
       </div>
