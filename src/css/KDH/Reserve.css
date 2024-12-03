@@ -1,157 +1,43 @@
-/* 공통 폰트 설정 */
-
-
-/* 전체 예약 페이지 컨테이너 */
-.reserve-container {
-    margin: 2rem auto;
-    max-width: 1280px;
-}
-
-/* 예약 상세 영역 스타일 */
-.reservation-details {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* 제목 스타일 */
-.reservation-details h3 {
-    color: #FF5733;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-/* 폼 스타일 */
-form .form-label {
-    color: #333;
-    font-weight: bold;
-}
-
-form .form-control {
-    border-radius: 5px;
-    box-shadow: none;
-}
-
-/* 버튼 스타일 */
-button {
-    background-color: #FF5733;
-    border: none;
-    padding: 0.8rem 2rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #e64a28;
-}
-
-/* 캘린더 스타일 */
 .react-calendar {
-    width: 700px;
-    height: 100%;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 1, 0.1);
+  width: 100%;
+  border: none;
+  font-family: system-ui, -apple-system, sans-serif;
 }
-.calendar-section{
-    padding-left: 0 !important;
-}
+
 .react-calendar__tile {
-    padding: 20px 10px;
-    border-radius: 8px;
+  padding: 1em 0.5em;
+  font-size: 0.875rem;
 }
 
-.react-calendar__navigation__label {
-    width: 100%;
-    padding: 15px 0;
+.react-calendar__tile--active {
+  background: #007bff !important;
+  color: white;
 }
 
-.react-calendar>button {
-    padding: 10px;
+.react-calendar__tile--now {
+  background: #f8f9fa;
 }
 
-.react-calendar__tile--active,
-.react-calendar__tile:hover {
-    background-color: #FF5733;
-    font-weight: bold;
+.react-calendar__navigation button {
+  font-size: 1.25rem;
+  padding: 0.5em;
 }
 
-.react-calendar__month-view__days__day--neighboringMonth{
-    color: gray !important;
+.react-calendar__navigation button:disabled {
+  background-color: transparent;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #dc3545;
 }
 
 .saturday {
-    color: blue;
+  color: #0056b3;
 }
-
-
-/* 레스토랑 정보 섹션 스타일 */
-.restaurant-info {
-    background-color: #FF5733;
-    color: white;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border-radius: 10px;
+.react-calendar__month-view__days__day--neighboringMonth{
+  color: gray;
 }
-
-.restaurant-info .restaurant-details h4 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.restaurant-info .restaurant-details p {
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-}
-
-/* 리뷰 섹션 스타일 */
-.reviews {
-    margin-top: 20px !important;
-}
-.reviews-section{
-    padding: 0 !important;
-}
-.reviews-col {
-    padding: 0 !important;
-    margin-top: 30px !important;
-}
-
-.reviews-section h3 {
-    color: #FF5733;
-    margin-bottom: 1rem;
-}
-
-.review-card {
-    margin-bottom: 1rem;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.review-card .card-title {
-    font-weight: bold;
-    color: #333;
-}
-
-.review-card .card-text {
-    color: #333;
-}
-
-/* 예약 요약 영역 스타일 */
-.reservation-summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.reservation-summary strong {
-    font-size: 20px;
-}
-
-.reservation-summary button {
-    margin-left: 20px;
+.reservetimebutton{
+  margin-top: 8px;
+  margin-bottom: 0 !important;
 }

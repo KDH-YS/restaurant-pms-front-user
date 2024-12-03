@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
+import { Button, Container, Form, Card, Row, Col } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import 'react-calendar/dist/Calendar.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import 'css/KDH/Reserve.css';
+import restaurantimg from "img/restaurant.jpg";
 
 const Reserve = () => {
   const navigate = useNavigate();
@@ -74,7 +76,7 @@ const Reserve = () => {
 
   const renderReviews = () =>
     reviews.map((review) => (
-      <Card key={review.id} className="review-card">
+      <Card key={review.id} className="mb-3">
         <Card.Body>
           <Card.Title>{review.username}</Card.Title>
           <Card.Text>{review.comment}</Card.Text>
@@ -84,68 +86,77 @@ const Reserve = () => {
     ));
 
   return (
-    <Container className="reserve-container">
-      <Row className="restaurant-info">
-        <Col>
-          <div className="restaurant-details">
-            <h4>[레스토랑 이름 서버에서 받아오기]</h4>
-            <p><strong>레스토랑 이름:</strong> 레스토랑</p>
-            <p><strong>위치:</strong> 서울시 강남구 123-45</p>
-            <p><strong>전화번호:</strong> 02-1234-5678</p>
-            <p><strong>영업시간:</strong> 10:00 AM - 10:00 PM</p>
+    <Container className="py-4">
+      <Card className="mb-4">
+        <Card.Img variant="top" src={restaurantimg} style={{ height: '400px', objectFit: 'cover' }} />
+        <Card.Body>
+          <Card.Title className="h4 mb-2">가게 이름</Card.Title>
+          <Card.Text className="text-muted">서울특별시 강남구 역삼동 123-45</Card.Text>
+        </Card.Body>
+      </Card>
+
+      <Card className="mb-4">
+        <Card.Body>
+          <Calendar 
+            onChange={handleDateChange} 
+            value={date} 
+            tileClassName={tileClassName} 
+            prevLabel="<" 
+            nextLabel=">"
+            className="w-100 border-0"
+          />
+        </Card.Body>
+      </Card>
+
+      <Card className="mb-4">
+        <Card.Body>
+          <Card.Title className="h5 mb-3 reservetimebutton">예약시간</Card.Title>
+          <Row>
+            {TIME_OPTIONS.slice(1).map((option) => (
+              <Col key={option.value} xs={6} sm={3} className="mb-2">
+                <Button
+                  variant={time === option.value ? "primary" : "outline-primary"}
+                  className="w-100"
+                  onClick={() => setTime(option.value)}
+                >
+                  {option.label}
+                </Button>
+              </Col>
+            ))}
+          </Row>
+        </Card.Body>
+      </Card>
+
+      <Card className="mb-4">
+        <Card.Body>
+          <Card.Title className="h5 mb-3">요청사항</Card.Title>
+          <Form.Control
+            as="textarea"
+            rows={4}
+            value={request}
+            onChange={(e) => setRequest(e.target.value)}
+            placeholder="요청사항을 입력해주세요"
+          />
+        </Card.Body>
+      </Card>
+
+      <Card>
+        <Card.Body className="d-flex justify-content-between align-items-center">
+          <div className="h5 mb-0">
+            총 금액: {totalPrice.toLocaleString()}원
           </div>
-        </Col>
-      </Row>
-
-      <Row className="main-content">
-        <Col md={6} className="calendar-section">
-          <Calendar onChange={handleDateChange} value={date} tileClassName={tileClassName} prevLabel="<" nextLabel=">" />
-        </Col>
-        <Col md={6} className="reservation-details">
-          <h3>예약 상세 정보</h3>
-          <Form>
-            <Form.Group controlId="formTime">
-              <Form.Label>시간 선택</Form.Label>
-              <Form.Control as="select" value={time} onChange={handleInputChange(setTime)}>
-                {TIME_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="formPeople">
-              <Form.Label>인원 수</Form.Label>
-              <Form.Control
-                type="number"
-                min="1"
-                value={people}
-                onChange={handlePeopleChange} // 인원 수가 변경될 때마다 handlePeopleChange 호출
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formRequest">
-              <Form.Label>요청 사항</Form.Label>
-              <Form.Control as="textarea" rows={3} value={request} onChange={handleInputChange(setRequest)} />
-            </Form.Group>
-
-            <div className="reservation-summary">
-              <strong>총 금액: {totalPrice} 원</strong>
-              <Button variant="primary" onClick={handleReserve}>
-                예약하기
-              </Button>
-            </div>
-          </Form>
-        </Col>
-      </Row>
-
-      <Row className="reviews">
-        <Col className="reviews-section">
-          <h3>고객 리뷰</h3>
-          {renderReviews()}
-        </Col>
-      </Row>
+          <Button
+            variant="primary"
+            className="ms-auto"
+            onClick={handleReserve}
+          >
+            예약하기
+          </Button>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };
 
 export default Reserve;
+
