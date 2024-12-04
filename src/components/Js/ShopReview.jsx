@@ -83,6 +83,7 @@ export function ShopReview() {
         });
 
         if (response.ok) {
+          alert("신고가 성공적으로 접수되었습니다.");
           console.log("신고가 성공적으로 접수되었습니다.");
         } else {
           console.error("신고를 접수하는 데 실패했습니다.");
