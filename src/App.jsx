@@ -30,7 +30,7 @@ function App() {
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
           <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
-          <Route path="/Inquiry" element={<InquiryPage/>}></Route>
+          <Route path="/inquiry" element={<InquiryPage/>}></Route>
                 
         </Routes>
       </div>

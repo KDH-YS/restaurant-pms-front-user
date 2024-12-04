@@ -18,6 +18,7 @@ export function ShopReview() {
       const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data.restaurantImg);
         setRestaurant(data.restaurant);
         setRestaurantImg(data.restaurantImg);
       } else {
