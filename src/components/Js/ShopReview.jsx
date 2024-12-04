@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, ListGroup, ProgressBar } from "react-bootstrap";
+import { Container, Row, Col, Button, ListGroup, ProgressBar, Modal, Form } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/shopReview.css";
-import { useIsRTL } from "react-bootstrap/esm/ThemeProvider";
 
 export function ShopReview() {
   const [restaurantId] = useState(1);
@@ -12,6 +11,10 @@ export function ShopReview() {
   const [restaurantImg, setRestaurantImg] = useState([]);
   const [showReviewsCount, setShowReviewsCount] = useState(3);
   const [showPhotosCount, setShowPhotosCount] = useState(3);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReviewId, setReportReviewId] = useState(null);
+  const [reportContent, setReportContent] = useState("");
+  const [reportReason, setReportReason] = useState("OTHER");
 
   const fetchRestaurant = async () => {
     try {
@@ -56,6 +59,41 @@ export function ShopReview() {
 
   const handleShowMorePhotos = () => {
     setShowPhotosCount(showPhotosCount + 3);
+  };
+
+  const handleReportClick = (reviewId) => {
+    setReportReviewId(reviewId);
+    setShowReportModal(true);
+  };
+
+  const handleReportSubmit = async () => {
+    if (reportReviewId && reportContent) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/reviews/${reportReviewId}/report`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reviewId: reportReviewId,
+            userId: 1,
+            reason: reportReason,
+            reportDescription: reportContent,
+          }),
+        });
+
+        if (response.ok) {
+          console.log("신고가 성공적으로 접수되었습니다.");
+        } else {
+          console.error("신고를 접수하는 데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error("신고를 접수하는 중 오류 발생:", error);
+      }
+    }
+    setShowReportModal(false);
+    setReportContent("");
+    setReportReason("OTHER");
   };
 
   return (
@@ -126,17 +164,22 @@ export function ShopReview() {
             {reviews.slice(0, showReviewsCount).map((review) => (
               <ListGroup.Item key={review.reviewId} className="js-review-item">
                 <Row>
-                    <img
-                      src={review.imageUrl || "https://via.placeholder.com/40x40"}
-                      alt="리뷰 프로필 이미지"
-                      className="img-fluid rounded-circle"
-                    />
+                  <img
+                    src={review.imageUrl || "https://via.placeholder.com/40x40"}
+                    alt="리뷰 프로필 이미지"
+                    className="img-fluid rounded-circle"
+                  />
                   <Col xs={10}>
-                    {/* <p className="fw-bold">{users.userName}</p> */}
                     <p className="text-muted small">{review.reviewDate}</p>
                   </Col>
                   <Col>
-                    <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
+                    <img
+                      src="/icons/siren.png"
+                      alt="신고하기"
+                      onClick={() => handleReportClick(review.reviewId)}
+                      style={{ cursor: "pointer" }}
+                    />
+                    <img src="/icons/heart-regular.svg" alt="좋아요" />
                   </Col>
                   <Row>
                     <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
@@ -153,6 +196,47 @@ export function ShopReview() {
           </Button>
         </Col>
       </Row>
+
+      {/* 신고 작성 모달 */}
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>리뷰 신고하기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="reportReason">
+              <Form.Label>신고 이유</Form.Label>
+              <Form.Control
+                as="select"
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+              >
+                <option value="OTHER">기타</option>
+                <option value="INAPPROPRIATE">부적절한 내용</option>
+                <option value="FAKE">가짜 리뷰</option>
+                <option value="OFFENSIVE">모욕적 언어 사용</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="reportContent">
+              <Form.Label>신고 내용</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={reportContent}
+                onChange={(e) => setReportContent(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowReportModal(false)}>
+            취소
+          </Button>
+          <Button variant="primary" onClick={handleReportSubmit}>
+            신고하기
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

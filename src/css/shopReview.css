@@ -78,7 +78,7 @@
   padding: 15px;
 }
 
-.js-review-item > div >img {
+.js-review-item > div > img {
   width: 40px;
   height: 40px;
   padding: 0;
@@ -88,6 +88,12 @@
   width: 100px;
   height: 100px;
   padding: 0;
+}
+.js-review-item > div > div.col > img {
+  float: right;
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
 }
 
 /* 버튼 */
