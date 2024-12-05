@@ -13,6 +13,8 @@ import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
 import InquiryPage from "./Router/Inquiry.jsx"
+import SchedulePage from "Router/SchedulePage.jsx";
+import ManagerReservePage from "Router/ManagerReservePage.jsx";
 
 function App() {
   return (
