@@ -7,12 +7,12 @@ function MenuCard() {
   const navigate = useNavigate();  // navigate 훅을 사용하여 페이지 이동
 
   const menuItems = [
-    { id: 1, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
-    { id: 2, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
-    { id: 3, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
-    { id: 4, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
-    { id: 5, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
-    { id: 6, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/foodimg1.jpg" },
+    { id: 1, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/img/foodimg1.jpg" },
+    { id: 2, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/img/foodimg1.jpg" },
+    { id: 3, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/img/foodimg1.jpg" },
+    { id: 4, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/img/foodimg1.jpg" },
+    { id: 5, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/img/foodimg1.jpg" },
+    { id: 6, title: "가게이름", description: "안녕하세용 길고긴 설명을 씁니다 1234564564950823", imgSrc: "/img/foodimg1.jpg" },
   ];
 
   const handleCardClick = () => {

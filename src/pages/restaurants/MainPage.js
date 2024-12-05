@@ -8,7 +8,7 @@ function MainPage() {
     <div className="App">
       <div className="imageContainer">
         <div className="image">
-          <img src="/foodimg1.jpg" alt="Food" className="img-fluid" />
+          <img src="/img/foodimg1.jpg" alt="Food" className="img-fluid" />
           <div className="searchBtn">
             <Form className="d-flex">
               <Form.Control
