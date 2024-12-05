@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card, Dropdown } from 'react-bootstrap';
 import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css'; // 캘린더 스타일
 
 const ManagerReserve = () => {
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [statusUpdates, setStatusUpdates] = useState({});
-  const [restaurantId, setRestaurantId] = useState(123);
+  const [restaurantId] = useState(123);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [datesWithReservations, setDatesWithReservations] = useState([]);
 
   const itemsPerPage = 6;
   const itemsPerGroup = 30;
@@ -20,23 +24,37 @@ const ManagerReserve = () => {
     fetchReservations();
   }, [pageGroup]);
 
+  useEffect(() => {
+    filterByDate(selectedDate);
+  }, [selectedDate]);
+
   const fetchReservations = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`);
       const data = await response.json();
-      setReservations(data.list || []);
-      setFilteredReservations(data.list || []);
+      const reservationList = data.list || [];
+      setReservations(reservationList);
+      setFilteredReservations(reservationList);
       setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
+
+      // 예약이 있는 날짜 목록을 업데이트
+      const dates = reservationList.map((reservation) => reservation.reservationTime.split('T')[0]);
+      setDatesWithReservations([...new Set(dates)]); // 중복 제거
     } catch (error) {
       console.error('예약 정보를 가져오는 중 오류 발생:', error);
     }
   };
 
+  const filterByDate = (date) => {
+    const selectedDateString = date.toISOString().split('T')[0];
+    const filtered = reservations.filter((reservation) => reservation.reservationTime.split('T')[0] === selectedDateString);
+    setFilteredReservations(filtered);
+    setCurrentPage(1);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+  };
+
   const filterReservations = (status) => {
-    let filtered = reservations;
-    if (status !== 'ALL') {
-      filtered = reservations.filter((reservation) => reservation.status === status);
-    }
+    const filtered = status === 'ALL' ? reservations : reservations.filter((reservation) => reservation.status === status);
     setFilteredReservations(filtered);
     setCurrentPage(1);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
@@ -86,11 +104,12 @@ const ManagerReserve = () => {
     }
   };
 
-  const setReservationStatus = (reservationId, status) => {
+  const handleStatusChange = (reservationId, status) => {
     setStatusUpdates((prev) => ({ ...prev, [reservationId]: status }));
   };
 
   const statusLabels = {
+    ALL: '모두',
     CANCELREQUEST: '취소 요청',
     COMPLETE: '방문 완료',
     RESERVING: '예약 중',
@@ -99,40 +118,62 @@ const ManagerReserve = () => {
   };
 
   const currentReservations = filteredReservations.slice(
-    ((currentPage - 1) % 5) * itemsPerPage, 
-    ((currentPage - 1) % 5 + 1) * itemsPerPage
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
+  const tileClassName = ({ date, view }) => {
+    // 현재 날짜가 예약된 날짜 목록에 포함되면 예약된 날짜로 표시
+    const dateString = date.toISOString().split('T')[0];
+    if (datesWithReservations.includes(dateString)) {
+      return 'reserved-date'; // 예약된 날짜에 클래스를 추가
+    }
+    return '';
+  };
+
   return (
     <Container className="reservation-status-container">
-      <h3>나의 레스토랑 예약 현황</h3>
-      <div className="mb-3">
-        <Dropdown>
-          <Dropdown.Toggle variant="secondary" id="status-filter">
-            {statusFilter}
-          </Dropdown.Toggle>
+      <Row className="mb-3" style={{ marginTop: '20px' }}>
+        <Col>
+          <h3>나의 레스토랑 예약 현황</h3>
+        </Col>
+        <Col className="text-end">
+          <Dropdown>
+            <Dropdown.Toggle variant="secondary" id="status-filter">
+              {statusFilter}
+            </Dropdown.Toggle>
 
-          <Dropdown.Menu>
-            {statusOptions.map((status) => (
-              <Dropdown.Item
-                key={status}
-                onClick={() => {
-                  setStatusFilter(status);
-                  filterReservations(status);
-                }}
-              >
-                {statusLabels[status] || status}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
+            <Dropdown.Menu>
+              {statusOptions.map((status) => (
+                <Dropdown.Item
+                  key={status}
+                  onClick={() => {
+                    setStatusFilter(statusLabels[status]);
+                    filterReservations(status);
+                  }}
+                >
+                  {statusLabels[status] || status}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Col>
+      </Row>
 
-      {/* 예약 정보 부분 */}
+      <Row className="mb-3">
+        <Col>
+          <Calendar
+            onChange={setSelectedDate}
+            value={selectedDate}
+            tileClassName={tileClassName} // 날짜에 예약이 있는지 체크
+          />
+        </Col>
+      </Row>
+
       <Row>
         {currentReservations.map((reservation) => (
           <Col md={6} key={reservation.reservationId} className="mb-3">
@@ -140,9 +181,8 @@ const ManagerReserve = () => {
               <Card.Header className="fs-5">예약</Card.Header>
               <Card.Body style={{ cursor: 'default' }}>
                 <div className="d-flex">
-                  {/* 이미지 부분 */}
                   <img
-                    src={reservation.user?.profileImageUrl} // 주스탠드에서 받아올 이미지 URL
+                    src={reservation.user?.profileImageUrl}
                     alt={reservation.user?.userName}
                     style={{
                       width: '80px',
@@ -164,14 +204,14 @@ const ManagerReserve = () => {
                 </div>
                 <div className="d-flex justify-content-end p-3">
                   <Dropdown>
-                    <Dropdown.Toggle variant="info" id={`status-update-${reservation.reservationId}`}>
+                    <Dropdown.Toggle variant="secondary" id={`status-update-${reservation.reservationId}`}>
                       {statusUpdates[reservation.reservationId] || '상태 변경'}
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       {statusOptions.map((status) => (
                         <Dropdown.Item
                           key={status}
-                          onClick={() => setReservationStatus(reservation.reservationId, status)}
+                          onClick={() => handleStatusChange(reservation.reservationId, statusLabels[status])}
                         >
                           {statusLabels[status] || status}
                         </Dropdown.Item>

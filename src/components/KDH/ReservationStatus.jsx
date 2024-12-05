@@ -181,7 +181,7 @@ const ReservationStatus = () => {
 <Container className="reservation-status-container">
   {/* 예약 현황 제목 오른쪽 끝 정렬 */}
   <Row className="mb-3">
-    <Col className="text-start">
+    <Col className="text-start" style={{marginTop:"20px"}}>
       <h3>예약 현황</h3>
     </Col>
   </Row>
