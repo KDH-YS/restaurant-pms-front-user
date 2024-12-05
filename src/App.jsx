@@ -8,6 +8,8 @@ import RestaurantInfo from "./Router/RestaurantInfo.jsx"
 import ReservePage from "./Router/Reserve.jsx"
 import ReservationStatusPage from "./Router/ReservationStatusPage.jsx";
 import ReserveMainPage from "./Router/ReserveMainPage.jsx"
+import LoginRouter from "./Router/LoginRouter.jsx";
+import SignupRouter from "./Router/SignupRouter.jsx";
 import Mypage from "./Router/Mypage.jsx"
 import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
@@ -30,6 +32,8 @@ function App() {
           <Route path="/manager/reserve" element={<ManagerReservePage />} />
           <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
           <Route path="/Reservemain" element={<ReserveMainPage/>} />
+          <Route path="/Login" element={<LoginRouter/>} />
+          <Route path="/Signup" element={<SignupRouter/>} />
           <Route path="/Mypage" element={<Mypage/>} />
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
