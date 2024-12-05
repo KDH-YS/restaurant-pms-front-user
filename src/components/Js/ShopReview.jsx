@@ -15,6 +15,7 @@ export function ShopReview() {
   const [reportReviewId, setReportReviewId] = useState(null);
   const [reportContent, setReportContent] = useState("");
   const [reportReason, setReportReason] = useState("OTHER");
+  const [helpfulReviews, setHelpfulReviews] = useState({});
 
   const fetchRestaurant = async () => {
     try {
@@ -34,12 +35,26 @@ export function ShopReview() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}/reviews`);
+      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}/reviews?userId=1`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data.reviews);
-        setReviews(data.reviews);
+        console.log(data);
+        
+        // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
+        const reviewsData = data.reviews.map(reviewData => ({
+          ...reviewData.review, // 리뷰 관련 필드
+          isHelpful: reviewData.isHelpful // 좋아요 여부 필드 추가
+        }));
+  
+        setReviews(reviewsData);
         setReviewImages(data.reviewImages);
+  
+        // 좋아요 상태 설정
+        const helpfulStatus = {};
+        reviewsData.forEach(review => {
+          helpfulStatus[review.reviewId] = review.isHelpful; // 서버에서 가져온 좋아요 상태 반영
+        });
+        setHelpfulReviews(helpfulStatus);
       } else {
         console.error("리뷰 정보를 가져오는 데 실패했습니다.");
       }
@@ -65,6 +80,59 @@ export function ShopReview() {
     setReportReviewId(reviewId);
     setShowReportModal(true);
   };
+  
+  const handleHelpfulClick = async (reviewId) => {
+    const currentStatus = helpfulReviews[reviewId];
+    try {
+      const url = currentStatus
+        ? `http://localhost:8080/api/reviews/${reviewId}/helpful?userId=1`
+        : `http://localhost:8080/api/reviews/${reviewId}/helpful`;
+      const options = {
+        method: currentStatus ? "DELETE" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+  
+      if (!currentStatus) {
+        options.body = JSON.stringify({
+          userId: 1,
+          state: 1
+        });
+      }
+  
+      // 서버 요청 전 UI 상태 업데이트 (로딩 상태 표현)
+      setHelpfulReviews((prev) => ({
+        ...prev,
+        [reviewId]: null,  // null 값으로 설정하여 로딩 중인 상태 표시
+      }));
+  
+      const response = await fetch(url, options);
+  
+      // 서버 응답이 성공적일 때만 상태를 업데이트
+      if (response.ok) {
+        setHelpfulReviews((prev) => ({
+          ...prev,
+          [reviewId]: !currentStatus,
+        }));
+        console.log(currentStatus ? "도움이 취소되었습니다." : "도움이 되었습니다.");
+      } else {
+        // 서버 요청 실패 시 원래 상태 복구
+        setHelpfulReviews((prev) => ({
+          ...prev,
+          [reviewId]: currentStatus,
+        }));
+        console.error("도움이 되었습니다/취소를 처리하는 데 실패했습니다.");
+      }
+    } catch (error) {
+      // 에러 발생 시 원래 상태 복구
+      setHelpfulReviews((prev) => ({
+        ...prev,
+        [reviewId]: currentStatus,
+      }));
+      console.error("도움이 되었습니다/취소를 처리하는 중 오류 발생:", error);
+    }
+  };
 
   const handleReportSubmit = async () => {
     if (reportReviewId && reportContent) {
@@ -83,7 +151,6 @@ export function ShopReview() {
         });
 
         if (response.ok) {
-          alert("신고가 성공적으로 접수되었습니다.");
           console.log("신고가 성공적으로 접수되었습니다.");
         } else {
           console.error("신고를 접수하는 데 실패했습니다.");
@@ -164,30 +231,35 @@ export function ShopReview() {
           <ListGroup>
             {reviews.slice(0, showReviewsCount).map((review) => (
               <ListGroup.Item key={review.reviewId} className="js-review-item">
-                <Row>
+                <Row className="align-items-center">
                   <img
                     src={review.imageUrl || "https://via.placeholder.com/40x40"}
                     alt="리뷰 프로필 이미지"
                     className="img-fluid rounded-circle"
                   />
-                  <Col xs={10}>
-                    <p className="text-muted small">{review.reviewDate}</p>
+                  <Col xs={10} className="d-flex align-items-center">
+                    <p className="text-muted small mb-0">{review.reviewDate}</p>
                   </Col>
-                  <Col>
+                  <Col className="d-flex justify-content-end align-items-center">
                     <img
                       src="/icons/siren.png"
                       alt="신고하기"
                       onClick={() => handleReportClick(review.reviewId)}
+                      style={{ cursor: "pointer", marginRight: "10px" }}
+                    />
+                    <img
+                      src={helpfulReviews[review.reviewId] ? "/icons/heart.svg" : "/icons/heart-regular.svg"}
+                      alt="좋아요"
+                      onClick={() => handleHelpfulClick(review.reviewId)}
                       style={{ cursor: "pointer" }}
                     />
-                    <img src="/icons/heart-regular.svg" alt="좋아요" />
                   </Col>
-                  <Row>
-                    <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
-                    <Col>
-                      <p>{review.reviewContent}</p>
-                    </Col>
-                  </Row>
+                </Row>
+                <Row>
+                  <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
+                  <Col>
+                    <p>{review.reviewContent}</p>
+                  </Col>
                 </Row>
               </ListGroup.Item>
             ))}
