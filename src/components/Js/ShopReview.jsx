@@ -22,7 +22,6 @@ export function ShopReview() {
       const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data.restaurantImg);
         setRestaurant(data.restaurant);
         setRestaurantImg(data.restaurantImg);
       } else {
@@ -38,8 +37,7 @@ export function ShopReview() {
       const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}/reviews?userId=1`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        
+
         // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
         const reviewsData = data.reviews.map(reviewData => ({
           ...reviewData.review, // 리뷰 관련 필드
@@ -68,19 +66,36 @@ export function ShopReview() {
     fetchReviews();
   }, [restaurantId]);
 
-  const handleShowMoreReviews = () => {
-    setShowReviewsCount(showReviewsCount + 3);
+  const handleReportSubmit = async () => {
+    if (reportReviewId && reportContent) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/reviews/${reportReviewId}/report`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reviewId: reportReviewId,
+            userId: 1,
+            reason: reportReason,
+            reportDescription: reportContent,
+          }),
+        });
+
+        if (response.ok) {
+          console.log("신고가 성공적으로 접수되었습니다.");
+        } else {
+          console.error("신고를 접수하는 데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error("신고를 접수하는 중 오류 발생:", error);
+      }
+    }
+    setShowReportModal(false);
+    setReportContent("");
+    setReportReason("OTHER");
   };
 
-  const handleShowMorePhotos = () => {
-    setShowPhotosCount(showPhotosCount + 3);
-  };
-
-  const handleReportClick = (reviewId) => {
-    setReportReviewId(reviewId);
-    setShowReportModal(true);
-  };
-  
   const handleHelpfulClick = async (reviewId) => {
     const currentStatus = helpfulReviews[reviewId];
     try {
@@ -134,41 +149,32 @@ export function ShopReview() {
     }
   };
 
-  const handleReportSubmit = async () => {
-    if (reportReviewId && reportContent) {
-      try {
-        const response = await fetch(`http://localhost:8080/api/reviews/${reportReviewId}/report`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            reviewId: reportReviewId,
-            userId: 1,
-            reason: reportReason,
-            reportDescription: reportContent,
-          }),
-        });
+  const handleShowMoreReviews = () => {
+    setShowReviewsCount(showReviewsCount + 3);
+  };
 
-        if (response.ok) {
-          console.log("신고가 성공적으로 접수되었습니다.");
-        } else {
-          console.error("신고를 접수하는 데 실패했습니다.");
-        }
-      } catch (error) {
-        console.error("신고를 접수하는 중 오류 발생:", error);
-      }
-    }
-    setShowReportModal(false);
-    setReportContent("");
-    setReportReason("OTHER");
+  const handleShowMorePhotos = () => {
+    setShowPhotosCount(showPhotosCount + 3);
+  };
+
+  const handleReportClick = (reviewId) => {
+    setReportReviewId(reviewId);
+    setShowReportModal(true);
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}.${month}.${day}`;
   };
 
   return (
     <Container className="mt-4">
       {/* 가게 정보 섹션 */}
       <Row className="justify-content-center mb-4">
-        <Col md={8} className="text-center">
+        <Col md={12}>
           <div className="js-shop-info">
             {restaurantImg.length > 0 ? (
               <img
@@ -179,9 +185,9 @@ export function ShopReview() {
             ) : (
               <p>가게 이미지가 없습니다.</p>
             )}
+            <p className="js-food-type">{restaurant.foodType} | {restaurant.neighborhood}</p>
             <h2 className="fw-bold">{restaurant.name}</h2>
             <p className="js-address">{restaurant.address}</p>
-            <p className="js-food-type">{restaurant.foodType}</p>
           </div>
         </Col>
       </Row>
@@ -238,7 +244,10 @@ export function ShopReview() {
                     className="img-fluid rounded-circle"
                   />
                   <Col xs={10} className="d-flex align-items-center">
-                    <p className="text-muted small mb-0">{review.reviewDate}</p>
+                    <p className="mb-0">
+                      아이디
+                    </p>
+                    <p className="text-muted small mb-0">{formatDate(review.createdAt)}</p>
                   </Col>
                   <Col className="d-flex justify-content-end align-items-center">
                     <img
@@ -256,7 +265,7 @@ export function ShopReview() {
                   </Col>
                 </Row>
                 <Row>
-                  <img src={review.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
+                  <img src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
                   <Col>
                     <p>{review.reviewContent}</p>
                   </Col>

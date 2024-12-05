@@ -5,7 +5,7 @@
 
 /* 가게 정보 스타일 */
 .js-shop-info {
-  text-align: center;
+  width: 100%;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -17,6 +17,7 @@
 }
 
 .js-shop-info .js-food-type {
+  margin: 0;
   font-size: 1rem;
   color: #888;
 }
@@ -35,15 +36,16 @@
 }
 
 /* 사진/영상 리뷰 섹션 */
-.js-photo-review > div > div{
+.js-photo-review > div > div {
   margin: 0;
 }
+
 .js-photo-review > div > div > div {
   margin: 0;
   padding: 0;
   width: 33.3%;
-  height: 300px;
 }
+
 .js-photo-review > div > div > div > img {
   margin: 0;
   padding: 0;
@@ -68,27 +70,28 @@
 }
 
 /* 리뷰 아이템 */
-.js-reviews > div >  {
-
-}
-
 .js-review-item {
   border: none;
   border-bottom: 1px solid #ddd;
   padding: 15px;
 }
 
-.js-review-item > div > img {
+.js-review-item > div.row:nth-of-type(1) > img {
   width: 40px;
   height: 40px;
   padding: 0;
   margin-bottom: 10px;
 }
-.js-review-item > div > div.row > img {
+.js-review-item p {
+  margin-right: 10px;
+}
+
+.js-review-item > div.row:nth-of-type(2) > img {
   width: 100px;
   height: 100px;
   padding: 0;
 }
+
 .js-review-item > div > div.col > img {
   float: right;
   width: 20px;
@@ -99,4 +102,4 @@
 .js-more-btn {
   width: 100%;
   margin-bottom: 40px;
-} 
+}
