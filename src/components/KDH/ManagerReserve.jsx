@@ -1,64 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card, Dropdown } from 'react-bootstrap';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // 캘린더 스타일
+import 'css/KDH/ManagerReserve.css';
 
 const ManagerReserve = () => {
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState('전체');
   const [statusUpdates, setStatusUpdates] = useState({});
-  const [restaurantId] = useState(123);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [datesWithReservations, setDatesWithReservations] = useState([]);
+  const [restaurantId, setRestaurantId] = useState(123);
 
   const itemsPerPage = 6;
-  const itemsPerGroup = 30;
-  const statusOptions = ['ALL', 'CANCELREQUEST', 'PENDING', 'RESERVING', 'NOSHOW', 'COMPLETE'];
+  const itemsPerGroup = 200;
+  const statusOptions = ['전체', '취소 요청', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
 
   const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
 
   useEffect(() => {
     fetchReservations();
-  }, [pageGroup]);
-
-  useEffect(() => {
-    filterByDate(selectedDate);
-  }, [selectedDate]);
+  }, []);
 
   const fetchReservations = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`);
       const data = await response.json();
-      const reservationList = data.list || [];
-      setReservations(reservationList);
-      setFilteredReservations(reservationList);
+      setReservations(data.list || []);
+      setFilteredReservations(data.list || []);
       setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
-
-      // 예약이 있는 날짜 목록을 업데이트
-      const dates = reservationList.map((reservation) => reservation.reservationTime.split('T')[0]);
-      setDatesWithReservations([...new Set(dates)]); // 중복 제거
     } catch (error) {
       console.error('예약 정보를 가져오는 중 오류 발생:', error);
     }
   };
 
-  const filterByDate = (date) => {
-    const selectedDateString = date.toISOString().split('T')[0];
-    const filtered = reservations.filter((reservation) => reservation.reservationTime.split('T')[0] === selectedDateString);
+  const filterReservations = (status) => {
+    let filtered = reservations;
+    if (status !== '전체') {
+      filtered = reservations.filter((reservation) => statusLabels[reservation.status] === status);
+    }
     setFilteredReservations(filtered);
     setCurrentPage(1);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
   };
 
-  const filterReservations = (status) => {
-    const filtered = status === 'ALL' ? reservations : reservations.filter((reservation) => reservation.status === status);
-    setFilteredReservations(filtered);
-    setCurrentPage(1);
-    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
-  };
+  const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
   const updateReservationStatus = async (reservationId, updatedStatus) => {
     if (!updatedStatus) {
@@ -70,7 +58,7 @@ const ManagerReserve = () => {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: updatedStatus }),
+        body: JSON.stringify({ status: Object.keys(statusLabels).find(key => statusLabels[key] === updatedStatus) }),
       });
 
       if (response.ok) {
@@ -104,12 +92,11 @@ const ManagerReserve = () => {
     }
   };
 
-  const handleStatusChange = (reservationId, status) => {
+  const setReservationStatus = (reservationId, status) => {
     setStatusUpdates((prev) => ({ ...prev, [reservationId]: status }));
   };
 
   const statusLabels = {
-    ALL: '모두',
     CANCELREQUEST: '취소 요청',
     COMPLETE: '방문 완료',
     RESERVING: '예약 중',
@@ -118,30 +105,41 @@ const ManagerReserve = () => {
   };
 
   const currentReservations = filteredReservations.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    ((currentPage - 1) % 5) * itemsPerPage, 
+    ((currentPage - 1) % 5 + 1) * itemsPerPage
   );
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
-  const tileClassName = ({ date, view }) => {
-    // 현재 날짜가 예약된 날짜 목록에 포함되면 예약된 날짜로 표시
-    const dateString = date.toISOString().split('T')[0];
-    if (datesWithReservations.includes(dateString)) {
-      return 'reserved-date'; // 예약된 날짜에 클래스를 추가
+  const tileContent = ({ date, view }) => {
+    if (view === 'month') {
+      const reservationsForDate = reservations.filter(
+        (reservation) => new Date(reservation.reservationTime).toDateString() === date.toDateString()
+      );
+      return reservationsForDate.length > 0 ? (
+        <p className="reservation-count">{reservationsForDate.length}</p>
+      ) : null;
     }
-    return '';
   };
 
   return (
     <Container className="reservation-status-container">
-      <Row className="mb-3" style={{ marginTop: '20px' }}>
+      <Row className="mb-3" style={{ marginTop: "20px" }}>
         <Col>
           <h3>나의 레스토랑 예약 현황</h3>
         </Col>
-        <Col className="text-end">
+      </Row>
+
+      <Row className="mb-3">
+        <Col>
+          <Calendar tileContent={tileContent} tileClassName={tileClassName} />
+        </Col>
+      </Row>
+
+      <Row className="mb-3">
+        <Col className='text-end'>
           <Dropdown>
             <Dropdown.Toggle variant="secondary" id="status-filter">
               {statusFilter}
@@ -149,28 +147,18 @@ const ManagerReserve = () => {
 
             <Dropdown.Menu>
               {statusOptions.map((status) => (
-                <Dropdown.Item
+                <Dropdown.Item 
                   key={status}
                   onClick={() => {
-                    setStatusFilter(statusLabels[status]);
+                    setStatusFilter(status);
                     filterReservations(status);
                   }}
                 >
-                  {statusLabels[status] || status}
+                  {status}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col>
-          <Calendar
-            onChange={setSelectedDate}
-            value={selectedDate}
-            tileClassName={tileClassName} // 날짜에 예약이 있는지 체크
-          />
         </Col>
       </Row>
 
@@ -194,7 +182,7 @@ const ManagerReserve = () => {
                     }}
                   />
                   <Card.Text>
-                    <strong>{statusLabels[reservation.status] || reservation.status}</strong><br />
+                    <strong>{statusLabels[reservation.status]}</strong><br />
                     {reservation.reservationTime.split('T')[0]} / {reservation.reservationTime.split('T')[1].substring(0, 5)} / {reservation.numberOfPeople}명<br />
                     <strong>이메일 : </strong> {reservation.user?.email}
                     <br />
@@ -211,9 +199,9 @@ const ManagerReserve = () => {
                       {statusOptions.map((status) => (
                         <Dropdown.Item
                           key={status}
-                          onClick={() => handleStatusChange(reservation.reservationId, statusLabels[status])}
+                          onClick={() => setReservationStatus(reservation.reservationId, status)}
                         >
-                          {statusLabels[status] || status}
+                          {status}
                         </Dropdown.Item>
                       ))}
                     </Dropdown.Menu>
