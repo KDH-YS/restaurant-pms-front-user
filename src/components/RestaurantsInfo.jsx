@@ -108,7 +108,8 @@ function RestaurantsInfo() {
            <p>{restaurant?.description}</p>
               <div className="address">
                 <h3>주소</h3>
-                <p>{restaurant?.address}</p>
+                <p>{restaurant?.jibunAddr}</p>
+                <p>{restaurant?.roadAddr}</p>
               </div>
                 <p><strong>총 좌석 수:</strong> {restaurant?.totalSeats}</p>
 

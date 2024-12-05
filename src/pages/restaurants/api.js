@@ -57,16 +57,29 @@ export const fetchRestaurantMenu = async (restaurantId) => {
 }
 
 //레스토랑 등록하
-
 export const registerRestaurant = async (restaurantData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/restaurant/create`, restaurantData);
+    // 'totalSeats'는 숫자로 변환해줍니다.
+    const dataToSend = {
+      ...restaurantData,
+      totalSeats: parseInt(restaurantData.totalSeats, 10), // totalSeats를 숫자로 변환
+    };
+
+    console.log("전송할 레스토랑 데이터:", dataToSend); // 데이터 확인
+
+    const response = await axios.post(`${BASE_URL}/restaurant/create`, dataToSend);
+    
+    // 서버 응답 메시지 로그 출력
     console.log(response.data.message);
     return response.data;
   } catch (error) {
+    // 에러 메시지 출력
     console.error('레스토랑 등록 실패:', error.response?.data?.error || error.message);
+    console.log('Full error:', error);  // 전체 오류 확인
+
   }
 };
+
 
 //레스토랑 수정하기
 

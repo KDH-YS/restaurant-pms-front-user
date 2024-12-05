@@ -53,13 +53,23 @@ Content-Type: application/json
 {
   "name": "안녕",
   "description": "안녕하세요",
-  "address": "서울특별시 강남구 역삼동 619-30",
+  "roadAddr": "서울특별시 강남구 역삼동 619-30",
+  "jibunAddr": "서울특별시 강남구 역삼동 619-30",
+  "detailAddr": "서울특별시 강남구 역삼동 619-30",
+  "postalCode": "12340",
   "phone": "010-6596-6858",
   "foodType": "한식",
   "parkingAvailable": true,
   "totalSeats": 37
 }
 
+<insert id="insertRestaurant" >
+    INSERT INTO restaurants (
+        name, description, postel_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
+    ) VALUES (
+        #{name}, #{description}, #{postelCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+    )
+	</insert>
 ### 레스토랑 수정
 PUT http://localhost:8080/api/restaurant/update/2017
 Content-Type: application/json

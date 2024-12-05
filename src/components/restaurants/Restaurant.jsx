@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchRestaurantDetail, updateRestaurant } from '../../pages/restaurants/api'; // api.js에서 import
 import { Button, Form, Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
+import AddrInput from './AddrInput';
 
 const Restaurant = () => {
   const { restaurantId } = useParams(); // URL에서 restaurantId 받기
@@ -9,7 +10,19 @@ const Restaurant = () => {
 
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
-  const [restaurant, setRestaurant] = useState(null); // 레스토랑 데이터 상태
+  const [restaurant, setRestaurant] = useState({
+    name: '',
+    description: '',
+    postalCode: '',
+    roadAddr: '',
+    jibunAddr: '',
+    detailAddr: '',
+    phone: '',
+    foodType: '',
+    totalSeats: '',
+    parkingAvailable: false,
+  }); // 레스토랑 데이터 상태
+
 
   useEffect(() => {
     const getRestaurantDetail = async () => {
@@ -17,7 +30,6 @@ const Restaurant = () => {
       setError(null); // 에러 초기화
 
       try {
-        console.log('Fetching data for restaurantId:', restaurantId); // 디버깅: restaurantId 확인
         const data = await fetchRestaurantDetail(restaurantId); // API 호출
         console.log('Fetched data:', data); // API 호출 결과 확인
         setRestaurant(data); // 레스토랑 정보 상태 업데이트
@@ -57,7 +69,7 @@ const Restaurant = () => {
       const result = await updateRestaurant(restaurantId, restaurant); // 외부 API 함수 사용
       console.log(result.message); // 성공 메시지 출력
       alert('가게 정보가 수정되었습니다.');
-      navigate('/my-page'); // 수정 후 마이페이지로 이동
+      navigate('/admin/restaurant'); // 수정 후 마이페이지로 이동
     } catch (error) {
       console.error('레스토랑 수정 실패:', error.message);
       alert('수정 중 문제가 발생했습니다.');
@@ -99,13 +111,18 @@ const Restaurant = () => {
             </Col>
             <Col md={6}>
               <Form.Group controlId="address">
-                <Form.Label>주소</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="address"
-                  value={restaurant.address || ''}
-                  onChange={handleChange}
-                  required
+              <Form.Label>주소</Form.Label>
+                <AddrInput
+                  address={{
+                    postalCode: restaurant.postalCode,
+                    roadAddr: restaurant.roadAddr,
+                    jibunAddr: restaurant.jibunAddr,
+                    detailAddr: restaurant.detailAddr,
+                  }}
+                  setAddressData={(newAddress) => setRestaurant((prevState) => ({
+                    ...prevState,
+                    ...newAddress,
+                  }))}
                 />
               </Form.Group>
             </Col>

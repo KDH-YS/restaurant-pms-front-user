@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
+import { Button, Form, Container, Row, Col, Spinner, Alert, Modal } from 'react-bootstrap';
 import { registerRestaurant } from './api';  // 새로운 레스토랑을 추가하는 API 함수
+import AddrInput from '../../components/restaurants/AddrInput';
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
@@ -10,20 +11,31 @@ const AddRestaurant = () => {
   const [error, setError] = useState(null); // 에러 상태
   const [restaurant, setRestaurant] = useState({
     name: '',
-    address: '',
-    phone: '',
     description: '',
+    postalCode: '',
+    roadAddr: '',
+    jibunAddr: '',
+    detailAddr: '',
+    phone: '',
     foodType: '',
     totalSeats: '',
     parkingAvailable: false,
-  }); // 레스토랑 데이터 상태
-
+  });
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRestaurant((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const setAddressData = (addressData) => {
+    setRestaurant((prevState) => ({
+      ...prevState,
+      ...addressData, // 주소 데이터 업데이트
+    }));
+    console.log('Updated Restaurant Data:', addressData);  // 주소가 제대로 업데이트 되는지 확인
+
   };
 
   const handleSubmit = async (e) => {
@@ -33,8 +45,8 @@ const AddRestaurant = () => {
       return; // 사용자가 "아니오"를 선택하면 추가하지 않음
     }
 
-    setLoading(true); // 로딩 시작
-    setError(null); // 에러 초기화
+    setLoading(true);
+    setError(null);
 
     try {
       await registerRestaurant(restaurant); // 외부 API 함수 사용하여 레스토랑 추가
@@ -63,6 +75,7 @@ const AddRestaurant = () => {
       </Alert>
     );
 
+    
   return (
     <Container className="my-5">
       <h2>새로운 레스토랑 추가</h2>
@@ -80,18 +93,7 @@ const AddRestaurant = () => {
               />
             </Form.Group>
           </Col>
-          <Col md={6}>
-            <Form.Group controlId="address">
-              <Form.Label>주소</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={restaurant.address || ''}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-          </Col>
+         
         </Row>
 
         <Row className="my-3">
@@ -158,7 +160,11 @@ const AddRestaurant = () => {
             </Form.Group>
           </Col>
         </Row>
-
+        <Col md={6}>
+            <Form.Group controlId="address">
+                <AddrInput setAddressData={setAddressData}/>
+            </Form.Group>
+          </Col>
         <Row className="my-3">
           <Col md={12}>
             <Form.Group controlId="description">
