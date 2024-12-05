@@ -14,9 +14,10 @@ import Mypage from "./Router/Mypage.jsx"
 import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
-import InquiryPage from "./Router/Inquiry.jsx"
-import SchedulePage from "Router/SchedulePage.jsx";
-import ManagerReservePage from "Router/ManagerReservePage.jsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminPage from "./Router/AdminPage.jsx";
+import RestaurantAdd from "./pages/restaurants/Add.jsx";
+import Update from "./pages/restaurants/Update.jsx";
 
 function App() {
   return (
@@ -26,8 +27,7 @@ function App() {
           <Route path="/" element={<User />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/Restaurant" element={<Restaurant />} />
-          <Route path="/Schedule" element={< SchedulePage/>} />
-          <Route path="/Restaurant/info" element={<RestaurantInfo />} />
+          <Route path="/Restaurant/:restaurantId" element={<RestaurantInfo />} />
           <Route path="/Reserve" element={<ReservePage />} />
           <Route path="/manager/reserve" element={<ManagerReservePage />} />
           <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
@@ -38,8 +38,10 @@ function App() {
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
           <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
-          <Route path="/inquiry" element={<InquiryPage/>}></Route>
-                
+          <Route path="/admin/restaurant" element={<AdminPage/>}></Route>
+          <Route path="/restaurant/update/:restaurantId" element={<Update/>}></Route>
+          <Route path="/restaurant/add" element={<RestaurantAdd/>}></Route>
+
         </Routes>
       </div>
     </BrowserRouter>
