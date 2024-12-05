@@ -39,7 +39,7 @@ const AddRestaurant = () => {
     try {
       await registerRestaurant(restaurant); // 외부 API 함수 사용하여 레스토랑 추가
       alert('새로운 레스토랑이 추가되었습니다.');
-      navigate('/my-page'); // 추가 후 마이페이지로 이동
+      navigate('/admin/restaurant'); // 추가 후 마이페이지로 이동
     } catch (err) {
       setError('레스토랑 추가에 실패했습니다.');
       console.error('레스토랑 추가 실패:', err);

@@ -109,3 +109,25 @@ export const fetchRestaurantSchedule = async (restaurantId) => {
     throw new Error('레스토랑 스케줄을 가져오는 데 실패했습니다.');
   }
 }
+
+// 메뉴 등록 함수
+export const insertMenu = async (restaurantId, menuData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/restaurant/menu/${restaurantId}/insert`, menuData);
+    return response;
+  } catch (error) {
+    console.error('메뉴 등록 실패:', error);
+    throw error; // 호출한 곳에서 예외를 처리할 수 있도록 오류를 던집니다.
+  }
+};
+
+// 메뉴 삭제 함수
+export const deleteMenu = async (restaurantId, menuId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/restaurant/menu/${restaurantId}/${menuId}/delete`);
+    return response;
+  } catch (error) {
+    console.error('메뉴 삭제 실패:', error);
+    throw error; // 호출한 곳에서 예외를 처리할 수 있도록 오류를 던집니다.
+  }
+};
