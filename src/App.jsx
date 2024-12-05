@@ -22,8 +22,10 @@ function App() {
           <Route path="/" element={<User />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/Restaurant" element={<Restaurant />} />
+          <Route path="/Schedule" element={< SchedulePage/>} />
           <Route path="/Restaurant/info" element={<RestaurantInfo />} />
           <Route path="/Reserve" element={<ReservePage />} />
+          <Route path="/manager/reserve" element={<ManagerReservePage />} />
           <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
           <Route path="/Reservemain" element={<ReserveMainPage/>} />
           <Route path="/Mypage" element={<Mypage/>} />

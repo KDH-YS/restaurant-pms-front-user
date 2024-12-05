@@ -1,0 +1,43 @@
+.react-calendar {
+  width: 100%;
+  border: none;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.react-calendar__tile {
+  padding: 1em 0.5em;
+  font-size: 0.875rem;
+}
+
+.react-calendar__tile--active {
+  background: #007bff !important;
+  color: white;
+}
+
+.react-calendar__tile--now {
+  background: #f8f9fa;
+}
+
+.react-calendar__navigation button {
+  font-size: 1.25rem;
+  padding: 0.5em;
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: transparent;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #dc3545;
+}
+
+.saturday {
+  color: #0056b3;
+}
+.react-calendar__month-view__days__day--neighboringMonth{
+  color: gray;
+}
+.reservetimebutton{
+  margin-top: 8px;
+  margin-bottom: 0 !important;
+}
