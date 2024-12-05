@@ -94,28 +94,44 @@ const Manager = () => {
   return (
     <div className="container mt-5 schedulecontainer">
       <h2>영업시간 및 상태 설정</h2>
-      <div className="row ">
+  
+      {/* 캘린더 및 설정 카드 */}
+      <div className="row">
         <div className="col-md-6">
-          <Calendar onChange={setDate} value={date} tileClassName={tileClassName} />
+          <Card className="schedulecard mt-4">
+            <Card.Body>
+              <Calendar onChange={setDate} value={date} tileClassName={tileClassName} />
+            </Card.Body>
+          </Card>
         </div>
         <div className="col-md-6">
           <Card className="schedulecard mt-4">
             <Card.Body>
-              <Card.Title>{date.toDateString()} 설정</Card.Title>
+              
+              <Card.Header>{date.toDateString()} 설정</Card.Header>
               <Form.Check
                 type="checkbox"
                 label="오픈 상태 (열림/닫힘)"
                 checked={currentSchedule.isOpen || false}
                 onChange={(e) => handleInputChange('isOpen', e.target.checked)}
               />
+  
+              {/* 시간 설정 */}
               <Row>
                 {['startTime', 'endTime', 'breakStart', 'breakEnd'].map((field) => (
                   <Col key={field} md={6}>
                     <Form.Group controlId={`form${field}`}>
-                      <Form.Label>
-                        {field === 'startTime' ? '영업 시작' : field === 'endTime' ? '영업 종료' : field === 'breakStart' ? '브레이크 시작' : '브레이크 종료'} 시간
+                      <Form.Label style={{marginTop:"5px"}}>
+                        {{
+                          startTime: '영업 시작',
+                          endTime: '영업 종료',
+                          breakStart: '브레이크 시작',
+                          breakEnd: '브레이크 종료',
+                        }[field]}{' '}
+                        시간
                       </Form.Label>
                       <Form.Control
+                      style={{marginTop:"5px"}}
                         as="select"
                         value={currentSchedule[field] || ''}
                         onChange={(e) => handleInputChange(field, e.target.value)}
@@ -131,6 +147,7 @@ const Manager = () => {
                   </Col>
                 ))}
               </Row>
+  
               <Button variant="primary" className="mt-3" onClick={handleSaveSchedule}>
                 설정 저장
               </Button>
@@ -138,7 +155,8 @@ const Manager = () => {
           </Card>
         </div>
       </div>
-
+  
+      {/* 저장된 일정 */}
       <div className="mt-5 savedschedule">
         <h3>저장된 일정</h3>
         <div>
@@ -152,18 +170,21 @@ const Manager = () => {
               <Card.Body>
                 <Card.Title>{schedule.openDate}</Card.Title>
                 <Card.Text>
-                  {schedule.startTime} ~ {schedule.endTime} 브레이크타임 {schedule.breakStart} ~ {schedule.breakEnd}
+                  {schedule.startTime} ~ {schedule.endTime} 브레이크타임 {schedule.breakStart} ~{' '}
+                  {schedule.breakEnd}
                 </Card.Text>
               </Card.Body>
             </Card>
           ))}
         </div>
+  
         <Button variant="danger" onClick={handleDeleteSchedule} disabled={!selectedScheduleId}>
           삭제
         </Button>
       </div>
     </div>
   );
+  
 };
 
 export default Manager;
