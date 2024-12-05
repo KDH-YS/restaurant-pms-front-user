@@ -1,48 +1,105 @@
-/* shopInfo */
-.shopInfo > img {
-  width: 50%;
+#root {
+  margin: 0;
+  padding: 0;
 }
 
-/* photo */
-.photoReview > img {
-  width: 25%;
+/* 가게 정보 스타일 */
+.js-shop-info {
+  width: 100%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
 }
 
-/* review */
-
-/* sns */
-.snsReview > p {
-  flex-basis: 100%;
-}
-.snsReview > li {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.snsReview > li > img {
-  margin-bottom: 1rem;
-}
-.snsReview > li > p {
-  flex-basis: 100%;
+.js-shop-info .js-address {
+  color: #666;
+  margin-bottom: 5px;
 }
 
-/* 반응형 */
-@media (min-width:990px) {
-  .shopInfo > img {
-    width: 50%;
-  }
+.js-shop-info .js-food-type {
+  margin: 0;
+  font-size: 1rem;
+  color: #888;
 }
-@media (max-width:768px) {
-  .shopInfo > img {
-    width: 100%;
-  }
-  .shopInfo > img:nth-of-type(2) {
-    display: none;
-  }
-  .photoReview > img {
-    width: 50%;
-  }
-  .photoReview > img:nth-of-type(3), img:nth-of-type(4) {
-    display: none;
-  }
+
+/* 평점 섹션 스타일 */
+.js-rating-section {
+  text-align: center;
+}
+
+.js-star-rating {
+  padding: 15px;
+}
+
+.js-star-rating span {
+  margin-right: 5px;
+}
+
+/* 사진/영상 리뷰 섹션 */
+.js-photo-review > div > div {
+  margin: 0;
+}
+
+.js-photo-review > div > div > div {
+  margin: 0;
+  padding: 0;
+  width: 33.3%;
+}
+
+.js-photo-review > div > div > div > img {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.js-section-title {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.js-img {
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.js-img:hover {
+  transform: scale(1.05);
+}
+
+/* 리뷰 아이템 */
+.js-review-item {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  padding: 15px;
+}
+
+.js-review-item > div.row:nth-of-type(1) > img {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin-bottom: 10px;
+}
+.js-review-item p {
+  margin-right: 10px;
+}
+
+.js-review-item > div.row:nth-of-type(2) > img {
+  width: 100px;
+  height: 100px;
+  padding: 0;
+}
+
+.js-review-item > div > div.col > img {
+  float: right;
+  width: 20px;
+  height: 20px;
+}
+
+/* 버튼 */
+.js-more-btn {
+  width: 100%;
+  margin-bottom: 40px;
 }

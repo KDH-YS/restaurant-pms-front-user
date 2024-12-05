@@ -1,15 +1,16 @@
-import Review from "../components/Review"
+import Inquiry from "../components/Js/Inquiry"
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+
 // 부트스트랩 임포트
-function ReviewPage() {
+function InquiryPage() {
     return (
         <>
         <Header/>
-        <Review/>
+        <Inquiry/>
         <Footer/>
         </>
     );
   }
 
-export default ReviewPage;
+export default InquiryPage;

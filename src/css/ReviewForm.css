@@ -1,0 +1,61 @@
+/* 이미지 미리보기 스타일 */
+.js-image-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.js-preview-image {
+  width: 120px;
+  height: 120px;
+  position: relative;
+}
+
+.js-preview-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.js-remove-image-btn {
+  top: 5px;
+  right: 5px;
+  padding: 2px 5px;
+  font-size: 0.8rem;
+}
+
+/* 평가 점수 스타일 */
+.rating-options {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* 카드에 마우스 오버 제거 */
+.no-hover:hover {
+  cursor: default;
+}
+
+#reviewContent {
+  height: 200px;
+  resize: none;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .rating-options {
+    justify-content: space-between;
+  }
+
+  .js-preview-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .js-remove-image-btn {
+    top: 3px;
+    right: 3px;
+    padding: 2px;
+    font-size: 0.7rem;
+  }
+}
