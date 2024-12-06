@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import User from "./Router/User.jsx";
@@ -18,6 +18,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminPage from "./Router/AdminPage.jsx";
 import RestaurantAdd from "./pages/restaurants/Add.jsx";
 import Update from "./pages/restaurants/Update.jsx";
+import ManagerReservePage from 'Router/ManagerReservePage.jsx';
 
 function App() {
   return (
