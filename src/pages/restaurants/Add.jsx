@@ -16,6 +16,9 @@ const AddRestaurant = () => {
     roadAddr: '',
     jibunAddr: '',
     detailAddr: '',
+    city: '',
+    district: '',
+    neighborhood: '',
     phone: '',
     foodType: '',
     totalSeats: '',
@@ -34,7 +37,7 @@ const AddRestaurant = () => {
       ...prevState,
       ...addressData, // 주소 데이터 업데이트
     }));
-    console.log('Updated Restaurant Data:', addressData);  // 주소가 제대로 업데이트 되는지 확인
+    // console.log('Updated Restaurant Data:', addressData);  // 주소가 제대로 업데이트 되는지 확인
 
   };
 

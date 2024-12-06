@@ -282,7 +282,9 @@ const handleSearch = async (page = 1) => {
             <tr key={restaurant.restaurantId} onClick={() => handleRestaurantClick(restaurant)}>
               <td>{restaurant.restaurantId}</td>
               <td>{restaurant.name}</td>
-              <td>{restaurant.address}</td>
+              <td>
+                {restaurant.roadAddr || restaurant.jibunAddr} {restaurant.detailAddr}
+              </td>
               <td>{restaurant.foodType}</td>
               <td>{restaurant.parkingAvailable ? '가능' : '불가능'}</td>
               <td>{restaurant.reservationAvailable ? '가능' : '불가능'}</td>
@@ -311,7 +313,7 @@ const handleSearch = async (page = 1) => {
           </Modal.Header>
           <Modal.Body>
             <p><strong>이름:</strong> {selectedRestaurant.name}</p>
-            <p><strong>주소:</strong> {selectedRestaurant.address}</p>
+            <p><strong>주소:</strong> {selectedRestaurant.roadAddr || selectedRestaurant.jibunAddr} {selectedRestaurant.detailAddr}</p>
             <p><strong>음식 종류:</strong> {selectedRestaurant.foodType}</p>
             <p><strong>전화번호:</strong> {selectedRestaurant.phone}</p>
             <p><strong>주차 가능:</strong> {selectedRestaurant.parkingAvailable ? '가능' : '불가능'}</p>

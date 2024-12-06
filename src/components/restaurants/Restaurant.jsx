@@ -17,6 +17,9 @@ const Restaurant = () => {
     roadAddr: '',
     jibunAddr: '',
     detailAddr: '',
+    city: '',
+    district: '',
+    neighborhood: '',
     phone: '',
     foodType: '',
     totalSeats: '',
@@ -31,7 +34,7 @@ const Restaurant = () => {
 
       try {
         const data = await fetchRestaurantDetail(restaurantId); // API 호출
-        console.log('Fetched data:', data); // API 호출 결과 확인
+        // console.log('Fetched data:', data); // API 호출 결과 확인
         setRestaurant(data); // 레스토랑 정보 상태 업데이트
       } catch (err) {
         setError('레스토랑 정보를 가져오는 데 실패했습니다.');
@@ -118,6 +121,9 @@ const Restaurant = () => {
                     roadAddr: restaurant.roadAddr,
                     jibunAddr: restaurant.jibunAddr,
                     detailAddr: restaurant.detailAddr,
+                    city: restaurant.city,
+                    district: restaurant.district,
+                    neighborhood: restaurant.neighborhood,
                   }}
                   setAddressData={(newAddress) => setRestaurant((prevState) => ({
                     ...prevState,

@@ -8,6 +8,9 @@ const [postalCode, setPostalCode] = useState(address?.postalCode || "");
 const [jibunAddr, setJibunAddr] = useState(address?.jibunAddr || ""); 
 const [roadAddr, setRoadAddr] = useState(address?.roadAddr || ""); 
 const [detailAddr, setDetailAddr] = useState(address?.detailAddr || ""); // 부모로부터 받은 값으로 detailAddr 초기화
+const [city, setCity] = useState(address?.city || ""); 
+const [district, setDistrict] = useState(address?.district || ""); 
+const [neighborhood, setNeighborhood] = useState(address?.neighborhood || ""); 
 const [isOpenAddr, setIsOpenAddr] = useState(false); // 모달 상태
   
     const themeObj = {
@@ -26,26 +29,42 @@ const [isOpenAddr, setIsOpenAddr] = useState(false); // 모달 상태
             setJibunAddr(address.jibunAddr || "");
             setRoadAddr(address.roadAddr || "");
             setDetailAddr(address.detailAddr || "");
+            setCity(address.city || "");    // sido 값 초기화
+            setDistrict(address.district || ""); // sigungu 값 초기화
+            setNeighborhood(address.neighborhood || ""); // sigungu 값 초기화
         }
     }, [address]);
-    
+
     const handleOpenAddr = () => {
         setIsOpenAddr((current) => !current); // 모달 열고 닫기
     };
 
     const selectAddr = (data) => {
-        setJibunAddr(data.jibunAddress);
-        setRoadAddr(data.roadAddress);
+        // 지번 주소가 있으면 jibunAddr, 없으면 autoJibunAddress 사용
+        const selectedJibunAddr = data.jibunAddress || data.autoJibunAddress;
+ 
         setPostalCode(data.zonecode);
+        setCity(data.sido); // sido 값을 추가
+        setDistrict(data.sigungu || ""); // sigungu 값을 추가
+        setNeighborhood(data.bname || ""); // bname이 없으면 빈 문자열로 설정
+
+       setJibunAddr(selectedJibunAddr);
+        setRoadAddr(data.roadAddress);
+
         setIsOpenAddr(false); // 주소 선택 후 모달 닫기
 
         // 주소가 수정되면 상위 컴포넌트로 업데이트
         setAddressData({
             postalCode: data.zonecode,
             roadAddr: data.roadAddress,
-            jibunAddr: data.jibunAddress,
-            detailAddr: detailAddr
+            jibunAddr: selectedJibunAddr,
+            detailAddr: detailAddr,
+            city: data.sido,      // sido는 city로 매핑
+            district: data.sigungu || "", // sigungu는 district로 매핑
+            neighborhood: data.bname || "" // sigungu는 district로 매핑
         });
+        // 콘솔 로그로 데이터를 확인
+        // console.log(data);
         };
     
        // useEffect를 사용하여 상태가 변경될 때마다 부모로 값을 전달
@@ -55,8 +74,11 @@ const [isOpenAddr, setIsOpenAddr] = useState(false); // 모달 상태
             jibunAddr,
             roadAddr,
             detailAddr, // detailAddr의 최신 값 전달
+            city, // sido 값을 부모에게 전달
+            district, // sigungu 값을 부모에게 전달
+            neighborhood // sigungu 값을 부모에게 전달
         });
-    }, [postalCode, jibunAddr, roadAddr, detailAddr]); // 상태 변경 시마다 실행
+    }, [postalCode, jibunAddr, roadAddr, detailAddr, city, district,neighborhood]); // 상태 변경 시마다 실행
 
 
     return (
