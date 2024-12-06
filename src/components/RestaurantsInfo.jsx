@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';  // useParams로 URL 파라미터 받기
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';  // API 호출 함수 임포트
 import '../css/ReserveMain.css';  // 스타일 임포트
-
+import { restaurantStore } from 'store/restaurantStore';
 function RestaurantsInfo() {
   const { restaurantId } = useParams();  // URL에서 restaurantId 받기
   const navigate = useNavigate();  // 네비게이션 함수
 
-  const [restaurant, setRestaurant] = useState(null);  // 레스토랑 데이터 상태
+  const {restaurant, setRestaurant} = restaurantStore();  // 레스토랑 데이터 상태
   const [loading, setLoading] = useState(true);  // 로딩 상태
   const [error, setError] = useState(null);  // 에러 상태
   const [menus, setMenus] = useState([]);  // 메뉴 데이터 상태
   const [schedule, setSchedule] = useState(null);
 
+  const handleReserveClick = () => {
+    navigate('/reserve');
+  };
   // 시간을 "HH:mm:ss" -> "HH:mm" 형식으로 변환
   const formatTime = (timeString) => {
     const [hours, minutes] = timeString.split(':');
@@ -167,7 +170,7 @@ function RestaurantsInfo() {
         <section className="reservation">
           <h2>Make a Reservation</h2>
 
-          <button className="reserve-btn" >
+          <button className="reserve-btn" onClick={handleReserveClick} >
              예약하기 
           </button>
         </section>

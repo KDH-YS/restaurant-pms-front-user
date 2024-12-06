@@ -19,7 +19,7 @@ import AdminPage from "./Router/AdminPage.jsx";
 import RestaurantAdd from "./pages/restaurants/Add.jsx";
 import Update from "./pages/restaurants/Update.jsx";
 import ManagerReservePage from 'Router/ManagerReservePage.jsx';
-
+import SchedulePage from 'Router/SchedulePage.jsx';
 function App() {
   return (
     <BrowserRouter> 
@@ -31,6 +31,7 @@ function App() {
           <Route path="/Restaurant/:restaurantId" element={<RestaurantInfo />} />
           <Route path="/Reserve" element={<ReservePage />} />
           <Route path="/manager/reserve" element={<ManagerReservePage />} />
+          <Route path="/manager/schedule" element={<SchedulePage/>} />
           <Route path="/ReservationStatus" element={<ReservationStatusPage/>} />
           <Route path="/Reservemain" element={<ReserveMainPage/>} />
           <Route path="/Login" element={<LoginRouter/>} />

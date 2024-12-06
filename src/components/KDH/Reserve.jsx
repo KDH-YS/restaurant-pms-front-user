@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'css/KDH/Reserve.css';
 import restaurantimg from "img/restaurant.jpg";
 import styled from 'styled-components';
-
+import { restaurantStore } from 'store/restaurantStore';
 const StyledCard = styled.div`
   .form-control {
     resize: none;
@@ -18,6 +18,8 @@ const StyledCard = styled.div`
 `;
 
 const Reserve = () => {
+  const {restaurant}= restaurantStore();
+  
   const navigate = useNavigate();
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState('');
@@ -51,7 +53,7 @@ const Reserve = () => {
 
   const handleReserve = async () => {
     const userId = 1; // 임시 사용자 ID
-    const restaurantId = 123; // 임시 레스토랑 ID
+    const restaurantId = restaurant.restaurantId; // 임시 레스토랑 ID
 
     const reservationData = {
       userId,
