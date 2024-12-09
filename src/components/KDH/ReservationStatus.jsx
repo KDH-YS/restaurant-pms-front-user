@@ -5,7 +5,8 @@ import * as PortOne from '@portone/browser-sdk/v2';
 import { useNavigate } from 'react-router-dom';
 import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
-
+import { jwtDecode } from 'jwt-decode';
+import { useAuthStore } from 'store/authStore';
 const ReservationStatus = () => {
   const [reservations, setReservations] = useState([]); // 예약 리스트
   const [selectedReservation, setSelectedReservation] = useState(null); // 선택된 예약
@@ -14,7 +15,7 @@ const ReservationStatus = () => {
   const [newTime, setNewTime] = useState(''); // 새로 입력된 시간
   const [newPeople, setNewPeople] = useState(''); // 새로 입력된 인원수
   const [newRequest, setNewRequest] = useState(''); // 새로 입력된 요청사항
-
+  const { token } = useAuthStore();
 
     const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
 
@@ -24,16 +25,35 @@ const ReservationStatus = () => {
 
 
 
-    const fetchReservations = async () => {
-      try {
-        const response = await fetch(`http://localhost:8080/api/reservations?userId=1&page=${pageGroup}&size=${itemsPerGroup}`);
-        const data = await response.json();
-        setReservations(data.list);
-        setTotalPages(Math.ceil(data.total / itemsPerPage));
-      } catch (error) {
-        console.error('예약 데이터를 가져오는 중 오류 발생:', error);
+const fetchReservations = async () => {
+  try {
+    const userId = jwtDecode(token).userId;
+    
+    // API 요청
+    const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=8&size=40`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        'Content-Type': 'application/json'
       }
-    };
+    });
+
+    // 응답 상태 확인
+    if (!response.ok) {
+      throw new Error(`예약 데이터를 가져오는 중 오류 발생: ${response.statusText}`);
+    }
+
+    // 응답 본문을 JSON으로 파싱
+    const data = await response.json();
+
+    // 데이터 처리
+    setReservations(data.list);
+    setTotalPages(Math.ceil(data.total / itemsPerPage));
+  } catch (error) {
+    console.error('예약 데이터를 가져오는 중 오류 발생:', error);
+  }
+};
+
   
     useEffect(() => {
       fetchReservations();

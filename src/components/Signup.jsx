@@ -130,7 +130,9 @@ function Signup() {
   const handleEmailCheck = async (e) => {
     e.preventDefault();
 
-    try {
+    try {      
+      console.log(formData.email);
+      console.log(authNum);
       const response = await axios.post("http://localhost:8080/api/auth/verify-emailCheck", {
         email: formData.email,
         authNum: authNum
