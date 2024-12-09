@@ -3,11 +3,13 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import 'css/KDH/ManagerSchedule.css';
+import { useAuthStore } from 'store/authStore';
 
 // 시간 옵션 생성 함수
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
 const Manager = () => {
+  const {token} = useAuthStore();
   const [date, setDate] = useState(new Date());
   const [schedules, setSchedules] = useState({});
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
@@ -42,7 +44,13 @@ const Manager = () => {
   // 저장된 스케줄을 불러오는 함수
   const fetchSavedSchedules = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/restaurants/schedule?restaurantId=123');
+      const response = await fetch('http://localhost:8080/api/restaurants/schedule?restaurantId=123',{
+        method: 'get',
+        headers:{
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+          }
+      });
       if (!response.ok) throw new Error('일정을 불러오는 데 실패했습니다.');
       const data = await response.json();
       setSavedSchedules(data);
@@ -68,7 +76,10 @@ const Manager = () => {
     try {
       const response = await fetch('http://localhost:8080/api/restaurants/schedule', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers:{
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+          },
         body: JSON.stringify(newSchedule),
       });
 
@@ -85,7 +96,14 @@ const Manager = () => {
     if (!selectedScheduleId) return alert('삭제할 일정을 선택해주세요.');
 
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/schedule/${selectedScheduleId}`, { method: 'DELETE' });
+      const response = await fetch(`http://localhost:8080/api/restaurants/schedule/${selectedScheduleId}`, 
+        {
+          method: 'DELETE',
+          headers:{
+        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        'Content-Type': 'application/json'
+        }
+     });
       if (!response.ok) throw new Error('일정 삭제에 실패했습니다.');
       alert('일정이 삭제되었습니다.');
       fetchSavedSchedules();

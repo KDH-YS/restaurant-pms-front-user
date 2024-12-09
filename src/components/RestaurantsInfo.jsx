@@ -3,7 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';  // useParams로 URL 
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';  // API 호출 함수 임포트
 import '../css/ReserveMain.css';  // 스타일 임포트
 import { restaurantStore } from 'store/restaurantStore';
+import { useAuthStore } from 'store/authStore';
 function RestaurantsInfo() {
+  const {token} = useAuthStore();
   const { restaurantId } = useParams();  // URL에서 restaurantId 받기
   const navigate = useNavigate();  // 네비게이션 함수
 
@@ -27,7 +29,7 @@ function RestaurantsInfo() {
     const getRestaurantDetail = async () => {
       setLoading(true);  // 로딩 시작
       try {
-        const data = await fetchRestaurantDetail(restaurantId);  // API 호출
+        const data = await fetchRestaurantDetail(restaurantId,token);  // API 호출
         setRestaurant(data);  // 레스토랑 정보 상태 업데이트
       } catch (err) {
         setError('레스토랑 정보를 가져오는 데 실패했습니다.');
@@ -39,7 +41,7 @@ function RestaurantsInfo() {
     const getRestaurantMenu = async () => {
       setLoading(true);  // 로딩 시작
       try {
-        const menuData = await fetchRestaurantMenu(restaurantId);  // 메뉴 정보 API 호출
+        const menuData = await fetchRestaurantMenu(restaurantId,token);  // 메뉴 정보 API 호출
         setMenus(menuData);  // 메뉴 상태 업데이트
       } catch (err) {
         setError('메뉴 정보를 가져오는 데 실패했습니다.');
@@ -51,7 +53,7 @@ function RestaurantsInfo() {
     const getRestaurantSchedule = async () => {
       setLoading(true);  // 로딩 시작
       try {
-        const scheduleData = await fetchRestaurantSchedule(restaurantId);  // 메뉴 정보 API 호출
+        const scheduleData = await fetchRestaurantSchedule(restaurantId,token);  // 메뉴 정보 API 호출
         setSchedule(scheduleData);  // 메뉴 상태 업데이트
       } catch (err) {
         setError('스케줄을 가져오는 데 실패했습니다.');

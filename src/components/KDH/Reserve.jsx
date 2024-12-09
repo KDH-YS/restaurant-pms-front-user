@@ -8,6 +8,7 @@ import 'css/KDH/Reserve.css';
 import restaurantimg from "img/restaurant.jpg";
 import styled from 'styled-components';
 import { restaurantStore } from 'store/restaurantStore';
+import { useAuthStore } from 'store/authStore';
 const StyledCard = styled.div`
   .form-control {
     resize: none;
@@ -18,6 +19,7 @@ const StyledCard = styled.div`
 `;
 
 const Reserve = () => {
+  const {token}=useAuthStore();
   const {restaurant}= restaurantStore();
   
   const navigate = useNavigate();
@@ -67,7 +69,8 @@ const Reserve = () => {
       const reservationResponse = await fetch('http://localhost:8080/api/reservations', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(reservationData),
       });

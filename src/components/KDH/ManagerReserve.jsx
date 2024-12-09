@@ -6,8 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
 import 'css/KDH/ManagerReserve.css';
+import { useAuthStore } from 'store/authStore';
 
 const ManagerReserve = () => {
+  const {token}=useAuthStore();
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [statusFilter, setStatusFilter] = useState('전체');
@@ -26,7 +28,15 @@ const ManagerReserve = () => {
 
   const fetchReservations = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`);
+      const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`,
+        {
+          method:'get',
+          headers:{
+            'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+            'Content-Type': 'application/json'
+            }
+        }
+      );
       const data = await response.json();
       setReservations(data.list || []);
       setFilteredReservations(data.list || []);
@@ -57,7 +67,10 @@ const ManagerReserve = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers:{
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+          },
         body: JSON.stringify({ status: Object.keys(statusLabels).find(key => statusLabels[key] === updatedStatus) }),
       });
 
@@ -77,7 +90,10 @@ const ManagerReserve = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers:{
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+          },
       });
 
       if (response.ok) {

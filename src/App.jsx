@@ -20,6 +20,7 @@ import RestaurantAdd from "./pages/restaurants/Add.jsx";
 import Update from "./pages/restaurants/Update.jsx";
 import ManagerReservePage from 'Router/ManagerReservePage.jsx';
 import SchedulePage from 'Router/SchedulePage.jsx';
+import InquiryPage from 'Router/Inquiry.jsx'
 function App() {
   return (
     <BrowserRouter> 
@@ -43,7 +44,7 @@ function App() {
           <Route path="/admin/restaurant" element={<AdminPage/>}></Route>
           <Route path="/restaurant/update/:restaurantId" element={<Update/>}></Route>
           <Route path="/restaurant/add" element={<RestaurantAdd/>}></Route>
-
+          <Route path="/Inquiry" element={<InquiryPage/>}/>
         </Routes>
       </div>
     </BrowserRouter>

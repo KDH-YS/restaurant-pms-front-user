@@ -30,7 +30,7 @@ const fetchReservations = async () => {
     const userId = jwtDecode(token).userId;
     
     // API 요청
-    const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=8&size=40`, {
+    const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${pageGroup}&size=${itemsPerGroup}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`, // 인증 토큰을 추가

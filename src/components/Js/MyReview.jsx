@@ -2,17 +2,25 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, ListGroup } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/myreview.css";
-
+import { useAuthStore } from "store/authStore";
+import { jwtDecode } from "jwt-decode";
 export function MyReview() {
   const [reviews, setReviews] = useState([]);
   const [reviewImg, setReviewImg] = useState([]);
   const [user, setUser] = useState({});
   const [reviewsToShow, setReviewsToShow] = useState(2);
-
+  const {token}= useAuthStore();
   // 유저정보를 가져오는 API 요청
   const fetchUser = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/js/user/1`);
+      const userId = jwtDecode(token).userId;
+      const response = await fetch(`http://localhost:8080/api/js/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        'Content-Type': 'application/json'
+      }
+    });
       if (response.ok) {
         const data = await response.json();
         setUser(data);
@@ -27,7 +35,14 @@ export function MyReview() {
   // 내 리뷰를 가져오는 API
   const fetchMyReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/mypage/1/reviews`);
+      const userId = jwtDecode(token).userId;
+      const response = await fetch(`http://localhost:8080/api/mypage/${userId}/reviews`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setReviews(data.reviews);

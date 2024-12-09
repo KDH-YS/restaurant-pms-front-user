@@ -33,10 +33,16 @@ export const searchRestaurants = async (searchParams) => {
 
 
 // 레스토랑 상세 정보를 가져오는 함수
-export const fetchRestaurantDetail = async (restaurantId) => {
+export const fetchRestaurantDetail = async (restaurantId,token) => {
   const restaurantIdString = String(restaurantId);
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant/${restaurantId}`);
+    const response = await axios.get(`${BASE_URL}/restaurant/${restaurantId}`,{
+      method:'get',
+      headers:{
+        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;  // 서버에서 반환한 레스토랑 정보
   } catch (error) {
     console.error('레스토랑 상세 정보를 가져오는 데 실패했습니다:', error);
@@ -45,10 +51,15 @@ export const fetchRestaurantDetail = async (restaurantId) => {
 };
 
 //메뉴 가져옥api
-export const fetchRestaurantMenu = async (restaurantId) => {
+export const fetchRestaurantMenu = async (restaurantId,token) => {
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant/menu/${restaurantId}`, {
-     });
+    const response = await axios.get(`${BASE_URL}/restaurant/menu/${restaurantId}`,{
+      method:'get',
+      headers:{
+        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error searching restaurants:', error);
@@ -112,10 +123,15 @@ export const deleteRestaurant = async (restaurantId) => {
 };
 
 //스케줄 가져옥api
-export const fetchRestaurantSchedule = async (restaurantId) => {
+export const fetchRestaurantSchedule = async (restaurantId,token) => {
   try {
-    const response = await axios.get(`${BASE_URL}/schedule/${restaurantId}`, {
-     });
+    const response = await axios.get(`${BASE_URL}/schedule/${restaurantId}`,{
+      method:'get',
+      headers:{
+        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error searching restaurants:', error);
