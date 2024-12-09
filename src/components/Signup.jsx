@@ -67,6 +67,9 @@ function Signup() {
     }));
   };
 
+  // 이메일 인증 상태 관리
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+
   // 회원가입 요청
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -74,6 +77,36 @@ function Signup() {
     // 필수 체크박스 검증
     if (!checkboxState.HjSignupCheckAgeOlder || !checkboxState.HjSignupCheckTermsOfService || !checkboxState.HjSignupCheckPersonalInformation) {
       alert("필수 약관에 동의해주세요.");
+      return;
+    }
+
+    // 아이디 입력 체크
+    if (!formData.userName) {
+      alert("아이디를 입력하세요.");
+      return;
+    }
+
+    // 비밀번호 입력 체크
+    if (!formData.password) {
+      alert("비밀번호를 입력하세요.");
+      return;
+    }
+
+    // 이름 입력 체크
+    if (!formData.name) {
+      alert("이름을 입력하세요.");
+      return;
+    }
+
+    // 이메일 인증 여부 체크
+    if (!isEmailVerified) {
+      alert("이메일 인증을 완료해주세요.");
+      return;
+    }
+
+    // 휴대폰 번호 입력 체크
+    if (!formData.phone) {
+      alert("휴대폰 번호를 입력하세요.");
       return;
     }
 
@@ -141,6 +174,7 @@ function Signup() {
       });
 
       if (response.status === 200) {
+        setIsEmailVerified(true);
         alert("인증 성공");
       } else {
         alert("인증 실패");
