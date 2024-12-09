@@ -4,17 +4,18 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from '../store/authStore';
 import { Navbar, Dropdown, Container } from 'react-bootstrap';
 import styled from 'styled-components';
-export function Header() {
-    const { token, userName, clearAuth } = useAuthStore();
-    const CustomDropdownToggle = styled(Dropdown.Toggle)`
+const CustomDropdownToggle = styled(Dropdown.Toggle)`
 
-  &::after {
-    display:none;
-  }
+&::after {
+  display:none;
+}
 `;
 const CustomDropdownMenu = styled(Dropdown.Menu)`
-  left: -100px !important;  // 메뉴 위치 조정
+left: -100px !important;  // 메뉴 위치 조정
 `;
+export function Header() {
+    const { token, userName, clearAuth } = useAuthStore();
+
 
     const handleLogout = () => {
         clearAuth();
