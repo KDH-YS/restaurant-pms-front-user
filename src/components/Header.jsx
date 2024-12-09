@@ -1,52 +1,59 @@
 import React from 'react';
-import menubuger from "../img/menubuger.png"
-import '../css/Header.css'
-import {Link} from "react-router-dom";
+import menubuger from "../img/menubuger.png";
+import { Link } from "react-router-dom";
 import { useAuthStore } from '../store/authStore';
-
+import { Navbar, Dropdown, Container } from 'react-bootstrap';
+import styled from 'styled-components';
 export function Header() {
-
     const { token, userName, clearAuth } = useAuthStore();
+    const CustomDropdownToggle = styled(Dropdown.Toggle)`
+
+  &::after {
+    display:none;
+  }
+`;
+const CustomDropdownMenu = styled(Dropdown.Menu)`
+  left: -100px !important;  // 메뉴 위치 조정
+`;
 
     const handleLogout = () => {
-        clearAuth(); // Zustand 상태 초기화
-        localStorage.removeItem("token"); // 로컬 스토리지에서도 제거
+        clearAuth();
+        localStorage.removeItem("token");
         alert("로그아웃되었습니다.");
     };
-    console.log(token); // 상태 확인용 로그
 
     return (
-        <nav className="navbar navbar-expand-lg">
-            <div className="container-fluid">
+        <Navbar expand="lg" className="navbar-custom">
+            <Container fluid>
                 {/* 중앙에 Rechelin Korea 텍스트 */}
-                <Link className="navbar-brand mx-auto" to="/">Rechelin Korea</Link>
+                <Navbar.Brand className="mx-auto" as={Link} to="/">Rechelin Korea</Navbar.Brand>
 
-                {/* 오른쪽 끝에 드롭다운 메뉴 */}
-                <div className="dropdown">
-                    <button className="btn" data-bs-toggle="dropdown">
-                        <img src={menubuger}/>
-                    </button>
+                {/* 드롭다운 메뉴 */}
+                <Dropdown>
+                <CustomDropdownToggle drop="start" variant="link">
+                <img src={menubuger} alt="메뉴 아이콘" />
+            </CustomDropdownToggle>
 
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <CustomDropdownMenu>
                         {token ? (
-                            <div>
-                                <p>{userName}님 환영합니다.</p>
-                                <li className="dropdown-item" onClick={handleLogout}>로그아웃</li>
-                                <li><Link className="dropdown-item" to="/MyPage">마이페이지</Link></li>
-                            </div>
+                            <>
+                                <Dropdown.ItemText>{userName}님 환영합니다.</Dropdown.ItemText>
+                                <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/MyPage">마이페이지</Dropdown.Item>
+                            </>
                         ) : (
                             <>
-                                <li><Link className="dropdown-item" to="/login">로그인</Link></li>
-                                <li><Link className="dropdown-item" to="/signup">회원가입</Link></li>
+                                <Dropdown.Item as={Link} to="/login">로그인</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/signup">회원가입</Dropdown.Item>
                             </>
                         )}
-                        <li><Link className="dropdown-item" to="/inquiry">문의하기</Link></li>
-                        <li><Link className="dropdown-item" to="/restaurant">레스토랑</Link></li>
-                        <li><Link className="dropdown-item" to="/admin">관리자 페이지</Link></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                        <Dropdown.Item as={Link} to="/inquiry">문의하기</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+                    </CustomDropdownMenu>
+                </Dropdown>
+            </Container>
+        </Navbar>
     );
 }
 

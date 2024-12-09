@@ -94,7 +94,7 @@ const Reserve = () => {
       const selectedTime = parseInt(timeOption.split(':')[0]) * 60 + parseInt(timeOption.split(':')[1]);
       return selectedTime >= currentTime;
     }
-    return true; // 날짜가 다르면 시간 제한 없음
+    return true; 
   };
 
   return (

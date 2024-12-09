@@ -12,10 +12,20 @@ const Manager = () => {
   const [schedules, setSchedules] = useState({});
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [savedSchedules, setSavedSchedules] = useState([]);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const timeOptions = generateTimeOptions();
 
   // 토요일에 특별한 스타일을 적용하는 함수
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
+
+  useEffect(() => {
+    // 현재 날짜와 시간으로 초기화
+    const interval = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // 입력값 변경 시 스케줄 업데이트
   const handleInputChange = (key, value) => {
@@ -100,7 +110,7 @@ const Manager = () => {
         <div className="col-md-6">
           <Card className="schedulecard mt-4">
             <Card.Body>
-              <Calendar onChange={setDate} value={date} tileClassName={tileClassName} />
+              <Calendar onChange={setDate} value={date} tileClassName={tileClassName} minDate={currentDateTime} />
             </Card.Body>
           </Card>
         </div>
@@ -136,7 +146,7 @@ const Manager = () => {
                         value={currentSchedule[field] || ''}
                         onChange={(e) => handleInputChange(field, e.target.value)}
                       >
-                        <option value="">선택</option>
+                        <option  value="">선택</option>
                         {timeOptions.map((time) => (
                           <option key={time} value={time}>
                             {time}
