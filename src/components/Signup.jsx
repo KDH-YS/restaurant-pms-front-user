@@ -117,6 +117,7 @@ function Signup() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
+        notificationAgreed: checkboxState.HjSignupCheckNotificationAgreed ? 1 : 0,
       }, {
         headers: {
           "Content-Type": "application/json",
