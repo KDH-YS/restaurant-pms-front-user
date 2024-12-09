@@ -9,6 +9,8 @@ import restaurantimg from "img/restaurant.jpg";
 import styled from 'styled-components';
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
+import { format } from 'date-fns';
+
 const StyledCard = styled.div`
   .form-control {
     resize: none;
@@ -19,48 +21,106 @@ const StyledCard = styled.div`
 `;
 
 const Reserve = () => {
-  const {token}=useAuthStore();
-  const {restaurant}= restaurantStore();
+  const { token } = useAuthStore();
+  const { restaurant } = restaurantStore();
   
   const navigate = useNavigate();
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState('');
   const [people, setPeople] = useState(1);
-  const [totalPrice, setTotalPrice] = useState(10000); // 기본 금액 (1명 기준)
+  const [totalPrice, setTotalPrice] = useState(10000);
   const [request, setRequest] = useState('');
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-
-  const TIME_OPTIONS = [
-    { value: '', label: '[예약 시간 선택]' },
-    { value: '12:00', label: '12:00 PM' },
-    { value: '14:00', label: '2:00 PM' },
-    { value: '18:00', label: '6:00 PM' },
-    { value: '20:00', label: '8:00 PM' },
-  ];
+  const [schedules, setSchedules] = useState({});
+  const [availableTimes, setAvailableTimes] = useState([]);
 
   useEffect(() => {
-    // 현재 날짜와 시간으로 초기화
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 1000);
 
+    fetchSchedules();
+
     return () => clearInterval(interval);
   }, []);
+
+  const formatTime = (time) => time ? time.slice(0, 5) : null;
+
+  const fetchSchedules = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/restaurants/schedule?restaurantId=${restaurant.restaurantId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('스케줄을 불러오는데 실패했습니다.');
+      }
+
+      const data = await response.json();
+      const schedulesMap = {};
+      data.forEach(schedule => {
+        schedulesMap[schedule.openDate] = {
+          ...schedule,
+          startTime: formatTime(schedule.startTime),
+          endTime: formatTime(schedule.endTime),
+          breakStart: formatTime(schedule.breakStart),
+          breakEnd: formatTime(schedule.breakEnd)
+        };
+      });
+      setSchedules(schedulesMap);
+    } catch (error) {
+      console.error('스케줄 불러오기 오류:', error);
+      alert(error.message);
+    }
+  };
+
+  useEffect(() => {
+    updateAvailableTimes();
+  }, [date, schedules]);
+
+  const updateAvailableTimes = () => {
+    const selectedDateStr = format(date, 'yyyy-MM-dd');
+    const schedule = schedules[selectedDateStr];
+    if (schedule && schedule.isOpen && schedule.startTime && schedule.endTime) {
+      const times = [];
+      let currentTime = schedule.startTime.slice(0, 5); // Remove seconds
+      const endTime = schedule.endTime.slice(0, 5); // Remove seconds
+      while (currentTime <= endTime) {
+        if (!schedule.breakStart || !schedule.breakEnd || 
+            currentTime < schedule.breakStart.slice(0, 5) || currentTime > schedule.breakEnd.slice(0, 5)) {
+          times.push(currentTime);
+        }
+        const [hours, minutes] = currentTime.split(':').map(Number);
+        let newHours = hours + 1;
+        if (newHours >= 24) {
+          break;  // 24시를 넘어가면 루프 종료
+        }
+        currentTime = `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      }
+      setAvailableTimes(times);
+    } else {
+      setAvailableTimes([]);
+    }
+  };
 
   const handlePeopleChange = (e) => {
     const numberOfPeople = parseInt(e.target.value);
     setPeople(numberOfPeople);
-    setTotalPrice(numberOfPeople * 10000); // 금액 갱신
+    setTotalPrice(numberOfPeople * 10000);
   };
 
   const handleReserve = async () => {
     const userId = 1; // 임시 사용자 ID
-    const restaurantId = restaurant.restaurantId; // 임시 레스토랑 ID
+    const restaurantId = restaurant.restaurantId;
 
     const reservationData = {
       userId,
       restaurantId,
-      reservationTime: `${date.toISOString().split('T')[0]}T${time}`,
+      reservationTime: `${format(date, 'yyyy-MM-dd')}T${time}`,
       request,
       numberOfPeople: people,
     };
@@ -86,18 +146,22 @@ const Reserve = () => {
     }
   };
 
-  const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
-
-
-
-  // 예약 시간 선택 제한
-  const isValidTime = (timeOption) => {
-    if (date.toDateString() === currentDateTime.toDateString()) {
-      const currentTime = currentDateTime.getHours() * 60 + currentDateTime.getMinutes();
-      const selectedTime = parseInt(timeOption.split(':')[0]) * 60 + parseInt(timeOption.split(':')[1]);
-      return selectedTime >= currentTime;
+  const tileClassName = ({ date, view }) => {
+    if (view === 'month') {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      if (schedules[dateStr] && schedules[dateStr].isOpen) {
+        return 'highlight';
+      }
     }
-    return true; 
+    return null;
+  };
+
+  const tileDisabled = ({ date, view }) => {
+    if (view === 'month') {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      return !schedules[dateStr] || !schedules[dateStr].isOpen;
+    }
+    return false;
   };
 
   return (
@@ -106,8 +170,8 @@ const Reserve = () => {
         <Card className="mb-4">
           <Card.Img variant="top" src={restaurantimg} style={{ height: '400px', objectFit: 'cover' }} />
           <Card.Body>
-            <Card.Title className="h4 mb-2">가게 이름</Card.Title>
-            <Card.Text className="text-muted">서울특별시 강남구 역삼동 123-45</Card.Text>
+            <Card.Title className="h4 mb-2">{restaurant.name}</Card.Title>
+            <Card.Text className="text-muted">{restaurant.roadAddr}</Card.Text>
           </Card.Body>
         </Card>
 
@@ -117,9 +181,10 @@ const Reserve = () => {
               onChange={setDate}
               value={date}
               tileClassName={tileClassName}
+              tileDisabled={tileDisabled}
               prevLabel="<"
               nextLabel=">"
-              minDate={currentDateTime} // 오늘 날짜 이후만 선택 가능
+              minDate={currentDateTime}
               className="w-100 border-0"
             />
           </Card.Body>
@@ -129,15 +194,14 @@ const Reserve = () => {
           <Card.Body>
             <Card.Title className="h5 mb-3 reservetimebutton">예약시간</Card.Title>
             <Row>
-              {TIME_OPTIONS.slice(1).map((option) => (
-                <Col key={option.value} xs={6} sm={3} className="mb-2">
+              {availableTimes.map((timeOption) => (
+                <Col key={timeOption} xs={6} sm={3} className="mb-2">
                   <Button
-                    variant={time === option.value ? "primary" : "outline-primary"}
+                    variant={time === timeOption ? "primary" : "outline-primary"}
                     className="w-100"
-                    onClick={() => setTime(option.value)}
-                    disabled={!isValidTime(option.value)} // 유효하지 않은 시간은 비활성화
+                    onClick={() => setTime(timeOption)}
                   >
-                    {option.label}
+                    {timeOption}
                   </Button>
                 </Col>
               ))}
@@ -184,6 +248,7 @@ const Reserve = () => {
               variant="primary"
               className="ms-auto"
               onClick={handleReserve}
+              disabled={!time}
             >
               예약하기
             </Button>
@@ -195,3 +260,4 @@ const Reserve = () => {
 };
 
 export default Reserve;
+

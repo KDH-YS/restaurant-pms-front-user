@@ -9,7 +9,7 @@ export const restaurantStore = create(
         setRestaurant: (restaurantData) => set({ restaurant: restaurantData }),
     }),
     {
-      name: 'auth-storage', // 로컬 스토리지에 저장될 키 이름
+      name: 'restaurant-storage', // 로컬 스토리지에 저장될 키 이름
       getStorage: () => localStorage, // 로컬 스토리지 사용
     }
   )

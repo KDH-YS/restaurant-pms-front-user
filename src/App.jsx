@@ -1,7 +1,7 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import User from "./Router/User.jsx";
+import MainPage from "./Router/MainPage";
 import Contact from "./Router/Contact.jsx";
 import Restaurant from "./Router/Restaurant.jsx"
 import RestaurantInfo from "./Router/RestaurantInfo.jsx"
@@ -26,7 +26,7 @@ function App() {
     <BrowserRouter> 
       <div className="App">
         <Routes>
-          <Route path="/" element={<User />} />
+          <Route path="/" element={<MainPage />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/Restaurant" element={<Restaurant />} />
           <Route path="/Restaurant/:restaurantId" element={<RestaurantInfo />} />
