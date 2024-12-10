@@ -24,12 +24,32 @@ const AddRestaurant = () => {
     totalSeats: '',
     parkingAvailable: false,
   });
+  const [phoneError, setPhoneError] = useState(null); // 전화번호 형식 오류 상태
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRestaurant((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+   // 전화번호 형식 확인
+  const handlePhoneChange = (e) => {
+    const { value } = e.target;
+    setRestaurant((prevState) => ({
+      ...prevState,
+      phone: value,
+    }));
+
+    // 전화번호 형식 검증 (예: 010-1234-5678)
+    const phoneRegex = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
+    if (value && !phoneRegex.test(value)) {
+      setPhoneError('전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)');
+    } else {
+      setPhoneError('');  // 올바른 형식일 경우 오류 메시지 제거
+    }
   };
 
   const setAddressData = (addressData) => {
@@ -43,6 +63,13 @@ const AddRestaurant = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+      // 전화번호 오류가 있으면 팝업 띄우고 종료
+      if (phoneError) {
+        alert('전화번호를 확인해주세요.');
+        return;  // 폼 제출을 중지
+      }
+
     const isConfirmed = window.confirm('새로운 레스토랑을 추가하시겠습니까?');
     if (!isConfirmed) {
       return; // 사용자가 "아니오"를 선택하면 추가하지 않음
@@ -107,8 +134,11 @@ const AddRestaurant = () => {
                 type="text"
                 name="phone"
                 value={restaurant.phone || ''}
-                onChange={handleChange}
+                onChange={handlePhoneChange} // 포맷팅된 전화번호로 처리
+                required
+                placeholder="예: 010-2345-1234"
               />
+              {phoneError && <div className="text-danger">{phoneError}</div>} {/* 오류 메시지 표시 */}
             </Form.Group>
           </Col>
           <Col md={6}>

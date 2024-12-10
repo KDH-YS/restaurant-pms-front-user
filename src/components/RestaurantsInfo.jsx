@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';  // useParams로 URL 파라미터 받기
-import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';  // API 호출 함수 임포트
+import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule, getRestaurantImages } from '../pages/restaurants/api';  // API 호출 함수 임포트
 import '../css/ReserveMain.css';  // 스타일 임포트
 
 function RestaurantsInfo() {
@@ -8,62 +8,50 @@ function RestaurantsInfo() {
   const navigate = useNavigate();  // 네비게이션 함수
 
   const [restaurant, setRestaurant] = useState(null);  // 레스토랑 데이터 상태
-  const [loading, setLoading] = useState(true);  // 로딩 상태
-  const [error, setError] = useState(null);  // 에러 상태
   const [menus, setMenus] = useState([]);  // 메뉴 데이터 상태
   const [schedule, setSchedule] = useState(null);
+  const [images, setImages] = useState([]);  // 이미지 데이터 상태
+  const [loading, setLoading] = useState(true);  // 로딩 상태
+  const [error, setError] = useState(null);  // 에러 상태
 
-  // 시간을 "HH:mm:ss" -> "HH:mm" 형식으로 변환
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(':');
-    return `${hours}:${minutes}`; // 시간과 분만 반환
-  };
 
-  // 레스토랑 상세 정보를 API에서 가져오는 함수
-  useEffect(() => {
-    const getRestaurantDetail = async () => {
-      setLoading(true);  // 로딩 시작
+   // 레스토랑 상세 정보를 API에서 가져오는 함수
+   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await fetchRestaurantDetail(restaurantId);  // API 호출
-        setRestaurant(data);  // 레스토랑 정보 상태 업데이트
-      } catch (err) {
-        setError('레스토랑 정보를 가져오는 데 실패했습니다.');
-      } finally {
-        setLoading(false);  // 로딩 종료
-      }
-    };
+        // 레스토랑, 메뉴, 스케줄, 이미지 데이터를 동시에 호출
+        const restaurantData = await fetchRestaurantDetail(restaurantId);
+        setRestaurant(restaurantData);
+        
+        const menuData = await fetchRestaurantMenu(restaurantId);
+        setMenus(menuData);
 
-    const getRestaurantMenu = async () => {
-      setLoading(true);  // 로딩 시작
-      try {
-        const menuData = await fetchRestaurantMenu(restaurantId);  // 메뉴 정보 API 호출
-        setMenus(menuData);  // 메뉴 상태 업데이트
-      } catch (err) {
-        setError('메뉴 정보를 가져오는 데 실패했습니다.');
-      } finally {
-        setLoading(false);  // 로딩 종료
-      }
-    };
+        const scheduleData = await fetchRestaurantSchedule(restaurantId);
+        setSchedule(scheduleData);
 
-    const getRestaurantSchedule = async () => {
-      setLoading(true);  // 로딩 시작
-      try {
-        const scheduleData = await fetchRestaurantSchedule(restaurantId);  // 메뉴 정보 API 호출
-        setSchedule(scheduleData);  // 메뉴 상태 업데이트
+        const imageData = await getRestaurantImages(restaurantId);
+        setImages(imageData);  // 이미지를 상태에 저장
       } catch (err) {
-        setError('스케줄을 가져오는 데 실패했습니다.');
+        setError('정보를 불러오는 데 실패했습니다.');
       } finally {
-        setLoading(false);  // 로딩 종료
+        setLoading(false);
       }
     };
 
     if (restaurantId) {
-      getRestaurantDetail();  // restaurantId가 있을 때만 API 호출
-      getRestaurantMenu();  // 메뉴 정보 API 호출
-      getRestaurantSchedule();
+      fetchData();
     }
   }, [restaurantId]);
 
+ // 시간을 "HH:mm:ss" -> "HH:mm" 형식으로 변환 (null 또는 undefined 처리 추가)
+const formatTime = (timeString) => {
+  if (!timeString) {
+    return '정보 없음';  // null 또는 undefined일 경우 처리
+  }
+  const [hours, minutes] = timeString.split(':');
+  return `${hours}:${minutes}`;
+};
 
      // 스케줄 데이터를 어떻게 처리할지 (예시로 format 함수를 만들어서 데이터를 보기 좋게 가공)
   const formatSchedule = (scheduleData) => {
@@ -92,6 +80,13 @@ function RestaurantsInfo() {
         {/* 상단: 식당 이름, 설명, 별점 */}
         <header className="restaurant-header">
           {/* 배경 이미지 등 */}
+          {images.length > 0 && images[0].imageUrl && (
+            <img
+              src={images[0].imageUrl}
+              alt={restaurant?.name}
+              style={{ width: '100%', height: 'auto' }}
+            />
+          )}
         </header>
 
         {/* 중간: 매장 소개, 주소, 영업시간, 메뉴 */}

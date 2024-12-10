@@ -144,3 +144,41 @@ export const deleteMenu = async (restaurantId, menuId) => {
     throw error; // 호출한 곳에서 예외를 처리할 수 있도록 오류를 던집니다.
   }
 };
+
+// 1. 레스토랑 이미지 조회
+export const getRestaurantImages = async (restaurantId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/restaurant/${restaurantId}/image`);
+    return response.data; // 이미지 목록 반환
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    throw error;
+  }
+};
+
+export const insertImage = async (restaurantId, formData) => {
+  try {
+    // POST 요청 (multipart/form-data로 전송)
+    const response = await axios.post(`${BASE_URL}/restaurant/${restaurantId}/image/insert`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // 필수로 명시
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error inserting image:', error);
+    throw error;
+  }
+};
+
+
+// 3. 이미지 삭제
+export const deleteImage = async (restaurantId, imageId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/restaurant/${restaurantId}/image/${imageId}/delete`);
+    return response;
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    throw error;
+  }
+};
