@@ -1,0 +1,89 @@
+### 메뉴 가져오기
+GET http://localhost:8080/api/restaurant/menu/1
+Content-Type: application/json
+
+### 메뉴 등록하기
+POST http://localhost:8080/api/restaurant/menu/1/insert
+Content-Type: application/json
+
+{
+  "name": "감자칩칙촉",
+  "price": "2000"
+}
+
+### 메뉴 삭제하기
+DELETE http://localhost:8080/api/restaurant/menu/1/3/delete
+Content-Type: application/json
+
+### 이미지 가져오기
+GET http://localhost:8080/api/restaurant/1/image
+Content-Type: application/json
+
+### 이미지 등록하기
+POST  http://localhost:8080/api/restaurant/1/image/insert
+Content-Type: application/json
+
+{
+  "imageUrl": "hello",
+  "imageOrder": "1"
+}
+
+### 이미지 삭제하기
+DELETE http://localhost:8080/api/restaurant/1/image/1/delete
+Content-Type: application/json
+
+
+
+### 레스토랑조회
+GET http://localhost:8080/api/restaurant
+Content-Type: application/json
+
+### 레스토랑검색
+GET http://localhost:8080/api/restaurant/search?neighborhood=역삼
+Content-Type: application/json
+
+### 레스토랑전체검색
+GET http://localhost:8080/api/restaurant/search?query=일식
+Content-Type: application/json
+
+### 레스토랑 등록
+POST http://localhost:8080/api/restaurant/create
+Content-Type: application/json
+
+{
+  "name": "안녕",
+  "description": "안녕하세요",
+  "roadAddr": "서울특별시 강남구 역삼동 619-30",
+  "jibunAddr": "서울특별시 강남구 역삼동 619-30",
+  "detailAddr": "서울특별시 강남구 역삼동 619-30",
+  "postalCode": "12340",
+  "phone": "010-6596-6858",
+  "foodType": "한식",
+  "parkingAvailable": true,
+  "totalSeats": 37
+}
+
+<insert id="insertRestaurant" >
+    INSERT INTO restaurants (
+        name, description, postel_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
+    ) VALUES (
+        #{name}, #{description}, #{postelCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+    )
+	</insert>
+### 레스토랑 수정
+PUT http://localhost:8080/api/restaurant/update/2017
+Content-Type: application/json
+
+{
+  "name": "안녕하지롱",
+  "description": "안녕못하ㅈ롱",
+  "address": "서울특별시 강남구 역삼동 619-30",
+  "phone": "010-6596-6858",
+  "foodType": "한식",
+  "parkingAvailable": true,
+  "totalSeats": 37
+}
+
+### 스케쥴 가져오기
+GET http://localhost:8080/api/schedule/1
+Content-Type: application/json

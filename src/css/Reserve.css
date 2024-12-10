@@ -1,14 +1,14 @@
 /* 공통 폰트 설정 */
-@font-face {
+/* @font-face {
     font-family: 'InkLipquid';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/InkLipquid.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-}
+} */
 
 /* 폰트 통일 */
 * {
-    font-family: 'InkLipquid', sans-serif;
+    /* font-family: 'InkLipquid', sans-serif; */
 }
 
 /* 전체 예약 페이지 컨테이너 */

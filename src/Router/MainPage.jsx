@@ -1,19 +1,19 @@
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import MainPage from "../pages/restaurants/MainPage.js";
+import Main from "../pages/restaurants/Main";
 // 부트스트랩 임포트
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-function User() {
+function MainPage() {
   return (
     <>
       <Header />
-      <MainPage />
+      <Main />
       <Footer />
     </>
   );
 }
 
-export default User;
+export default MainPage;

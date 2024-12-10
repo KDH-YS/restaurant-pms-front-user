@@ -1,4 +1,4 @@
-import ReservationStatusComponent from "../components/ReservationStatus"; // ReservationStatus 컴포넌트 임포트
+import ReservationStatusComponent from "components/KDH/ReservationStatus"; // ReservationStatus 컴포넌트 임포트
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 

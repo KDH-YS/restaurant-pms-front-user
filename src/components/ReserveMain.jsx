@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';  // useNavigate 훅 추가
+import { useNavigate,Link } from 'react-router-dom';  // useNavigate 훅 추가
 import '../css/ReserveMain.css';
 
 function ReserveMain() {
@@ -71,13 +71,10 @@ function ReserveMain() {
         {/* 하단: 리뷰 구역 */}
         <section className="reviews">
           <h2>Reviews</h2>
+          <Link to="/review/shopreview"><span>전체보기</span></Link>
           <div className="review">
             <p>리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <span>- 작성자</span>
-          </div>
-          <div className="review">
-            <p>리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
-            <span>- 두개</span>
           </div>
         </section>
 

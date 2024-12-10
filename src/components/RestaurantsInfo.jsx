@@ -1,7 +1,94 @@
-
-import '../css/ReserveMain.css';
-
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';  // useParams로 URL 파라미터 받기
+import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';  // API 호출 함수 임포트
+import '../css/ReserveMain.css';  // 스타일 임포트
+import { restaurantStore } from 'store/restaurantStore';
+import { useAuthStore } from 'store/authStore';
 function RestaurantsInfo() {
+  const {token} = useAuthStore();
+  const { restaurantId } = useParams();  // URL에서 restaurantId 받기
+  const navigate = useNavigate();  // 네비게이션 함수
+
+  const {restaurant, setRestaurant} = restaurantStore();  // 레스토랑 데이터 상태
+  const [loading, setLoading] = useState(true);  // 로딩 상태
+  const [error, setError] = useState(null);  // 에러 상태
+  const [menus, setMenus] = useState([]);  // 메뉴 데이터 상태
+  const [schedule, setSchedule] = useState(null);
+
+  const handleReserveClick = () => {
+    navigate('/reserve');
+  };
+  // 시간을 "HH:mm:ss" -> "HH:mm" 형식으로 변환
+  const formatTime = (timeString) => {
+    const [hours, minutes] = timeString.split(':');
+    return `${hours}:${minutes}`; // 시간과 분만 반환
+  };
+
+  // 레스토랑 상세 정보를 API에서 가져오는 함수
+  useEffect(() => {
+    const getRestaurantDetail = async () => {
+      setLoading(true);  // 로딩 시작
+      try {
+        const data = await fetchRestaurantDetail(restaurantId);  // API 호출
+        setRestaurant(data);  // 레스토랑 정보 상태 업데이트
+      } catch (err) {
+        setError('레스토랑 정보를 가져오는 데 실패했습니다.');
+      } finally {
+        setLoading(false);  // 로딩 종료
+      }
+    };
+
+    const getRestaurantMenu = async () => {
+      setLoading(true);  // 로딩 시작
+      try {
+        const menuData = await fetchRestaurantMenu(restaurantId,token);  // 메뉴 정보 API 호출
+        setMenus(menuData);  // 메뉴 상태 업데이트
+      } catch (err) {
+        setError('메뉴 정보를 가져오는 데 실패했습니다.');
+      } finally {
+        setLoading(false);  // 로딩 종료
+      }
+    };
+
+    const getRestaurantSchedule = async () => {
+      setLoading(true);  // 로딩 시작
+      try {
+        const scheduleData = await fetchRestaurantSchedule(restaurantId,token);  // 메뉴 정보 API 호출
+        setSchedule(scheduleData);  // 메뉴 상태 업데이트
+      } catch (err) {
+        setError('스케줄을 가져오는 데 실패했습니다.');
+      } finally {
+        setLoading(false);  // 로딩 종료
+      }
+    };
+
+    if (restaurantId) {
+      getRestaurantDetail();  // restaurantId가 있을 때만 API 호출
+      getRestaurantMenu();  // 메뉴 정보 API 호출
+      getRestaurantSchedule();
+    }
+  }, [restaurantId]);
+
+
+     // 스케줄 데이터를 어떻게 처리할지 (예시로 format 함수를 만들어서 데이터를 보기 좋게 가공)
+  const formatSchedule = (scheduleData) => {
+    if (!schedule || schedule.length === 0) {
+      return <p>영업시간 정보가 없습니다.</p>;
+    }
+    return scheduleData.map((item) => (
+      <div key={item.scheduleId}>
+        <h4>{item.openDate}</h4>
+        <h4>{Number(item.isOpen) === 1 ? '영업 중' : '휴무'}</h4>
+        <p>영업시간 : {formatTime(item.startTime)} - {formatTime(item.endTime)}</p>
+        {item.breakStart && item.breakEnd && (
+          <p>휴식시간 : {formatTime(item.breakStart)} - {formatTime(item.breakEnd)}</p>
+        )}
+      </div>
+    ));
+  };
+
+  if (loading) return <p>로딩 중...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
 
   return (
@@ -14,33 +101,40 @@ function RestaurantsInfo() {
 
         {/* 중간: 매장 소개, 주소, 영업시간, 메뉴 */}
         <section className="restaurant-info">
-          <h1 className="restaurant-title">레슐렝 코리아</h1>
-          <p className="restaurant-description">한줄평[레스토랑 정보 페이지에서 받아와서 동적으로 처리]</p>
+          <h1 className="restaurant-title">{restaurant?.name}</h1>
           <div className="rating">
-            <span>★★★★☆</span> {/* 별점 표시 */}
+            <span>{'★'.repeat(restaurant?.averageRating || 0)}{'☆'.repeat(5 - (restaurant?.averageRating || 0))}</span> {/* 별점 표시 */}
           </div>
          {/* 주소와 영업시간, 지도 배치 */}
           <div className="info-container">
             <div className="left-info">
                 
-          <h2>매장소개</h2>
-          <p>[레스토랑 정보 페이지에서 받아와서 동적으로 처리]</p>
+            <h2>매장소개</h2>
+           <p>{restaurant?.description}</p>
               <div className="address">
                 <h3>주소</h3>
-                <p>[레스토랑 데이터 서버에서 받아와서 처리]</p>
+                <p>{restaurant?.jibunAddr}</p>
+                <p>{restaurant?.roadAddr}</p>
               </div>
+                <p><strong>총 좌석 수:</strong> {restaurant?.totalSeats}</p>
 
+                 {/* 스케줄 섹션 */}
               <div className="business-hours">
                 <h3>영업시간</h3>
-                <p>[레스토랑 정보 페이지에서 받아와서 동적으로 처리]</p>
-                <p>[레스토랑 정보 페이지에서 받아와서 동적으로 처리]</p>
+                {formatSchedule(schedule)}
               </div>
               <div className="menu">
             <h3>메뉴</h3>
             <ul>
-              <li>[레스토랑 데이터 서버에서 받아와서 처리]</li>
-              <li>[레스토랑 데이터 서버에서 받아와서 처리]</li>
-              <li>[레스토랑 데이터 서버에서 받아와서 처리]</li>
+              {menus.length > 0 ? (
+                menus.map((menu,index) => (
+                  <li key={index}>
+                        <strong>{menu.name}</strong> {menu.price}원
+                      </li>
+                    ))
+                  ) : (
+                    <li>메뉴 정보가 없습니다.</li>
+              )}
             </ul>
           </div>
             </div>
@@ -78,7 +172,7 @@ function RestaurantsInfo() {
         <section className="reservation">
           <h2>Make a Reservation</h2>
 
-          <button className="reserve-btn" >
+          <button className="reserve-btn" onClick={handleReserveClick} >
              예약하기 
           </button>
         </section>
