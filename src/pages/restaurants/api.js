@@ -182,3 +182,31 @@ export const deleteImage = async (restaurantId, imageId) => {
     throw error;
   }
 };
+
+// 대표 이미지 설정 API 호출 함수
+export const setMainImage = async (restaurantId, imageDTO) => {
+  try { console.log(restaurantId);
+    // PUT 요청으로 대표 이미지 설정
+    const response = await axios.put(`${BASE_URL}/restaurant/setMain`, imageDTO, {
+      params: { restaurantId: Number(restaurantId) } // 여기서 int로 변환
+    });
+
+    // 요청이 성공하면 응답 데이터 처리
+    return response.data;  // "대표 이미지가 설정되었습니다."
+  } catch (error) {
+    // 에러 처리
+    if (error.response) {
+      // 서버 응답이 있는 경우
+      console.error('Error response:', error.response.data);
+      return `오류: ${error.response.data}`;
+    } else if (error.request) {
+      // 요청이 서버로 전송되었으나 응답을 받지 못한 경우
+      console.error('Error request:', error.request);
+      return '서버에서 응답을 받지 못했습니다.';
+    } else {
+      // 기타 오류
+      console.error('Error:', error.message);
+      return `오류: ${error.message}`;
+    }
+  }
+};

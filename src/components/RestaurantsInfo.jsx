@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';  // useParams로 URL 파라미터 받기
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule, getRestaurantImages } from '../pages/restaurants/api';  // API 호출 함수 임포트
 import '../css/ReserveMain.css';  // 스타일 임포트
+import { Modal } from 'react-bootstrap';
 
 function RestaurantsInfo() {
   const { restaurantId } = useParams();  // URL에서 restaurantId 받기
@@ -14,6 +15,9 @@ function RestaurantsInfo() {
   const [loading, setLoading] = useState(true);  // 로딩 상태
   const [error, setError] = useState(null);  // 에러 상태
 
+  // 모달 관련 상태
+  const [showModal, setShowModal] = useState(false);  // 모달 열기/닫기 상태
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);  // 선택된 이미지 인덱스
 
    // 레스토랑 상세 정보를 API에서 가져오는 함수
    useEffect(() => {
@@ -70,6 +74,23 @@ const formatTime = (timeString) => {
     ));
   };
 
+  const handleImageClick = (index) => {
+    setSelectedImageIndex(index);  // 클릭한 이미지 인덱스를 저장
+    setShowModal(true);  // 모달 열기
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);  // 모달 닫기
+  };
+
+  const handlePrevImage = () => {
+    setSelectedImageIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+  };
+
+  const handleNextImage = () => {
+    setSelectedImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+  };
+
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
@@ -79,13 +100,33 @@ const formatTime = (timeString) => {
       <div className="restaurant-page">
         {/* 상단: 식당 이름, 설명, 별점 */}
         <header className="restaurant-header">
-          {/* 배경 이미지 등 */}
-          {images.length > 0 && images[0].imageUrl && (
-            <img
-              src={images[0].imageUrl}
-              alt={restaurant?.name}
-              style={{ width: '100%', height: 'auto' }}
-            />
+         {/* 배경 이미지 등 */}
+         {images.length > 0 && (
+            <div className="image-gallery">
+              <h3>식당 이미지</h3>
+              <div className="image-list">
+                {/* 이미지를 3개씩 보여주기 */}
+                {images.slice(0, 3).map((image, index) => (
+                  <img
+                    key={index}
+                    src={image.imageUrl}
+                    alt={restaurant?.name}
+                    className="gallery-image"
+                    style={{ width: '30%', margin: '0 7.5px' }}
+                    onClick={() => handleImageClick(index)}  // 이미지 클릭 시 해당 이미지를 모달에서 보기
+                  />
+                ))}
+                {/* 이미지가 3개 이상일 경우 "더보기" 버튼 */}
+                {images.length > 3 && (
+                  <button
+                    className="more-images-btn"
+                    onClick={() => handleImageClick(3)}  // 4번째 이미지를 모달로 열기
+                  >
+                    +{images.length - 3}개 더 보기
+                  </button>
+                )}
+              </div>
+            </div>
           )}
         </header>
 
@@ -167,6 +208,38 @@ const formatTime = (timeString) => {
           </button>
         </section>
       </div>
+
+      {/* 모달: 이미지 확대 보기 */}
+      <Modal show={showModal} onHide={handleModalClose} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>이미지 확대보기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="modal-image-container">
+            <button className="prev-button" onClick={handlePrevImage}>◀</button>
+            <img
+              src={images[selectedImageIndex]?.imageUrl}
+              alt="Restaurant"
+              style={{ width: '70%', height: 'auto' }}
+            />
+            <button className="next-button" onClick={handleNextImage}>▶</button>
+          </div>
+
+          {/* 이미지 썸네일 리스트 */}
+    <div className="thumbnail-list">
+      {images.map((image, index) => (
+        <img
+          key={index}
+          src={image.imageUrl}
+          alt={`Thumbnail ${index}`}
+          style={{ width: '10%', height: 'auto'}}
+          className={`thumbnail-image ${index === selectedImageIndex ? 'active' : ''}`}
+          onClick={() => setSelectedImageIndex(index)} // 썸네일 클릭 시 이미지 변경
+        />
+      ))}
+    </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

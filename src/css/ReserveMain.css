@@ -9,14 +9,17 @@
     font-family: InkLipquid, sans-serif;
     margin: 20px;
   }
-  
+  .gallery-image {
+    height: 30vh;
+  }
   .restaurant-header {
     text-align: center;
     margin-bottom: 30px;
-    background-image: url('../img/restaurant.jpg');
+    /* background-image: url('../img/restaurant.jpg'); */
     background-size: cover;
     background-position: center;
-    height: 20vh;
+    height: 35vh;
+
   }
   
   .restaurant-info h1 {
@@ -195,11 +198,13 @@
     }
   
     .restaurant-header {
-      height: 15vh; /* 헤더 높이를 줄임 */
+      height: 35vh; /* 헤더 높이를 줄임 */
       background-size: cover;
       background-position: center;
     }
-  
+    .gallery-image {
+      height: 25vh;
+    }
     .info-container {
       flex-direction: column; /* 세로 정렬 */
       align-items: center;
@@ -250,9 +255,12 @@
     }
   
     .restaurant-header {
-      height: 12vh;
+      height: 25vh;
     }
-  
+    
+    .gallery-image {
+      height: 20vh;
+    }
     .info-container {
       flex-direction: column;
     }

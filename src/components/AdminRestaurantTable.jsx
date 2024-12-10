@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form } from 'react-bootstrap';  // Modal 추가
-import { deleteImage, deleteMenu, fetchRestaurantMenu, fetchRestaurants, getRestaurantImages, insertImage, insertMenu, searchRestaurants } from '../pages/restaurants/api.js';
+import { deleteImage, deleteMenu, fetchRestaurantMenu, fetchRestaurants, getRestaurantImages, insertImage, insertMenu, searchRestaurants, setMainImage } from '../pages/restaurants/api.js';
 import { deleteRestaurant } from '../pages/restaurants/api.js';
 import Pagination from '../components/restaurants/Pagination';
 import { useNavigate } from 'react-router-dom'; // navigate 사용
@@ -35,6 +35,8 @@ const AdminRestaurantTable = () => {
   const [imageFile, setImageFile] = useState(null); // 이미지 파일 상태
   const [imageOrder, setImageOrder] = useState(false); // 이미지 순서 (기본 false로 설정)
   const [imagePreview, setImagePreview] = useState(''); // 이미지 미리보기 URL 상태
+  // 현재 선택된 대표 이미지 ID
+  const [selectedMainImageId, setSelectedMainImageId] = useState(null);
 
   // 레스토랑 데이터 가져오기
   const fetchRestaurantsData = async (page = 1) => {
@@ -213,9 +215,16 @@ const handlePageChange = async (page) => {
         ...prevState,
         images: updatedImages,
       }));
+      
+      // 업로드된 이미지들 출력 (배열로 되어 있기 때문에 각 이미지의 imageUrl을 출력)
+      // updatedImages.forEach(image => {
+      //   console.log("Image URL:", image.imageUrl); // 각 이미지의 URL 출력
+      // });
+
       alert("이미지가 업로드되었습니다.");
       setImageFile(null); // 파일 초기화
       setImagePreview(''); // 미리보기 초기화
+      
     }
   } catch (error) {
     console.error('이미지 업로드 실패:', error.response?.data || error.message);
@@ -240,6 +249,7 @@ const handleDeleteImage = async (imageId) => {
         ...prevState,
         images: updatedImages,
       }));
+      
     }
   } catch (error) {
     console.error("이미지 삭제 실패:", error);
@@ -331,6 +341,68 @@ const handleSearch = async (page = 1) => {
   } finally {
     setLoading(false);  // 로딩 종료
   }
+};
+
+// 이미지 클릭 시 대표 이미지로 설정
+const handleSetAsMainImage = async (imageId) => {
+  // 이전 대표 이미지 해제
+  const updatedImages = selectedRestaurant.images.map((image) => {
+    if (image.imageId === imageId) {
+      return { ...image, imageOrder: true }; // 대표 이미지로 설정
+    } else {
+      return { ...image, imageOrder: false }; // 기존 대표 이미지는 해제
+    }
+  });
+
+  // 업데이트된 이미지 배열을 레스토랑 데이터에 반영
+  setSelectedRestaurant((prevState) => ({
+    ...prevState,
+    images: updatedImages,
+  }));
+
+  // 대표 이미지 ID 저장
+  setSelectedMainImageId(imageId);
+
+   // 이미지 정보를 서버에 반영
+    const imageDTO = {
+      restaurantId: selectedRestaurant.restaurantId,
+      imageId: imageId,
+      imageOrder: true, // 대표 이미지로 설정
+    };
+
+    try {
+      const responseMessage = await setMainImage(selectedRestaurant.restaurantId, imageDTO);
+      alert(responseMessage);  // "대표 이미지가 설정되었습니다." 메시지 출력
+    } catch (error) {
+      alert("대표 이미지 설정에 실패했습니다.");
+      console.error("대표 이미지 설정 실패:", error);
+    }
+};
+
+  // 이미지 리스트 렌더링 함수
+const renderImageList = () => {
+  return selectedRestaurant?.images && selectedRestaurant.images.length > 0 ? (
+    selectedRestaurant.images.map((image) => (
+      <li key={image.imageId}>
+        <img
+          src={image.imageUrl}
+          alt="이미지"
+          style={{ maxWidth: '100px', marginRight: '10px', cursor: 'pointer' }}
+          onClick={() => handleSetAsMainImage(image.imageId)}  // 클릭하면 대표 이미지로 설정
+        />
+        {image.imageOrder && <span>대표 이미지</span>} {/* 대표 이미지 표시 */}
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleDeleteImage(image.imageId)}
+        >
+          삭제
+        </Button>
+      </li>
+    ))
+  ) : (
+    <p>이미지가 없습니다.</p>
+  );
 };
 
   return (
@@ -430,22 +502,8 @@ const handleSearch = async (page = 1) => {
             <h5 className="mt-3">이미지 리스트</h5>
             {/* 레스토랑 이미지 목록을 출력 */}
             <ul>
-              {selectedRestaurant.images && selectedRestaurant.images.map((image) => (
-                <li key={image.imageId}>
-                    <img 
-                      src={`http://localhost:8080${image.imageUrl.replace(/^\/+/, "")}`} 
-                      alt="이미지" 
-                      style={{ maxWidth: '100px', marginRight: '10px' }} 
-                    />
-                   <Button 
-                    variant="danger" 
-                    size="sm" 
-                    onClick={() => handleDeleteImage(image.imageId)}>
-                    삭제
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            {renderImageList()}
+          </ul>
 
 
             {/* 메뉴 추가 폼 */}
