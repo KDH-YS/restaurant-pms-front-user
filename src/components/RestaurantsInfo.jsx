@@ -29,7 +29,7 @@ function RestaurantsInfo() {
     const getRestaurantDetail = async () => {
       setLoading(true);  // 로딩 시작
       try {
-        const data = await fetchRestaurantDetail(restaurantId,token);  // API 호출
+        const data = await fetchRestaurantDetail(restaurantId);  // API 호출
         setRestaurant(data);  // 레스토랑 정보 상태 업데이트
       } catch (err) {
         setError('레스토랑 정보를 가져오는 데 실패했습니다.');

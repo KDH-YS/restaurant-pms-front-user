@@ -123,12 +123,11 @@ export const deleteRestaurant = async (restaurantId) => {
 };
 
 //스케줄 가져옥api
-export const fetchRestaurantSchedule = async (restaurantId,token) => {
+export const fetchRestaurantSchedule = async (restaurantId) => {
   try {
     const response = await axios.get(`${BASE_URL}/schedule/${restaurantId}`,{
       method:'get',
       headers:{
-        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
         'Content-Type': 'application/json'
       }
     });
