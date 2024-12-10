@@ -12,6 +12,7 @@ export function Header() {
         clearAuth(); // Zustand 상태 초기화
         localStorage.removeItem("token"); // 로컬 스토리지에서도 제거
         alert("로그아웃되었습니다.");
+        window.location.href = "/"; // 메인페이지로 이동
     };
     console.log(token); // 상태 확인용 로그
 
