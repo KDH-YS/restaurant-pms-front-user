@@ -148,11 +148,11 @@ const ManagerReserve = () => {
         </Col>
       </Row>
 
-      <Row className="mb-3">
-        <Col>
+      <Card className="mb-4">
+      <Card.Body>
           <Calendar tileContent={tileContent} tileClassName={tileClassName} />
-        </Col>
-      </Row>
+          </Card.Body>
+        </Card>
 
       <Row className="mb-3">
         <Col className='text-end'>
