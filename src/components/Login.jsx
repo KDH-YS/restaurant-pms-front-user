@@ -15,6 +15,7 @@ function Login() {
 
   // Zustand 스토어에서 상태 및 액션 가져오기
   const setToken = useAuthStore((state) => state.setToken);
+  const setUserId = useAuthStore((state) => state.setUserId);
   const setUserName = useAuthStore((state) => state.setUserName);
 
   useEffect(() => {
@@ -38,10 +39,12 @@ function Login() {
     );
       if (response.data.success) {
         const token = response.data.data.token; // 서버에서 받은 JWT 토큰
+        const userId = response.data.data.userId;
         const userName = response.data.data.userName; // 서버에서 받은 사용자 이름
 
         // Zustand 스토어에 저장
         console.log(response);
+        setUserId(userId);
         setToken(token);
         setUserName(userName);
 

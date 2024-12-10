@@ -4,6 +4,8 @@ import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } f
 import '../css/ReserveMain.css';  // 스타일 임포트
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
+import { Link } from "react-router-dom"
+
 function RestaurantsInfo() {
   const {token} = useAuthStore();
   const { restaurantId } = useParams();  // URL에서 restaurantId 받기
@@ -158,6 +160,7 @@ function RestaurantsInfo() {
         {/* 하단: 리뷰 구역 */}
         <section className="reviews">
           <h2>Reviews</h2>
+          <Link to="/review/shopReview"><p>전체보기</p></Link>
           <div className="review">
             <p>리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <span> - 작성자</span>
