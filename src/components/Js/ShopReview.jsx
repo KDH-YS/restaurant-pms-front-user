@@ -10,6 +10,8 @@ export function ShopReview() {
   // api상태관리
   const [reviews, setReviews] = useState([]);
   const [reviewImages, setReviewImages] = useState({});
+  const [isEditing, setIsEditing] = useState(null); // 수정 중인 리뷰 ID
+  const [editedContent, setEditedContent] = useState(""); // 수정 중인 내용
   const [restaurantData, setRestaurantData] = useState({});
   const [restaurantImg, setRestaurantImg] = useState([]);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -83,6 +85,34 @@ export function ShopReview() {
       }
     } catch (error) {
       console.error("리뷰 정보를 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  // 리뷰 수정 API 호출
+  const handleEditSubmit = async (reviewId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/reviews/${reviewId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          reviewContent: editedContent,
+        }),
+      });
+      if (response.ok) {
+        setReviews((prev) =>
+          prev.map((review) =>
+            review.reviewId === reviewId ? { ...review, reviewContent: editedContent } : review
+          )
+        );
+        setIsEditing(null); // 수정 모드 종료
+      } else {
+        console.error("리뷰 수정 실패");
+      }
+    } catch (error) {
+      console.error("리뷰 수정 중 오류 발생:", error);
     }
   };
 
@@ -291,7 +321,7 @@ export function ShopReview() {
         <Col>
           <h3 className="js-section-title mb-0">리뷰</h3>
           <ListGroup>
-            {reviews.slice(0, showReviewsCount).map((review) => (
+            {reviews.map((review) => (
               <ListGroup.Item key={review.reviewId} className="js-review-item">
                 <Row className="align-items-center">
                   <img
@@ -320,19 +350,42 @@ export function ShopReview() {
                 </Row>
                 <Row className="mt-3">
                   <Col>
-                    <p className="mb-0">{review.reviewContent}</p>
+                    {/* 수정 중인 리뷰일 경우 input box 표시 */}
+                    {isEditing === review.reviewId ? (
+                      <Form.Control
+                        type="textarea"
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                      />
+                    ) : (
+                      <p className="mb-0">{review.reviewContent}</p>
+                    )}
                   </Col>
                   <Col xs={4} className="d-flex justify-content-end align-items-end">
                     {review.userId === userId && (
                       <>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => console.log(`수정: ${review.reviewId}`)}
-                        >
-                          수정
-                        </Button>
+                        {isEditing === review.reviewId ? (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => handleEditSubmit(review.reviewId)}
+                          >
+                            완료
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => {
+                              setIsEditing(review.reviewId); // 수정 모드 활성화
+                              setEditedContent(review.reviewContent); // 기존 내용 설정
+                            }}
+                          >
+                            수정
+                          </Button>
+                        )}
                         <Button
                           variant="danger"
                           size="sm"
@@ -347,11 +400,6 @@ export function ShopReview() {
               </ListGroup.Item>
             ))}
           </ListGroup>
-          {reviews.length > showReviewsCount && (
-            <Button variant="primary" onClick={handleShowMoreReviews} className="js-more-btn mt-3">
-              더보기
-            </Button>
-          )}
         </Col>
       </Row>
 

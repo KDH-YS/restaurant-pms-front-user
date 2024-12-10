@@ -102,6 +102,15 @@
   height: 20px;
 }
 
+
+.js-review-item > div > div > input {
+  width: 100%; /* 가로 전체 차지 */
+  height: 100px; /* 높이 자동 조정 */
+  box-sizing: border-box; /* 패딩 포함 */
+  padding: 10px; /* 텍스트 여백 */
+  font-size: 16px; /* 읽기 쉬운 폰트 크기 */
+}
+
 /* 버튼 */
 .js-more-btn {
   width: 100%;
