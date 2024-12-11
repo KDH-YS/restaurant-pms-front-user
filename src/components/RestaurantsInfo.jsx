@@ -5,17 +5,9 @@ import { StarFill } from 'react-bootstrap-icons';
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
-<<<<<<< HEAD
 import Map from './Map';
 import Restaurantimg from 'img/restaurant.jpg'
-=======
 import { Link } from "react-router-dom"
-
-function RestaurantsInfo() {
-  const {token} = useAuthStore();
-  const { restaurantId } = useParams();  // URL에서 restaurantId 받기
-  const navigate = useNavigate();  // 네비게이션 함수
->>>>>>> front/js
 
 function RestaurantsInfo() {
   const { token } = useAuthStore();
