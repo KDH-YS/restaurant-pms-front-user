@@ -4,6 +4,7 @@ import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } f
 import '../css/ReserveMain.css';  // 스타일 임포트
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
+import KakaoMap from './KakaoMap';
 function RestaurantsInfo() {
   const {token} = useAuthStore();
   const { restaurantId } = useParams();  // URL에서 restaurantId 받기
@@ -142,13 +143,7 @@ function RestaurantsInfo() {
             {/* 오른쪽에 지도 */}
             <div className="google-map">
               <h3>지도</h3>
-              <div className="map-placeholder">
-                {/* 임시로 구글 맵 영역을 대체하는 박스 */}
-                <p>  .</p>
-                <div style={{ width: '100%', height: '400px', backgroundColor: '#e0e0e0', textAlign: 'center', lineHeight: '400px' }}>
-                  <span>추후 지도 API로 구현.</span>
-                </div>
-              </div>
+              <KakaoMap/>
             </div>
           </div>
 
