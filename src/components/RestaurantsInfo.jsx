@@ -162,15 +162,10 @@ function RestaurantsInfo() {
             <p className="mb-1">리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <small className="text-muted">- 김성자</small>
           </div>
-<<<<<<< HEAD
           <div>
             <p className="mb-1">리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <small className="text-muted">- 두개</small>
-=======
-
-
-        </section>
-
+          </div>
         {/* 하단: 리뷰 구역 */}
         <section className="reviews">
           <h2>Reviews</h2>
@@ -178,8 +173,8 @@ function RestaurantsInfo() {
           <div className="review">
             <p>리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <span> - 작성자</span>
->>>>>>> front/js
           </div>
+        </section>
         </Card.Body>
       </Card>
 
