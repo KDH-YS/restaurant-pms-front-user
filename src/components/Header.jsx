@@ -6,7 +6,7 @@ import { useAuthStore } from '../store/authStore';
 
 export function Header() {
 
-    const { token, userName, clearAuth } = useAuthStore();
+    const { token, userName, userRole, clearAuth } = useAuthStore();
 
     const handleLogout = () => {
         clearAuth(); // Zustand 상태 초기화
@@ -14,7 +14,9 @@ export function Header() {
         alert("로그아웃되었습니다.");
         window.location.href = "/"; // 메인페이지로 이동
     };
+
     console.log(token); // 상태 확인용 로그
+    console.log(userRole); // 권한 확인용 로그
 
     return (
         <nav className="navbar navbar-expand-lg">
@@ -43,7 +45,9 @@ export function Header() {
                         )}
                         <li><Link className="dropdown-item" to="/inquiry">문의하기</Link></li>
                         <li><Link className="dropdown-item" to="/restaurant">레스토랑</Link></li>
-                        <li><Link className="dropdown-item" to="/admin">관리자 페이지</Link></li>
+                        {token && userRole.includes('ROLE_ADMIN') && (
+                            <li><Link className="dropdown-item" to="/admin">관리자 페이지</Link></li>
+                        )}
                     </ul>
                 </div>
             </div>
