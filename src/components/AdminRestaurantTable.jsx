@@ -121,21 +121,39 @@ const AdminRestaurantTable = () => {
 
   
   const deleteRestaurantsData = async (restaurantId) => {
-    const isConfirmed = window.confirm("정말로 삭제하시겠습니까?");
-    if (!isConfirmed) return;
+  const isConfirmed = window.confirm("정말로 삭제하시겠습니까?");
+  if (!isConfirmed) return;
 
-    try {
-      await deleteRestaurant(restaurantId);  // 레스토랑 삭제 API 호출
-      setRestaurants((prevRestaurants) =>
-        prevRestaurants.filter((restaurant) => restaurant.restaurantId !== restaurantId)
-      );
-      setShowModal(false);  // 레스토랑 삭제 후 Modal 닫기
-      window.location.reload();  // 화면 새로고침
-      window.alert("삭제되었습니다.");
-    } catch (error) {
-      console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
+  try {
+    // 레스토랑의 메뉴 삭제
+    const menuList = await fetchRestaurantMenu(restaurantId);
+    for (const menu of menuList) {
+      await deleteMenu(restaurantId, menu.menuId); // 각 메뉴 삭제
     }
-  };
+
+    // 레스토랑의 이미지 삭제
+    const imageList = await getRestaurantImages(restaurantId);
+    for (const image of imageList) {
+      await deleteImage(restaurantId, image.imageId); // 각 이미지 삭제
+    }
+
+    // 레스토랑 삭제
+    await deleteRestaurant(restaurantId);  // 레스토랑 삭제 API 호출
+
+    // 레스토랑 목록에서 삭제된 레스토랑 제거
+    setRestaurants((prevRestaurants) =>
+      prevRestaurants.filter((restaurant) => restaurant.restaurantId !== restaurantId)
+    );
+
+    setShowModal(false);  // 레스토랑 삭제 후 Modal 닫기
+    window.location.reload();  // 화면 새로고침
+    window.alert("레스토랑과 관련된 모든 데이터가 삭제되었습니다.");
+  } catch (error) {
+    console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
+    alert("레스토랑 삭제 중 오류가 발생했습니다.");
+  }
+};
+
  
   useEffect(() => {
     if (!searchParams.query) {

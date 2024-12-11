@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';  // useParams로 URL 파라미터 받기
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule, getRestaurantImages } from '../pages/restaurants/api';  // API 호출 함수 임포트
 import '../css/ReserveMain.css';  // 스타일 임포트
-import { Modal } from 'react-bootstrap';
+import { Button, Card, Col, Modal, Row } from 'react-bootstrap';
+
 
 function RestaurantsInfo() {
   const { restaurantId } = useParams();  // URL에서 restaurantId 받기
@@ -97,36 +98,43 @@ const formatTime = (timeString) => {
 
   return (
     <div className="main" >
-      <div className="restaurant-page">
+      <div className="restaurant_page">
         {/* 상단: 식당 이름, 설명, 별점 */}
-        <header className="restaurant-header">
+        <header className="restaurantHeaderJh">
          {/* 배경 이미지 등 */}
          {images.length > 0 && (
-            <div className="image-gallery">
-              <h3>식당 이미지</h3>
-              <div className="image-list">
-                {/* 이미지를 3개씩 보여주기 */}
-                {images.slice(0, 3).map((image, index) => (
-                  <img
-                    key={index}
-                    src={image.imageUrl}
-                    alt={restaurant?.name}
-                    className="gallery-image"
-                    style={{ width: '30%', margin: '0 7.5px' }}
-                    onClick={() => handleImageClick(index)}  // 이미지 클릭 시 해당 이미지를 모달에서 보기
-                  />
-                ))}
-                {/* 이미지가 3개 이상일 경우 "더보기" 버튼 */}
-                {images.length > 3 && (
-                  <button
-                    className="more-images-btn"
-                    onClick={() => handleImageClick(3)}  // 4번째 이미지를 모달로 열기
-                  >
-                    +{images.length - 3}개 더 보기
-                  </button>
-                )}
+             <div className="imageGalleryJh">
+             <h3>식당 이미지</h3>
+             <Row>
+               {/* 이미지를 3개씩 나열 */}
+               {images.slice(0, 3).map((image, index) => (
+                 <Col key={index} xs={3} sm={3} md={3} lg={3} className='mb-4'>
+                   <Card className="galleryCardJh">
+                   <div className="galleryImageContainerJh">
+                     <Card.Img
+                       variant="top"
+                       src={image.imageUrl}
+                       alt="식당 이미지"
+                       className="galleryImageJh"
+                       onClick={() => handleImageClick(index)} // 이미지 클릭 시 모달로 보기
+                     />
+                     </div>
+                   </Card>
+                 </Col>
+               ))}
+             </Row>
+       
+             {/* "더보기" 버튼 */}
+             {images.length > 3 && (
+               <Button
+                 variant="primary"
+                 className="moreImagesBtnJh"
+                 onClick={() => handleImageClick(3)} // 4번째 이미지부터 모달 열기
+               >
+                 +{images.length - 3}개 더 보기
+               </Button>
+             )}
               </div>
-            </div>
           )}
         </header>
 

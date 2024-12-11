@@ -6,7 +6,7 @@ import { fetchRestaurants, getRestaurantImages } from './api';  // api.js에서 
 import { searchRestaurants } from './api';  // api.js에서 import
 import SearchBar from '../../components/restaurants/SearchBar';  // SearchBar 컴포넌트 import
 import Pagination from '../../components/restaurants/Pagination';
-
+import "../../css/restaurants/MenuPage.css";
 const MenuPage = () => {
   const [restaurants, setRestaurants] = useState([]);  // 레스토랑 목록 상태
   const [loading, setLoading] = useState(false);  // 로딩 상태
@@ -263,14 +263,17 @@ const handleSearch = async (page = 1) => {
           return (
             <Col key={restaurant.restaurantId}>
               <Card onClick={() => handleCardClick(restaurant.restaurantId)}>
-                <Card.Img
-                  variant="top"
-                  src={imageUrl} // 이미지 URL 설정
-                />
+                <div className="cardImageContainer">
+                  <Card.Img
+                    variant="top"
+                    src={imageUrl}
+                    className="cardImage"
+                  />
+                </div>
                 <Card.Body>
                   <Card.Title>{restaurant.name}</Card.Title>
                   <Card.Text>
-                    <strong>주소:</strong> {restaurant.address}
+                    <strong>주소:</strong> {restaurant.roadAddr || restaurant.jibunAddr}
                   </Card.Text>
                   <Card.Text>
                     <strong>음식 종류:</strong> {restaurant.foodType}

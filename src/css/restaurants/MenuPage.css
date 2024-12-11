@@ -1,28 +1,16 @@
-ul, li {
-    list-style: none;
-}
-.menuNav {
-    /* border: 1px solid black; */
-    /* margin-bottom: 50px; */
-}
-.menuNavSearch {
-    /* border: 1px solid orange; */
-    margin: 15px 0;
-}
-
-.menuNavList {
-    /* border: 1px solid red; */
-    text-align: left;
-}
-.menuNavList li {
-    margin-right: 15px ;
-    /* float: left; */
-    display: inline-block;
-}
-.line {
+.cardImageContainer {
+    position: relative;
     width: 100%;
-    /* height: 1px; */
-
-    border-top: 1px solid gray;
-    margin-bottom: 50px;
-}
+    padding-top: 100%; /* 1:1 비율 (정사각형) */
+    overflow: hidden; /* 이미지가 넘치면 숨기기 */
+  }
+  
+  .cardImage {
+    position: absolute; /* 절대 위치로 지정 */
+    top: 50%; /* 이미지를 가운데 정렬 */
+    left: 50%;
+    width: 100%; /* 이미지가 가득 채워지도록 */
+    height: 100%; /* 이미지가 영역을 채우도록 */
+    object-fit: cover; /* 이미지 비율을 유지하면서 잘라내기 */
+    transform: translate(-50%, -50%); /* 이미지를 정확히 가운데로 이동 */
+  }
