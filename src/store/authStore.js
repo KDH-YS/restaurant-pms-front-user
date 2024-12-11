@@ -6,8 +6,10 @@ export const useAuthStore = create(
   persist(
     (set) => ({
       token: null, // JWT 토큰
+      userId: null,
       userName: null, // 사용자 이름
       setToken: (newToken) => set({ token: newToken }),
+      setUserId: (newUserId) => set({ userId: newUserId }),
       setUserName: (newUserName) => set({ userName: newUserName }),
       clearAuth: () => set({ token: null, userName: null }), // 로그아웃 시 상태 초기화
     }),

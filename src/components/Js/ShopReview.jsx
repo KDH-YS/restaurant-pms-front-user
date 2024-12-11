@@ -3,26 +3,53 @@ import { Container, Row, Col, Button, ListGroup, ProgressBar, Modal, Form } from
 import "../../css/main.css";
 import "../../css/shopReview.css";
 
+import { useAuthStore } from "store/authStore";
+import { restaurantStore } from 'store/restaurantStore';
+
 export function ShopReview() {
-  const [restaurantId] = useState(1);
+  // api상태관리
   const [reviews, setReviews] = useState([]);
   const [reviewImages, setReviewImages] = useState({});
-  const [restaurant, setRestaurant] = useState({});
+  const [isEditing, setIsEditing] = useState(null); // 수정 중인 리뷰 ID
+  const [editedContent, setEditedContent] = useState(""); // 수정 중인 내용
+  const [restaurantData, setRestaurantData] = useState({});
   const [restaurantImg, setRestaurantImg] = useState([]);
-  const [showReviewsCount, setShowReviewsCount] = useState(3);
-  const [showPhotosCount, setShowPhotosCount] = useState(3);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState(null);
   const [reportReviewId, setReportReviewId] = useState(null);
   const [reportContent, setReportContent] = useState("");
   const [reportReason, setReportReason] = useState("OTHER");
   const [helpfulReviews, setHelpfulReviews] = useState({});
+  // 주스탠드
+  const { restaurant } = restaurantStore();
+  const { token } = useAuthStore();
+  // 프론트 상태관리
+  const [showReviewsCount, setShowReviewsCount] = useState(3);
+  const [showPhotosCount, setShowPhotosCount] = useState(3);
+
+  const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
+
+  // JWT 파싱 함수
+  function parseJwt(token) {
+    if (!token) return null;
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  }
 
   const fetchRestaurant = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}`);
+      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurant.restaurantId}`);
       if (response.ok) {
         const data = await response.json();
-        setRestaurant(data.restaurant);
+        setRestaurantData(data.restaurant);
         setRestaurantImg(data.restaurantImg);
       } else {
         console.error("가게 정보를 가져오는 데 실패했습니다.");
@@ -34,7 +61,7 @@ export function ShopReview() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}/reviews?userId=1`);
+      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurant.restaurantId}/reviews?userId=${userId}`);
       if (response.ok) {
         const data = await response.json();
 
@@ -61,10 +88,38 @@ export function ShopReview() {
     }
   };
 
+  // 리뷰 수정 API 호출
+  const handleEditSubmit = async (reviewId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/reviews/${reviewId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          reviewContent: editedContent,
+        }),
+      });
+      if (response.ok) {
+        setReviews((prev) =>
+          prev.map((review) =>
+            review.reviewId === reviewId ? { ...review, reviewContent: editedContent } : review
+          )
+        );
+        setIsEditing(null); // 수정 모드 종료
+      } else {
+        console.error("리뷰 수정 실패");
+      }
+    } catch (error) {
+      console.error("리뷰 수정 중 오류 발생:", error);
+    }
+  };
+
   useEffect(() => {
     fetchRestaurant();
     fetchReviews();
-  }, [restaurantId]);
+  }, [restaurant.restaurantId]);
 
   const handleReportSubmit = async () => {
     if (reportReviewId && reportContent) {
@@ -149,6 +204,26 @@ export function ShopReview() {
     }
   };
 
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/reviews/${reviewToDelete}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        setReviews((prev) => prev.filter((review) => review.reviewId !== reviewToDelete));
+        setShowDeleteModal(false);
+        console.log("리뷰 삭제 성공");
+      } else {
+        console.error("리뷰 삭제 실패");
+      }
+    } catch (error) {
+      console.error("리뷰 삭제 중 오류 발생:", error);
+    }
+  };
+
   const handleShowMoreReviews = () => {
     setShowReviewsCount(showReviewsCount + 3);
   };
@@ -160,6 +235,11 @@ export function ShopReview() {
   const handleReportClick = (reviewId) => {
     setReportReviewId(reviewId);
     setShowReportModal(true);
+  };
+
+  const handleDeleteClick = (reviewId) => {
+    setReviewToDelete(reviewId);
+    setShowDeleteModal(true);
   };
 
   const formatDate = (dateString) => {
@@ -217,25 +297,31 @@ export function ShopReview() {
             {reviews.slice(0, showPhotosCount).map((review, index) => (
               <Col md={4} className="mb-3" key={index}>
                 <img
-                  src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/200x200"}
+                  src={
+                    reviewImages[review.reviewId]?.[0]?.imageUrl ||
+                    "https://via.placeholder.com/200x200"
+                  }
                   alt={`리뷰 이미지 ${index + 1}`}
                   className="img-fluid rounded shadow-sm"
                 />
               </Col>
             ))}
           </Row>
-          <Button variant="primary" onClick={handleShowMorePhotos} className="js-more-btn">
-            더보기
-          </Button>
+          {/* 사진/영상 리뷰가 더 있으면 더보기 버튼 표시 */}
+          {reviews.length > showPhotosCount && (
+            <Button variant="primary" onClick={handleShowMorePhotos} className="js-more-btn">
+              더보기
+            </Button>
+          )}
         </Col>
       </Row>
 
       {/* 리뷰 섹션 */}
       <Row className="js-reviews">
         <Col>
-          <h3 className="js-section-title">리뷰</h3>
+          <h3 className="js-section-title mb-0">리뷰</h3>
           <ListGroup>
-            {reviews.slice(0, showReviewsCount).map((review) => (
+            {reviews.map((review) => (
               <ListGroup.Item key={review.reviewId} className="js-review-item">
                 <Row className="align-items-center">
                   <img
@@ -243,13 +329,11 @@ export function ShopReview() {
                     alt="리뷰 프로필 이미지"
                     className="img-fluid rounded-circle"
                   />
-                  <Col xs={10} className="d-flex align-items-center">
-                    <p className="mb-0">
-                      아이디
-                    </p>
+                  <Col xs={8} className="d-flex flex-column">
+                    <p className="mb-0 fw-bold">{review.userName}</p>
                     <p className="text-muted small mb-0">{formatDate(review.createdAt)}</p>
                   </Col>
-                  <Col className="d-flex justify-content-end align-items-center">
+                  <Col className="d-flex justify-content-end align-items-start">
                     <img
                       src="/icons/siren.png"
                       alt="신고하기"
@@ -264,20 +348,76 @@ export function ShopReview() {
                     />
                   </Col>
                 </Row>
-                <Row>
-                  <img src={reviewImages[review.reviewId]?.[0]?.imageUrl || "https://via.placeholder.com/40x40"} alt="" />
+                <Row className="mt-3">
                   <Col>
-                    <p>{review.reviewContent}</p>
+                    {/* 수정 중인 리뷰일 경우 input box 표시 */}
+                    {isEditing === review.reviewId ? (
+                      <Form.Control
+                        type="textarea"
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                      />
+                    ) : (
+                      <p className="mb-0">{review.reviewContent}</p>
+                    )}
+                  </Col>
+                  <Col xs={4} className="d-flex justify-content-end align-items-end">
+                    {review.userId === userId && (
+                      <>
+                        {isEditing === review.reviewId ? (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => handleEditSubmit(review.reviewId)}
+                          >
+                            완료
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => {
+                              setIsEditing(review.reviewId); // 수정 모드 활성화
+                              setEditedContent(review.reviewContent); // 기존 내용 설정
+                            }}
+                          >
+                            수정
+                          </Button>
+                        )}
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDeleteClick(review.reviewId)}
+                        >
+                          삭제
+                        </Button>
+                      </>
+                    )}
                   </Col>
                 </Row>
               </ListGroup.Item>
             ))}
           </ListGroup>
-          <Button variant="primary" onClick={handleShowMoreReviews} className="js-more-btn mt-3">
-            더보기
-          </Button>
         </Col>
       </Row>
+
+      {/* 리뷰 삭제 모달 */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>리뷰 삭제</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>리뷰를 삭제하시겠습니까?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            아니요
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            예
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* 신고 작성 모달 */}
       <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>

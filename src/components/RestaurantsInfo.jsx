@@ -5,8 +5,17 @@ import { StarFill } from 'react-bootstrap-icons';
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
+<<<<<<< HEAD
 import Map from './Map';
 import Restaurantimg from 'img/restaurant.jpg'
+=======
+import { Link } from "react-router-dom"
+
+function RestaurantsInfo() {
+  const {token} = useAuthStore();
+  const { restaurantId } = useParams();  // URL에서 restaurantId 받기
+  const navigate = useNavigate();  // 네비게이션 함수
+>>>>>>> front/js
 
 function RestaurantsInfo() {
   const { token } = useAuthStore();
@@ -161,9 +170,23 @@ function RestaurantsInfo() {
             <p className="mb-1">리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <small className="text-muted">- 김성자</small>
           </div>
+<<<<<<< HEAD
           <div>
             <p className="mb-1">리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <small className="text-muted">- 두개</small>
+=======
+
+
+        </section>
+
+        {/* 하단: 리뷰 구역 */}
+        <section className="reviews">
+          <h2>Reviews</h2>
+          <Link to="/review/shopReview"><p>전체보기</p></Link>
+          <div className="review">
+            <p>리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
+            <span> - 작성자</span>
+>>>>>>> front/js
           </div>
         </Card.Body>
       </Card>
