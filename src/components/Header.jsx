@@ -17,7 +17,7 @@ const CustomDropdownMenu = styled(Dropdown.Menu)`
 `;
 
 export function Header() {
-    const { token, userName, clearAuth } = useAuthStore();
+    const { token, userName, clearAuth,userRole } = useAuthStore();
     const [restaurantId, setRestaurantId] = useState(null);
 
     useEffect(() => {
@@ -25,6 +25,7 @@ export function Header() {
             try {
                 const decodedToken = jwtDecode(token);
                 setRestaurantId(decodedToken.restaurantId);
+
             } catch (error) {
                 console.error("Invalid token:", error);
             }
@@ -76,7 +77,7 @@ export function Header() {
                             </>
                         )}
 
-{token && userRole.includes('ROLE_ADMIN') && (
+                        {token && userRole=='ROLE_ADMIN' && (
                             <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
                         )}  
                     </CustomDropdownMenu>
