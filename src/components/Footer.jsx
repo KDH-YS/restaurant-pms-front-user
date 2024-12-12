@@ -1,6 +1,6 @@
 import React from 'react';
 import '../css/Footer.css';
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
 
 export function Footer() {
   return (
@@ -8,9 +8,9 @@ export function Footer() {
       <div className="container">
         <p>&copy; {new Date().getFullYear()} Rechelin Korea. All rights reserved.</p>
         <div className="footer-links">
-          <Link className="text-white mx-3" to="privacyPolicy">Privacy Policy</Link>
-          <Link className="text-white mx-3" to="termsOfService">Terms of Service</Link>
-          <Link className="text-white mx-3" to="contactUs">Contact Us</Link>
+          <span className="text-white mx-3" >Privacy Policy</span>
+          <span className="text-white mx-3" >Terms of Service</span>
+          <span className="text-white mx-3" >Contact Us</span>
         </div>
       </div>
     </footer>
