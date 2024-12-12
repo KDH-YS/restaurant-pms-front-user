@@ -1,6 +1,3 @@
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import MainPage from "./Router/MainPage";
 import Contact from "./Router/Contact.jsx";
 import Restaurant from "./Router/Restaurant.jsx"
@@ -20,6 +17,7 @@ import Update from "./pages/restaurants/Update.jsx";
 import ManagerReservePage from 'Router/ManagerReservePage.jsx';
 import SchedulePage from 'Router/SchedulePage.jsx';
 import InquiryPage from 'Router/Inquiry.jsx'
+
 function App() {
   return (
     <BrowserRouter> 
