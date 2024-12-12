@@ -25,7 +25,6 @@ function Login() {
   // 로그인 요청 처리
   const handleLogin = async (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
-    console.log("Sending login request with:", { userName: username, password: password }); // 입력 확인용 로그
     try {
       const response = await axios.post("http://localhost:8080/api/auth/login", {
         userName: username,
@@ -43,7 +42,7 @@ function Login() {
         const userName = response.data.data.userName; // 서버에서 받은 사용자 이름
 
         // Zustand 스토어에 저장
-        console.log(response);
+
         setUserId(userId);
         setToken(token);
         setUserName(userName);

@@ -225,7 +225,6 @@ const handleSearch = async (page = 1) => {
 };
 
   const handleCardClick = (restaurantId) => {
-    console.log('Clicked restaurantId:', restaurantId);
     navigate(`/restaurant/${restaurantId}`);
   };
 

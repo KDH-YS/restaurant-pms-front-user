@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { StarFill } from 'react-bootstrap-icons';
-import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule,getRestaurantImages } from '../pages/restaurants/api';
-import { restaurantStore } from 'store/restaurantStore';
-import { useAuthStore } from 'store/authStore';
+import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule, getRestaurantImages } from '../pages/restaurants/api';
+import { restaurantStore } from '../store/restaurantStore';
+import { useAuthStore } from '../store/authStore';
 import Map from './Map';
-import Restaurantimg from 'img/restaurant.jpg'
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 function RestaurantsInfo() {
   const { token } = useAuthStore();
@@ -18,56 +17,48 @@ function RestaurantsInfo() {
   const [error, setError] = useState(null);
   const [menus, setMenus] = useState([]);
   const [schedule, setSchedule] = useState(null);
-  const [images, setImages] = useState([]);  // 이미지 데이터 상태
+  const [images, setImages] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [open, setOpen] = useState(true);
 
-  // 모달 관련 상태
-  const [showModal, setShowModal] = useState(false);  // 모달 열기/닫기 상태
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);  // 선택된 이미지 인덱스
-
-   // 레스토랑 상세 정보를 API에서 가져오는 함수
-   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // 레스토랑, 메뉴, 스케줄, 이미지 데이터를 동시에 호출
-        const restaurantData = await fetchRestaurantDetail(restaurantId);
-        setRestaurant(restaurantData);
-        
-        const menuData = await fetchRestaurantMenu(restaurantId);
-        setMenus(menuData);
-
-        const scheduleData = await fetchRestaurantSchedule(restaurantId);
-        setSchedule(scheduleData);
-
-        const imageData = await getRestaurantImages(restaurantId);
-        setImages(imageData);  // 이미지를 상태에 저장
-      } catch (err) {
-        setError('정보를 불러오는 데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (restaurantId) {
-      fetchData();
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [restaurantData, menuData, scheduleData, imageData] = await Promise.all([
+        fetchRestaurantDetail(restaurantId),
+        fetchRestaurantMenu(restaurantId),
+        fetchRestaurantSchedule(restaurantId),
+        getRestaurantImages(restaurantId)
+      ]);
+      
+      setRestaurant(restaurantData);
+      setMenus(menuData);
+      setSchedule(scheduleData);
+      setImages(imageData);
+    } catch (err) {
+      setError('정보를 불러오는 데 실패했습니다.');
+    } finally {
+      setLoading(false);
     }
-  }, [restaurantId, token, setRestaurant]);
+  };
 
- // 시간을 "HH:mm:ss" -> "HH:mm" 형식으로 변환 (null 또는 undefined 처리 추가)
-const formatTime = (timeString) => {
-  if (!timeString) {
-    return '정보 없음';  // null 또는 undefined일 경우 처리
-  }
-  const [hours, minutes] = timeString.split(':');
-  return `${hours}:${minutes}`;
-};
+  useEffect(() => {
+    fetchData();
+  }, [restaurantId, token]);
 
-     // 스케줄 데이터를 어떻게 처리할지 (예시로 format 함수를 만들어서 데이터를 보기 좋게 가공)
-  const formatSchedule = (scheduleData) => {
-    if (!scheduleData || scheduleData.length === 0) {
+  const formatTime = (timeString) => {
+    if (!timeString) return '정보 없음';
+    const [hours, minutes] = timeString.split(':');
+    return `${hours}:${minutes}`;
+  };
+
+  const formatSchedule = useMemo(() => {
+    if (!schedule || schedule.length === 0) {
+      setOpen(false);
       return <p className="text-muted">영업시간 정보가 없습니다.</p>;
-    }
-    return scheduleData.map((item) => (
+    } else{   setOpen(true);
+    return schedule.map((item) => (
       <div key={item.scheduleId} className="mb-3">
         <h6 className="mb-2">{item.openDate}</h6>
         <h6 className="mb-2">{Number(item.isOpen) === 1 ? '영업 중' : '휴무'}</h6>
@@ -76,75 +67,85 @@ const formatTime = (timeString) => {
           <p className="mb-0">휴식시간 : {formatTime(item.breakStart)} - {formatTime(item.breakEnd)}</p>
         )}
       </div>
-    ));
-  };
+    ));}
+  }, [schedule]);
 
-  const handleImageClick = (index) => {
-    setSelectedImageIndex(index);  // 클릭한 이미지 인덱스를 저장
-    setShowModal(true);  // 모달 열기
-  };
+  const handleImageClick = useCallback((index) => {
+    setSelectedImageIndex(index);
+    setShowModal(true);
+  }, []);
 
-  const handleModalClose = () => {
-    setShowModal(false);  // 모달 닫기
-  };
-  const handleReserveClick = () => {
-    navigate("/reserve");  // 모달 닫기
-  };
-
-  const handlePrevImage = () => {
-    setSelectedImageIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-  };
-
-  const handleNextImage = () => {
-    setSelectedImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-  };
+  const handleModalClose = useCallback(() => setShowModal(false), []);
+  const handleReserveClick = useCallback(() => navigate("/reserve"), [navigate]);
+  const handlePrevImage = useCallback(() => setSelectedImageIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1)), [images.length]);
+  const handleNextImage = useCallback(() => setSelectedImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1)), [images.length]);
+  const reserveBtn = useMemo(() => {
+    if (open) {
+      return (
+        <Button
+          variant="warning"
+          size="lg"
+          onClick={handleReserveClick}
+          style={{backgroundColor: "#f28d28", border:"none"}}
+          className="reservation-btn"
+        >
+          예약하기
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          variant="warning"
+          size="lg"
+          onClick={handleReserveClick}
+          style={{backgroundColor: "#f28d28", border:"none"}}
+          className="reservation-btn"
+          disabled
+          title="가게에 문의해주세요"
+        >
+          예약하기
+        </Button>
+      );
+    }
+  }, [open]);
 
   if (loading) return <p>로딩 중...</p>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
-
-  if (error) return (
-    <Container className="text-center py-5">
-      <h3 className="text-danger">{error}</h3>
-    </Container>
-  );
+  if (error) return <Container className="text-center py-5"><h3 className="text-danger">{error}</h3></Container>;
 
   return (
     <Container className="py-4">
-      {/* 헤더 이미지 */}
+      {/* 이미지 갤러리 */}
       {images.length > 0 && (
-             <div className="imageGalleryJh">
-             <h3>식당 이미지</h3>
-             <Row>
-               {/* 이미지를 3개씩 나열 */}
-               {images.slice(0, 3).map((image, index) => (
-                 <Col key={index} xs={3} sm={3} md={3} lg={3} className='mb-4'>
-                   <Card className="galleryCardJh">
-                   <div className="galleryImageContainerJh">
-                     <Card.Img
-                       variant="top"
-                       src={image.imageUrl}
-                       alt="식당 이미지"
-                       className="galleryImageJh"
-                       onClick={() => handleImageClick(index)} // 이미지 클릭 시 모달로 보기
-                     />
-                     </div>
-                   </Card>
-                 </Col>
-               ))}
-             </Row>
-       
-             {/* "더보기" 버튼 */}
-             {images.length > 3 && (
-               <Button
-                 variant="primary"
-                 className="moreImagesBtnJh"
-                 onClick={() => handleImageClick(3)} // 4번째 이미지부터 모달 열기
-               >
-                 +{images.length - 3}개 더 보기
-               </Button>
-             )}
-              </div>
+        <div className="imageGalleryJh">
+          <h3>식당 이미지</h3>
+          <Row>
+            {images.slice(0, 3).map((image, index) => (
+              <Col key={index} xs={3} sm={3} md={3} lg={3} className='mb-4'>
+                <Card className="galleryCardJh">
+                  <div className="galleryImageContainerJh">
+                    <Card.Img
+                      variant="top"
+                      src={image.imageUrl}
+                      alt="식당 이미지"
+                      className="galleryImageJh"
+                      onClick={() => handleImageClick(index)}
+                    />
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+          {images.length > 3 && (
+            <Button
+              variant="primary"
+              className="moreImagesBtnJh"
+              onClick={() => handleImageClick(3)}
+            >
+              +{images.length - 3}개 더 보기
+            </Button>
           )}
+        </div>
+      )}
 
       {/* 레스토랑 이름과 별점 */}
       <div className="text-center mb-5">
@@ -163,8 +164,8 @@ const formatTime = (timeString) => {
       <Row style={{marginBottom:"30px"}}>
         {/* 왼쪽 정보 섹션 */}
         <Col md={7}>
-          <Card className="mb-4 bg-light"style={{height:"100%"}}>
-            <Card.Body >
+          <Card className="mb-4 bg-light" style={{height:"100%"}}>
+            <Card.Body>
               <h2 className="h5 mb-4">매장소개</h2>
               <p className="text-muted mb-4">{restaurant?.description}</p>
 
@@ -177,7 +178,7 @@ const formatTime = (timeString) => {
 
               <div className="mb-4">
                 <h3 className="h6 mb-3">영업시간</h3>
-                {formatSchedule(schedule)}
+                {formatSchedule}
               </div>
 
               <div>
@@ -207,7 +208,8 @@ const formatTime = (timeString) => {
       {/* 리뷰 섹션 */}
       <Card className="mb-4">
         <Card.Body>
-          <h2 className="h5 mb-4">Reviews</h2>
+          <h2 className="h5 mb-4">리뷰</h2>
+          <Link to="/review/shopReview">전체보기</Link>
           <div className="border-bottom pb-3 mb-3">
             <p className="mb-1">리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <small className="text-muted">- 김성자</small>
@@ -216,33 +218,15 @@ const formatTime = (timeString) => {
             <p className="mb-1">리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
             <small className="text-muted">- 두개</small>
           </div>
-        {/* 하단: 리뷰 구역 */}
-        <section className="reviews">
-          <h2>Reviews</h2>
-          <Link to="/review/shopReview"><p>전체보기</p></Link>
-          <div className="review">
-            <p>리뷰 페이지에서 받아온 리뷰 클릭시 리뷰 페이지로</p>
-            <span> - 작성자</span>
-          </div>
-        </section>
         </Card.Body>
       </Card>
 
       {/* 예약 섹션 */}
-        <Card.Body>
-          <h2 className="h5 mb-4">Make a Reservation</h2>
-          <Button 
-            variant="warning" 
-            size="lg" 
-            onClick={handleReserveClick}
-            style={{backgroundColor: "#f28d28",border:"none"}}
-            className="reservation-btn"
-          >
-            예약하기
-          </Button>
-        </Card.Body>
+      <Card.Body>
+        {reserveBtn}
+      </Card.Body>
         
-                      {/* 모달: 이미지 확대 보기 */}
+      {/* 모달: 이미지 확대 보기 */}
       <Modal show={showModal} onHide={handleModalClose} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title>이미지 확대보기</Modal.Title>
@@ -259,21 +243,20 @@ const formatTime = (timeString) => {
           </div>
 
           {/* 이미지 썸네일 리스트 */}
-    <div className="thumbnail-list">
-      {images.map((image, index) => (
-        <img
-          key={index}
-          src={image.imageUrl}
-          alt={`Thumbnail ${index}`}
-          style={{ width: '10%', height: 'auto'}}
-          className={`thumbnail-image ${index === selectedImageIndex ? 'active' : ''}`}
-          onClick={() => setSelectedImageIndex(index)} // 썸네일 클릭 시 이미지 변경
-        />
-      ))}
-    </div>
+          <div className="thumbnail-list">
+            {images.map((image, index) => (
+              <img
+                key={index}
+                src={image.imageUrl}
+                alt={`Thumbnail ${index}`}
+                style={{ width: '10%', height: 'auto'}}
+                className={`thumbnail-image ${index === selectedImageIndex ? 'active' : ''}`}
+                onClick={() => setSelectedImageIndex(index)}
+              />
+            ))}
+          </div>
         </Modal.Body>
       </Modal>
-
     </Container>
   );
 }

@@ -5,7 +5,7 @@ import MainPage from "./Router/MainPage";
 import Contact from "./Router/Contact.jsx";
 import Restaurant from "./Router/Restaurant.jsx"
 import RestaurantInfo from "./Router/RestaurantInfo.jsx"
-import ReservePage from "./Router/Reserve.jsx"
+import ReservePage from "./Router/ReservePage"
 import ReservationStatusPage from "./Router/ReservationStatusPage.jsx";
 import LoginRouter from "./Router/LoginRouter.jsx";
 import SignupRouter from "./Router/SignupRouter.jsx";

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, Container, Row, Col, Spinner, Alert, Modal } from 'react-bootstrap';
+import { Button, Form, Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { registerRestaurant } from './api';  // 새로운 레스토랑을 추가하는 API 함수
 import AddrInput from '../../components/restaurants/AddrInput';
 
