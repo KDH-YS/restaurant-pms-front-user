@@ -1,6 +1,3 @@
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import MainPage from "./Router/MainPage";
 import Contact from "./Router/Contact.jsx";
 import Restaurant from "./Router/Restaurant.jsx"
@@ -20,6 +17,7 @@ import Update from "./pages/restaurants/Update.jsx";
 import ManagerReservePage from 'Router/ManagerReservePage.jsx';
 import SchedulePage from 'Router/SchedulePage.jsx';
 import InquiryPage from 'Router/Inquiry.jsx'
+
 function App() {
   return (
     <BrowserRouter> 
@@ -38,7 +36,7 @@ function App() {
           <Route path="/Mypage" element={<Mypage/>} />
           <Route path="/review/myreview" element={<MyReview/>}></Route>
           <Route path="/review/shopreview" element={<ShopReview/>}></Route>
-          <Route path="/review/reviewform" element={<ReviewForm/>}></Route>
+          <Route path="/review/reviewform/:restaurantId/:reservationId" element={<ReviewForm/>}></Route>
           <Route path="/admin/restaurant" element={<AdminPage/>}></Route>
           <Route path="/restaurant/update/:restaurantId" element={<Update/>}></Route>
           <Route path="/restaurant/add" element={<RestaurantAdd/>}></Route>
