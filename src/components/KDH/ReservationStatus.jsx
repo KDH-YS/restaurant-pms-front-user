@@ -183,7 +183,7 @@ const fetchReservations = async () => {
     const oneHour = 60 * 60 * 500; // 1시간을 밀리초로 변환
 
     if (timeDifference >= oneHour) {
-      history.push('/review/reviewform');
+      history('/review/reviewform');
     } else {
       alert("리뷰는 예약 시간으로부터 1시간이 지난 후에 작성 가능합니다.");
     }
