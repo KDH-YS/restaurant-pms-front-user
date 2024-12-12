@@ -35,8 +35,8 @@
 }
 
 .js-review-image {
-  width: 80px;
-  height: 80px;
+  max-width: 150px;
+  max-height: 150px;
   object-fit: cover;
 }
 
@@ -44,7 +44,10 @@
   font-size: 1rem;
   color: #444;
 }
-
+.js-review-textarea {
+  overflow: hidden;
+  resize: none; /* 크기 조정 비활성화 */
+}
 .js-review-restaurant-name {
   font-size: 1.1rem;
   color: #007bff;
