@@ -92,7 +92,15 @@ function RestaurantsInfo() {
   }, []);
 
   const handleModalClose = useCallback(() => setShowModal(false), []);
-  const handleReserveClick = useCallback(() => navigate("/reserve"), [navigate]);
+  const handleReserveClick = useCallback(() => {
+    if (!token) {
+      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+      navigate("/login");  // 로그인 페이지로 리디렉션
+    } else {
+      navigate("/reserve");  // 예약 페이지로 리디렉션
+    }
+  }, [navigate, token]);  // navigate와 token 의존성
+  
   const handlePrevImage = useCallback(() => setSelectedImageIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1)), [images.length]);
   const handleNextImage = useCallback(() => setSelectedImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1)), [images.length]);
   const reserveBtn = useMemo(() => {
