@@ -35,7 +35,11 @@ export function Header() {
         clearAuth();
         localStorage.removeItem("token");
         alert("로그아웃되었습니다.");
+        window.location.href = "/"; // 메인페이지로 이동
     };
+
+    console.log(token); // 상태 확인용 로그
+    console.log(userRole); // 권한 확인용 로그
 
     return (
         <Navbar expand="lg" className="navbar-custom">
@@ -72,7 +76,9 @@ export function Header() {
                             </>
                         )}
 
-                        <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+{token && userRole.includes('ROLE_ADMIN') && (
+                            <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+                        )}  
                     </CustomDropdownMenu>
                 </Dropdown>
             </Container>
