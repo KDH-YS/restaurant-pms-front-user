@@ -7,21 +7,18 @@ import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
 import 'css/KDH/ManagerReserve.css';
 import { useAuthStore } from 'store/authStore';
-
+import { jwtDecode } from 'jwt-decode';
 const ManagerReserve = () => {
   const {token}=useAuthStore();
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [statusUpdates, setStatusUpdates] = useState({});
-  const [restaurantId, setRestaurantId] = useState(123);
-
   const itemsPerPage = 6;
-  const itemsPerGroup = 200;
+  const itemsPerGroup = 300;
   const statusOptions = ['전체', '취소 요청', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
-
   const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
-
+  const restaurantId= jwtDecode(token).restaurantId;
   useEffect(() => {
     fetchReservations();
   }, []);
@@ -114,7 +111,7 @@ const ManagerReserve = () => {
 
   const statusLabels = {
     CANCELREQUEST: '취소 요청',
-    COMPLETE: '방문 완료',
+    COMPLETED: '방문 완료',
     RESERVING: '예약 중',
     PENDING: '결제 대기중',
     NOSHOW: '노쇼',
