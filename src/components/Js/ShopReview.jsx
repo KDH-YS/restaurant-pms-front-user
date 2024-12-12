@@ -322,21 +322,20 @@ export function ShopReview() {
         <Col>
           <h3 className="js-section-title">사진/영상 리뷰</h3>
           <Row>
-            {reviews.slice(0, showPhotosCount).map((review, index) => (
-              <Col md={4} className="mb-3" key={index}>
-                <img
-                  src={
-                    reviewImages[review.reviewId]?.[0]?.imageUrl ||
-                    "https://via.placeholder.com/200x200"
-                  }
-                  alt={`리뷰 이미지 ${index + 1}`}
-                  className="img-fluid rounded shadow-sm"
-                />
-              </Col>
-            ))}
+            {reviews.slice(0, showPhotosCount)
+              .filter(review => reviewImages[review.reviewId] && reviewImages[review.reviewId].length > 0) // 필터링 추가
+              .map((review, index) => (
+                <Col md={4} className="mb-3" key={index}>
+                  <img
+                    src={reviewImages[review.reviewId][0].imageUrl}
+                    alt={`리뷰 이미지 ${index + 1}`}
+                    className="img-fluid rounded shadow-sm"
+                  />
+                </Col>
+              ))}
           </Row>
           {/* 사진/영상 리뷰가 더 있으면 더보기 버튼 표시 */}
-          {reviews.length > showPhotosCount && (
+          {reviews.filter(review => reviewImages[review.reviewId] && reviewImages[review.reviewId].length > 0).length > showPhotosCount && (
             <Button variant="primary" onClick={handleShowMorePhotos} className="js-more-btn">
               더보기
             </Button>
@@ -375,6 +374,20 @@ export function ShopReview() {
                       style={{ cursor: "pointer" }}
                     />
                   </Col>
+                  {/* 리뷰 이미지가 있을 경우 표시 */}
+                  {reviewImages[review.reviewId] && reviewImages[review.reviewId].length > 0 && (
+                      <div className="mt-2">
+                        {reviewImages[review.reviewId].map((image, index) => (
+                          <img
+                            key={index}
+                            src={image.imageUrl}
+                            alt={`리뷰 이미지 ${index + 1}`}
+                            className="img-fluid rounded shadow-sm me-2"
+                            style={{ maxWidth: "100px", maxHeight: "100px" }}
+                          />
+                        ))}
+                      </div>
+                    )}
                 </Row>
                 <Row className="mt-3">
                   <Col>
