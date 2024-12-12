@@ -14,6 +14,7 @@ export function ReviewForm() {
   const [userId] = useState(1);
   const [restaurantId] = useState(1);
   const [restaurant, setRestaurant] = useState(null);
+  const [restaurantImg, setRestaurantImg] = useState(null);
   const [reservation, setReservation] = useState(null);
   const fileInputRef = useRef(null); // Ref for file input
 
@@ -23,6 +24,7 @@ export function ReviewForm() {
       if (response.ok) {
         const data = await response.json();
         setRestaurant(data.restaurant);
+        setRestaurantImg(data.restaurantImg);
       } else {
         console.error("가게 정보를 가져오는 데 실패했습니다.");
       }
@@ -124,6 +126,17 @@ export function ReviewForm() {
     setImagePreviews(updatedPreviews);
   };
 
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+  
+    return `${year}년 ${month}월 ${day}일 ${hours}시${minutes}분`;
+  };
+
   if (!reservation || !restaurant) {
     return <div>Loading...</div>;
   }
@@ -132,9 +145,14 @@ export function ReviewForm() {
     <Container className="mt-4">
       <Card className="mb-4 no-hover">
         <Card.Body>
+          <Card.Text className="text-muted small mb-0">{restaurant.foodType}</Card.Text>
           <Card.Title>{restaurant.name}</Card.Title>
-          <Card.Text>{restaurant.foodType}</Card.Text>
-          <Card.Img variant="top" src={restaurant.mainImageUrl} alt="가게 대표 사진" />
+          <Card.Img
+            variant="top"
+            src={restaurantImg[0]?.imageUrl.trim()}
+            alt="가게 대표 사진"
+            style={{ maxWidth: '400px', maxHeight: '400px', objectFit: 'cover' }}
+          />
           <Card.Text>{restaurant.address}</Card.Text>
           <Card.Text>{restaurant.phone}</Card.Text>
           <Card.Text>평균 평가: {restaurant.averageRating}</Card.Text>
@@ -202,9 +220,9 @@ export function ReviewForm() {
                 );
               })}
             </div>
-
-            <p className="mt-3">{reservation.reservationTime}</p>
-            <Button type="submit" variant="primary" className="mt-4">리뷰 제출</Button>
+            <p className="mt-4  mb-0 fw-bold">예약시간</p>
+            <p className="mb-0 small">{formatDateTime(reservation.reservationTime)}</p>
+            <Button type="submit" variant="primary" className="mt-4 mb-4">리뷰 제출</Button>
           </Form>
         </Card.Body>
       </Card>
