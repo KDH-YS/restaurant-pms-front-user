@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/ReviewForm.css";
+import { useParams } from "react-router-dom";
 
 export function ReviewForm() {
   const [reviewContent, setReviewContent] = useState("");
@@ -12,11 +13,12 @@ export function ReviewForm() {
   const [atmosphereRating, setAtmosphereRating] = useState(0);
   const [valueRating, setValueRating] = useState(0);
   const [userId] = useState(1);
-  const [restaurantId] = useState(1);
   const [restaurant, setRestaurant] = useState(null);
   const [restaurantImg, setRestaurantImg] = useState(null);
   const [reservation, setReservation] = useState(null);
   const fileInputRef = useRef(null); // Ref for file input
+  
+  const { restaurantId,reservationId } = useParams();
 
   const fetchRestaurant = async () => {
     try {
@@ -35,7 +37,7 @@ export function ReviewForm() {
 
   const fetchReservation = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/js/reservation/77`);
+      const response = await fetch(`http://localhost:8080/api/js/reservation/${reservationId}`);
       if (response.ok) {
         const data = await response.json();
         setReservation(data);
