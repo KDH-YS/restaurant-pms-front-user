@@ -128,7 +128,7 @@ const fetchReservations = async () => {
     const storeId = "store-69e65e79-61d9-4e6c-a0da-a06c6e32e37b";
     const channelKey = "channel-key-5e0eb0b0-5c03-4514-85a3-38dbc688666c";
     const paymentId = `payment-${crypto.randomUUID()}`;
-    const orderName = `${reservation.restaurantName} 예약`;
+      const orderName = `${reservation.restaurantName} 예약`;
     const totalAmount = reservation.numberOfPeople * 10000;
 
     try {
@@ -146,7 +146,9 @@ const fetchReservations = async () => {
 
       const paymentResponse = await fetch(`http://localhost:8080/payment`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json" },
         body: JSON.stringify({ paymentId, reservationId: reservation.reservationId, amount: totalAmount }),
       });
 
@@ -156,7 +158,9 @@ const fetchReservations = async () => {
 
       const updateResponse = await fetch(`http://localhost:8080/payment`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json" },
         body: JSON.stringify(reservation.reservationId),
       });
 

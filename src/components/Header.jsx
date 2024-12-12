@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import menubuger from "../img/menubuger.png";
 import { Link } from "react-router-dom";
 import { useAuthStore } from '../store/authStore';
 import { Navbar, Dropdown, Container } from 'react-bootstrap';
 import styled from 'styled-components';
-
+import { jwtDecode } from 'jwt-decode';
 const CustomDropdownToggle = styled(Dropdown.Toggle)`
 
 &::after {
@@ -15,9 +15,10 @@ const CustomDropdownMenu = styled(Dropdown.Menu)`
 left: -100px !important;  // 메뉴 위치 조정
 `;
 export function Header() {
+    const [managerid,setManagerid] = useState(null);
     const { token, userName, clearAuth } = useAuthStore();
 
-
+    // console.log(jwtDecode(token));
     const handleLogout = () => {
         clearAuth();
         localStorage.removeItem("token");
