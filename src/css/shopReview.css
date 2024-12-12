@@ -75,6 +75,10 @@
   border-bottom: 1px solid #ddd;
   padding: 15px;
 }
+.js-review-item img {
+  max-width: 150px;
+  max-height: 150px;
+}
 
 .js-review-item > div.row:nth-of-type(1) > img {
   width: 40px;
