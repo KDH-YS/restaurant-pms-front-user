@@ -18,30 +18,31 @@ function RestaurantsInfo() {
   const [error, setError] = useState(null);
   const [menus, setMenus] = useState([]);
   const [schedule, setSchedule] = useState(null);
+  const [images, setImages] = useState([]);  // 이미지 데이터 상태
 
-  const handleReserveClick = () => {
-    navigate('/reserve');
-  };
+  // 모달 관련 상태
+  const [showModal, setShowModal] = useState(false);  // 모달 열기/닫기 상태
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);  // 선택된 이미지 인덱스
 
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(':');
-    return `${hours}:${minutes}`;
-  };
-
-  useEffect(() => {
+   // 레스토랑 상세 정보를 API에서 가져오는 함수
+   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [restaurantData, menuData, scheduleData] = await Promise.all([
-          fetchRestaurantDetail(restaurantId),
-          fetchRestaurantMenu(restaurantId, token),
-          fetchRestaurantSchedule(restaurantId, token)
-        ]);
+        // 레스토랑, 메뉴, 스케줄, 이미지 데이터를 동시에 호출
+        const restaurantData = await fetchRestaurantDetail(restaurantId);
         setRestaurant(restaurantData);
+        
+        const menuData = await fetchRestaurantMenu(restaurantId);
         setMenus(menuData);
+
+        const scheduleData = await fetchRestaurantSchedule(restaurantId);
         setSchedule(scheduleData);
+
+        const imageData = await getRestaurantImages(restaurantId);
+        setImages(imageData);  // 이미지를 상태에 저장
       } catch (err) {
-        setError('정보를 불러오는데 실패했습니다.');
+        setError('정보를 불러오는 데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -52,6 +53,16 @@ function RestaurantsInfo() {
     }
   }, [restaurantId, token, setRestaurant]);
 
+ // 시간을 "HH:mm:ss" -> "HH:mm" 형식으로 변환 (null 또는 undefined 처리 추가)
+const formatTime = (timeString) => {
+  if (!timeString) {
+    return '정보 없음';  // null 또는 undefined일 경우 처리
+  }
+  const [hours, minutes] = timeString.split(':');
+  return `${hours}:${minutes}`;
+};
+
+     // 스케줄 데이터를 어떻게 처리할지 (예시로 format 함수를 만들어서 데이터를 보기 좋게 가공)
   const formatSchedule = (scheduleData) => {
     if (!scheduleData || scheduleData.length === 0) {
       return <p className="text-muted">영업시간 정보가 없습니다.</p>;
@@ -68,11 +79,25 @@ function RestaurantsInfo() {
     ));
   };
 
-  if (loading) return (
-    <Container className="text-center py-5">
-      <h3>로딩 중...</h3>
-    </Container>
-  );
+  const handleImageClick = (index) => {
+    setSelectedImageIndex(index);  // 클릭한 이미지 인덱스를 저장
+    setShowModal(true);  // 모달 열기
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);  // 모달 닫기
+  };
+
+  const handlePrevImage = () => {
+    setSelectedImageIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+  };
+
+  const handleNextImage = () => {
+    setSelectedImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+  };
+
+  if (loading) return <p>로딩 중...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   if (error) return (
     <Container className="text-center py-5">
@@ -83,14 +108,40 @@ function RestaurantsInfo() {
   return (
     <Container className="py-4">
       {/* 헤더 이미지 */}
-      <Card className="border-0 mb-4">
-        <Card.Img 
-          src={Restaurantimg}
-          alt="레스토랑 내부" 
-          className="restaurant-header-img"
-          style={{ height: '300px', objectFit: 'cover' }}
-        />
-      </Card>
+      {images.length > 0 && (
+             <div className="imageGalleryJh">
+             <h3>식당 이미지</h3>
+             <Row>
+               {/* 이미지를 3개씩 나열 */}
+               {images.slice(0, 3).map((image, index) => (
+                 <Col key={index} xs={3} sm={3} md={3} lg={3} className='mb-4'>
+                   <Card className="galleryCardJh">
+                   <div className="galleryImageContainerJh">
+                     <Card.Img
+                       variant="top"
+                       src={image.imageUrl}
+                       alt="식당 이미지"
+                       className="galleryImageJh"
+                       onClick={() => handleImageClick(index)} // 이미지 클릭 시 모달로 보기
+                     />
+                     </div>
+                   </Card>
+                 </Col>
+               ))}
+             </Row>
+       
+             {/* "더보기" 버튼 */}
+             {images.length > 3 && (
+               <Button
+                 variant="primary"
+                 className="moreImagesBtnJh"
+                 onClick={() => handleImageClick(3)} // 4번째 이미지부터 모달 열기
+               >
+                 +{images.length - 3}개 더 보기
+               </Button>
+             )}
+              </div>
+          )}
 
       {/* 레스토랑 이름과 별점 */}
       <div className="text-center mb-5">
@@ -191,6 +242,39 @@ function RestaurantsInfo() {
             예약하기
           </Button>
         </Card.Body>
+        
+                      {/* 모달: 이미지 확대 보기 */}
+      <Modal show={showModal} onHide={handleModalClose} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>이미지 확대보기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="modal-image-container">
+            <button className="prev-button" onClick={handlePrevImage}>◀</button>
+            <img
+              src={images[selectedImageIndex]?.imageUrl}
+              alt="Restaurant"
+              style={{ width: '70%', height: 'auto' }}
+            />
+            <button className="next-button" onClick={handleNextImage}>▶</button>
+          </div>
+
+          {/* 이미지 썸네일 리스트 */}
+    <div className="thumbnail-list">
+      {images.map((image, index) => (
+        <img
+          key={index}
+          src={image.imageUrl}
+          alt={`Thumbnail ${index}`}
+          style={{ width: '10%', height: 'auto'}}
+          className={`thumbnail-image ${index === selectedImageIndex ? 'active' : ''}`}
+          onClick={() => setSelectedImageIndex(index)} // 썸네일 클릭 시 이미지 변경
+        />
+      ))}
+    </div>
+        </Modal.Body>
+      </Modal>
+
     </Container>
   );
 }

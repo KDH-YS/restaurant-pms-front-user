@@ -17,12 +17,16 @@ const Restaurant = () => {
     roadAddr: '',
     jibunAddr: '',
     detailAddr: '',
+    city: '',
+    district: '',
+    neighborhood: '',
     phone: '',
     foodType: '',
     totalSeats: '',
     parkingAvailable: false,
   }); // 레스토랑 데이터 상태
 
+  const [phoneError, setPhoneError] = useState(null); // 전화번호 형식 오류 상태
 
   useEffect(() => {
     const getRestaurantDetail = async () => {
@@ -31,7 +35,7 @@ const Restaurant = () => {
 
       try {
         const data = await fetchRestaurantDetail(restaurantId); // API 호출
-        console.log('Fetched data:', data); // API 호출 결과 확인
+        // console.log('Fetched data:', data); // API 호출 결과 확인
         setRestaurant(data); // 레스토랑 정보 상태 업데이트
       } catch (err) {
         setError('레스토랑 정보를 가져오는 데 실패했습니다.');
@@ -57,8 +61,31 @@ const Restaurant = () => {
     }));
   };
 
+   // 전화번호 형식 확인
+   const handlePhoneChange = (e) => {
+    const { value } = e.target;
+    setRestaurant((prevState) => ({
+      ...prevState,
+      phone: value,
+    }));
+
+    // 전화번호 형식 검증 (예: 010-1234-5678)
+    const phoneRegex = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
+    if (value && !phoneRegex.test(value)) {
+      setPhoneError('전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)');
+    } else {
+      setPhoneError('');  // 올바른 형식일 경우 오류 메시지 제거
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+  // 전화번호 오류가 있으면 팝업 띄우고 종료
+    if (phoneError) {
+      alert('전화번호를 확인해주세요.');
+      return;  // 폼 제출을 중지
+    }
 
     const isConfirmed = window.confirm('수정하시겠습니까?');
     if (!isConfirmed) {
@@ -118,6 +145,9 @@ const Restaurant = () => {
                     roadAddr: restaurant.roadAddr,
                     jibunAddr: restaurant.jibunAddr,
                     detailAddr: restaurant.detailAddr,
+                    city: restaurant.city,
+                    district: restaurant.district,
+                    neighborhood: restaurant.neighborhood,
                   }}
                   setAddressData={(newAddress) => setRestaurant((prevState) => ({
                     ...prevState,
@@ -136,8 +166,10 @@ const Restaurant = () => {
                   type="text"
                   name="phone"
                   value={restaurant.phone || ''}
-                  onChange={handleChange}
-                />
+                  onChange={handlePhoneChange} // 포맷팅된 전화번호로 처리
+                  placeholder="예: 010-2345-1234"
+                />  
+                {phoneError && <div className="text-danger">{phoneError}</div>} {/* 오류 메시지 표시 */}
               </Form.Group>
             </Col>
             <Col md={6}>

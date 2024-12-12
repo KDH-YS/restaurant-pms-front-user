@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form } from 'react-bootstrap';  // Modal 추가
-import { deleteMenu, fetchRestaurantMenu, fetchRestaurants, insertMenu, searchRestaurants } from '../pages/restaurants/api.js';
+import { deleteImage, deleteMenu, fetchRestaurantMenu, fetchRestaurants, getRestaurantImages, insertImage, insertMenu, searchRestaurants, setMainImage } from '../pages/restaurants/api.js';
 import { deleteRestaurant } from '../pages/restaurants/api.js';
 import Pagination from '../components/restaurants/Pagination';
 import { useNavigate } from 'react-router-dom'; // navigate 사용
 import SearchBar from './restaurants/SearchBar.jsx';
+import { v4 as uuidv4 } from 'uuid';  // uuid 라이브러리 임포트
 
 const AdminRestaurantTable = () => {
   const [restaurants, setRestaurants] = useState([]);  // 레스토랑 목록 상태
@@ -31,6 +32,11 @@ const AdminRestaurantTable = () => {
   const navigate = useNavigate();
   const [menu, setMenu] = useState([]);  // 새 메뉴 입력 상태
   const [newMenu, setNewMenu] = useState({ name: '', price: '' }); // 새로운 메뉴 객체
+  const [imageFile, setImageFile] = useState(null); // 이미지 파일 상태
+  const [imageOrder, setImageOrder] = useState(false); // 이미지 순서 (기본 false로 설정)
+  const [imagePreview, setImagePreview] = useState(''); // 이미지 미리보기 URL 상태
+  // 현재 선택된 대표 이미지 ID
+  const [selectedMainImageId, setSelectedMainImageId] = useState(null);
 
   // 레스토랑 데이터 가져오기
   const fetchRestaurantsData = async (page = 1) => {
@@ -115,21 +121,39 @@ const AdminRestaurantTable = () => {
 
   
   const deleteRestaurantsData = async (restaurantId) => {
-    const isConfirmed = window.confirm("정말로 삭제하시겠습니까?");
-    if (!isConfirmed) return;
+  const isConfirmed = window.confirm("정말로 삭제하시겠습니까?");
+  if (!isConfirmed) return;
 
-    try {
-      await deleteRestaurant(restaurantId);  // 레스토랑 삭제 API 호출
-      setRestaurants((prevRestaurants) =>
-        prevRestaurants.filter((restaurant) => restaurant.restaurantId !== restaurantId)
-      );
-      setShowModal(false);  // 레스토랑 삭제 후 Modal 닫기
-      window.location.reload();  // 화면 새로고침
-      window.alert("삭제되었습니다.");
-    } catch (error) {
-      console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
+  try {
+    // 레스토랑의 메뉴 삭제
+    const menuList = await fetchRestaurantMenu(restaurantId);
+    for (const menu of menuList) {
+      await deleteMenu(restaurantId, menu.menuId); // 각 메뉴 삭제
     }
-  };
+
+    // 레스토랑의 이미지 삭제
+    const imageList = await getRestaurantImages(restaurantId);
+    for (const image of imageList) {
+      await deleteImage(restaurantId, image.imageId); // 각 이미지 삭제
+    }
+
+    // 레스토랑 삭제
+    await deleteRestaurant(restaurantId);  // 레스토랑 삭제 API 호출
+
+    // 레스토랑 목록에서 삭제된 레스토랑 제거
+    setRestaurants((prevRestaurants) =>
+      prevRestaurants.filter((restaurant) => restaurant.restaurantId !== restaurantId)
+    );
+
+    setShowModal(false);  // 레스토랑 삭제 후 Modal 닫기
+    window.location.reload();  // 화면 새로고침
+    window.alert("레스토랑과 관련된 모든 데이터가 삭제되었습니다.");
+  } catch (error) {
+    console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
+    alert("레스토랑 삭제 중 오류가 발생했습니다.");
+  }
+};
+
  
   useEffect(() => {
     if (!searchParams.query) {
@@ -162,9 +186,17 @@ const handlePageChange = async (page) => {
       // 레스토랑의 메뉴 리스트를 가져옴
       const menuData = await fetchRestaurantMenu(restaurant.restaurantId);
       setMenu(menuData);  // 메뉴 리스트 상태 업데이트
+
+      // 레스토랑의 이미지 리스트를 가져옴
+      const imageData = await getRestaurantImages(restaurant.restaurantId);
+      setSelectedRestaurant((prevState) => ({
+        ...prevState,
+        images: imageData, // 이미지 정보 저장
+      }));
+
     } catch (error) {
-      console.error("메뉴를 가져오는 데 실패했습니다:", error);
-      setError("메뉴를 가져오는 데 실패했습니다.");
+       console.error("메뉴나 이미지를 가져오는 데 실패했습니다:", error);
+      setError("메뉴 또는 이미지를 가져오는 데 실패했습니다.");
     } finally {
       setLoading(false);
     }
@@ -175,6 +207,84 @@ const handlePageChange = async (page) => {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedRestaurant(null);  // Modal 닫을 때 선택된 레스토랑 정보 초기화
+    setImageFile(null);
+    setImagePreview('');
+  };
+
+ // 이미지 업로드 (폼 데이터로 보내기)
+ const handleImageUpload = async () => {
+  if (!imageFile || !selectedRestaurant) {
+    alert("이미지 파일을 선택해주세요!");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", imageFile);
+  formData.append("imageOrder", imageOrder); // 이미지 순서
+  formData.append("uid", uuidv4()); // 고유한 UUID 생성 후 전송
+
+  try {
+    // 이미지 업로드 API 호출
+    const response = await insertImage(selectedRestaurant.restaurantId, formData);
+    if (response.status === 201) {
+      // 이미지 업로드 후 레스토랑 이미지 갱신
+      const updatedImages = await getRestaurantImages(selectedRestaurant.restaurantId);
+      setSelectedRestaurant((prevState) => ({
+        ...prevState,
+        images: updatedImages,
+      }));
+      
+      // 업로드된 이미지들 출력 (배열로 되어 있기 때문에 각 이미지의 imageUrl을 출력)
+      // updatedImages.forEach(image => {
+      //   console.log("Image URL:", image.imageUrl); // 각 이미지의 URL 출력
+      // });
+
+      alert("이미지가 업로드되었습니다.");
+      setImageFile(null); // 파일 초기화
+      setImagePreview(''); // 미리보기 초기화
+      
+    }
+  } catch (error) {
+    console.error('이미지 업로드 실패:', error.response?.data || error.message);
+    alert("이미지 업로드에 실패했습니다.");
+  }
+};
+
+
+  // 이미지 삭제
+const handleDeleteImage = async (imageId) => {
+  const isConfirmed = window.confirm("이 이미지를 삭제하시겠습니까?");
+  if (!isConfirmed) return;
+
+  try {
+    // 이미지 삭제 API 호출
+    const response = await deleteImage(selectedRestaurant.restaurantId, imageId);
+
+    if (response.status === 204) {
+      // 삭제 후 이미지 리스트 갱신
+      const updatedImages = await getRestaurantImages(selectedRestaurant.restaurantId);
+      setSelectedRestaurant((prevState) => ({
+        ...prevState,
+        images: updatedImages,
+      }));
+      
+    }
+  } catch (error) {
+    console.error("이미지 삭제 실패:", error);
+  }
+};
+
+  // 이미지 파일 선택 시 미리보기 처리
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // 검색어 입력 시 상태 업데이트
@@ -251,6 +361,68 @@ const handleSearch = async (page = 1) => {
   }
 };
 
+// 이미지 클릭 시 대표 이미지로 설정
+const handleSetAsMainImage = async (imageId) => {
+  // 이전 대표 이미지 해제
+  const updatedImages = selectedRestaurant.images.map((image) => {
+    if (image.imageId === imageId) {
+      return { ...image, imageOrder: true }; // 대표 이미지로 설정
+    } else {
+      return { ...image, imageOrder: false }; // 기존 대표 이미지는 해제
+    }
+  });
+
+  // 업데이트된 이미지 배열을 레스토랑 데이터에 반영
+  setSelectedRestaurant((prevState) => ({
+    ...prevState,
+    images: updatedImages,
+  }));
+
+  // 대표 이미지 ID 저장
+  setSelectedMainImageId(imageId);
+
+   // 이미지 정보를 서버에 반영
+    const imageDTO = {
+      restaurantId: selectedRestaurant.restaurantId,
+      imageId: imageId,
+      imageOrder: true, // 대표 이미지로 설정
+    };
+
+    try {
+      const responseMessage = await setMainImage(selectedRestaurant.restaurantId, imageDTO);
+      alert(responseMessage);  // "대표 이미지가 설정되었습니다." 메시지 출력
+    } catch (error) {
+      alert("대표 이미지 설정에 실패했습니다.");
+      console.error("대표 이미지 설정 실패:", error);
+    }
+};
+
+  // 이미지 리스트 렌더링 함수
+const renderImageList = () => {
+  return selectedRestaurant?.images && selectedRestaurant.images.length > 0 ? (
+    selectedRestaurant.images.map((image) => (
+      <li key={image.imageId}>
+        <img
+          src={image.imageUrl}
+          alt="이미지"
+          style={{ maxWidth: '100px', marginRight: '10px', cursor: 'pointer' }}
+          onClick={() => handleSetAsMainImage(image.imageId)}  // 클릭하면 대표 이미지로 설정
+        />
+        {image.imageOrder && <span>대표 이미지</span>} {/* 대표 이미지 표시 */}
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleDeleteImage(image.imageId)}
+        >
+          삭제
+        </Button>
+      </li>
+    ))
+  ) : (
+    <p>이미지가 없습니다.</p>
+  );
+};
+
   return (
     <div>
       <h2>레스토랑 목록</h2>
@@ -282,7 +454,9 @@ const handleSearch = async (page = 1) => {
             <tr key={restaurant.restaurantId} onClick={() => handleRestaurantClick(restaurant)}>
               <td>{restaurant.restaurantId}</td>
               <td>{restaurant.name}</td>
-              <td>{restaurant.address}</td>
+              <td>
+                {restaurant.roadAddr || restaurant.jibunAddr} {restaurant.detailAddr}
+              </td>
               <td>{restaurant.foodType}</td>
               <td>{restaurant.parkingAvailable ? '가능' : '불가능'}</td>
               <td>{restaurant.reservationAvailable ? '가능' : '불가능'}</td>
@@ -311,12 +485,45 @@ const handleSearch = async (page = 1) => {
           </Modal.Header>
           <Modal.Body>
             <p><strong>이름:</strong> {selectedRestaurant.name}</p>
-            <p><strong>주소:</strong> {selectedRestaurant.address}</p>
+            <p><strong>주소:</strong> {selectedRestaurant.roadAddr || selectedRestaurant.jibunAddr} {selectedRestaurant.detailAddr}</p>
             <p><strong>음식 종류:</strong> {selectedRestaurant.foodType}</p>
             <p><strong>전화번호:</strong> {selectedRestaurant.phone}</p>
             <p><strong>주차 가능:</strong> {selectedRestaurant.parkingAvailable ? '가능' : '불가능'}</p>
             <p><strong>예약 가능:</strong> {selectedRestaurant.reservationAvailable ? '가능' : '불가능'}</p>
-          
+          {/* 이미지 업로드 폼 */}
+          <Form>
+              <Form.Group>
+                <Form.Label>이미지 파일</Form.Label>
+                <Form.Control
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
+              </Form.Group>
+              {imagePreview && (
+                <div className="mt-3">
+                  <img src={imagePreview} alt="미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                </div>
+              )}
+              <Form.Check
+                type="checkbox"
+                label="첫 번째 이미지로 설정"
+                checked={imageOrder}
+                onChange={(e) => setImageOrder(e.target.checked)}
+                className="mt-3"
+              />
+              <Button variant="success" onClick={handleImageUpload} className="mt-3">
+                이미지 업로드
+              </Button>
+            </Form>
+
+            <h5 className="mt-3">이미지 리스트</h5>
+            {/* 레스토랑 이미지 목록을 출력 */}
+            <ul>
+            {renderImageList()}
+          </ul>
+
+
             {/* 메뉴 추가 폼 */}
             <Form.Control
               type="text"

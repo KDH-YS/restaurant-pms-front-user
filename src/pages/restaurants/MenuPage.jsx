@@ -2,11 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Row, Col, Card } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { fetchRestaurants } from './api';  // api.js에서 import
+import { fetchRestaurants, getRestaurantImages } from './api';  // api.js에서 import
 import { searchRestaurants } from './api';  // api.js에서 import
 import SearchBar from '../../components/restaurants/SearchBar';  // SearchBar 컴포넌트 import
 import Pagination from '../../components/restaurants/Pagination';
-
+import "../../css/restaurants/MenuPage.css";
 const MenuPage = () => {
   const [restaurants, setRestaurants] = useState([]);  // 레스토랑 목록 상태
   const [loading, setLoading] = useState(false);  // 로딩 상태
@@ -27,10 +27,12 @@ const MenuPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지
   const [totalPages, setTotalPages] = useState(1);  // 총 페이지 수
+  const [restaurantImages, setRestaurantImages] = useState({}); // 레스토랑 이미지 상태 저장
 
   const navigate = useNavigate();  // navigate 훅을 사용하여 페이지 이동
   const isRequestPending = useRef(false); // 요청 중인지 여부를 추적
   const location = useLocation(); // URL에서 파라미터를 가져오기 위한 훅
+  const defaultImage = '/fc7ece8e8ee1f5db97577a4622f33975.jpg';  // 기본 이미지 경로
 
 /// API 요청 함수: URL에서 query 값을 받아서 검색하는 함수
 const fetchRestaurantsByQuery = async (query, page = 1) => {
@@ -132,6 +134,23 @@ useEffect(() => {
       if (response.content) {
         setRestaurants(response.content);  // 레스토랑 목록 업데이트
         setTotalPages(response.totalPages);  // 총 페이지 수 설정
+       // 각 레스토랑에 대한 이미지 요청 (병렬로 처리)
+       const imagesData = await Promise.all(
+        response.content.map(async (restaurant) => {
+          const images = await getRestaurantImages(restaurant.restaurantId);
+          return {
+            restaurantId: restaurant.restaurantId,
+            imageUrl: images.length > 0 ? images[0].imageUrl : defaultImage,
+          };
+        })
+      );
+
+      // 이미지 데이터를 restaurantImages 상태에 병합
+      const imagesMap = imagesData.reduce((acc, { restaurantId, imageUrl }) => {
+        acc[restaurantId] = imageUrl;
+        return acc;
+      }, {});
+      setRestaurantImages(imagesMap); // 레스토랑 ID와 이미지 URL을 매핑하여 저장
       } else {
         setRestaurants([]);
         setTotalPages(1);
@@ -237,15 +256,24 @@ const handleSearch = async (page = 1) => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-4">
-        {restaurants.length > 0 ? (
-          restaurants.map((restaurant) => (
+      {restaurants.length > 0 ? (
+        restaurants.map((restaurant) => {
+          // 각 레스토랑에 맞는 이미지 URL을 가져옵니다
+          const imageUrl = restaurantImages[restaurant.restaurantId] || defaultImage;  // 해당 레스토랑의 대표 이미지 URL 가져오기
+          return (
             <Col key={restaurant.restaurantId}>
               <Card onClick={() => handleCardClick(restaurant.restaurantId)}>
-                <Card.Img variant="top" src={restaurant.image} />
+                <div className="cardImageContainer">
+                  <Card.Img
+                    variant="top"
+                    src={imageUrl}
+                    className="cardImage"
+                  />
+                </div>
                 <Card.Body>
                   <Card.Title>{restaurant.name}</Card.Title>
                   <Card.Text>
-                    <strong>주소:</strong> {restaurant.address}
+                    <strong>주소:</strong> {restaurant.roadAddr || restaurant.jibunAddr}
                   </Card.Text>
                   <Card.Text>
                     <strong>음식 종류:</strong> {restaurant.foodType}
@@ -265,11 +293,12 @@ const handleSearch = async (page = 1) => {
                 </Card.Body>
               </Card>
             </Col>
-          ))
-        ) : (
-          <p>레스토랑이 없습니다.</p>
-        )}
-      </Row>
+          );
+        })
+      ) : (
+        <p>레스토랑이 없습니다.</p>
+      )}
+    </Row>
 
       {/* 페이지네이션 */}
       <Pagination
