@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, ListGroup, ProgressBar, Modal, Form } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import "../../css/main.css";
 import "../../css/shopReview.css";
 
@@ -8,28 +9,37 @@ import { restaurantStore } from 'store/restaurantStore';
 
 export function ShopReview() {
   // api상태관리
-  const [reviews, setReviews] = useState([]);
-  const [reviewImages, setReviewImages] = useState({});
-  const [isEditing, setIsEditing] = useState(null); // 수정 중인 리뷰 ID
-  const [editedContent, setEditedContent] = useState(""); // 수정 중인 내용
+  // 가게
   const [restaurantData, setRestaurantData] = useState({});
   const [restaurantImg, setRestaurantImg] = useState([]);
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // 유저
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  // 리뷰
+  const [reviews, setReviews] = useState([]);
+  const [reviewImages, setReviewImages] = useState({});
   const [reviewToDelete, setReviewToDelete] = useState(null);
+  // 수정
+  const [isEditing, setIsEditing] = useState(null); // 수정 중인 리뷰 ID
+  const [editedContent, setEditedContent] = useState(""); // 수정 중인 내용
+  // 신고
+  const [showReportModal, setShowReportModal] = useState(false);
   const [reportReviewId, setReportReviewId] = useState(null);
   const [reportContent, setReportContent] = useState("");
   const [reportReason, setReportReason] = useState("OTHER");
+  // 도움
   const [helpfulReviews, setHelpfulReviews] = useState({});
+
   // 주스탠드
   const { restaurant } = restaurantStore();
   const { token } = useAuthStore();
-  // 프론트 상태관리
-  const [showReviewsCount, setShowReviewsCount] = useState(3);
-  const [showPhotosCount, setShowPhotosCount] = useState(3);
-
   const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
 
+  // 프론트 상태관리
+  const [showReviewsCount, setShowReviewsCount] = useState(5);
+  const [showPhotosCount, setShowPhotosCount] = useState(3);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const navigate = useNavigate();
+  
   // JWT 파싱 함수
   function parseJwt(token) {
     if (!token) return null;
@@ -61,10 +71,15 @@ export function ShopReview() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurant.restaurantId}/reviews?userId=${userId}`);
+      let url = `http://localhost:8080/api/restaurants/${restaurant.restaurantId}/reviews`;
+      if (userId) {
+        url += `?userId=${userId}`;
+      }
+  
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
-
+  
         // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
         const reviewsData = data.reviews.map(reviewData => ({
           ...reviewData.review, // 리뷰 관련 필드
@@ -108,6 +123,7 @@ export function ShopReview() {
           )
         );
         setIsEditing(null); // 수정 모드 종료
+        setEditedContent("");
       } else {
         console.error("리뷰 수정 실패");
       }
@@ -128,10 +144,11 @@ export function ShopReview() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             reviewId: reportReviewId,
-            userId: 1,
+            userId: userId,
             reason: reportReason,
             reportDescription: reportContent,
           }),
@@ -139,6 +156,9 @@ export function ShopReview() {
 
         if (response.ok) {
           console.log("신고가 성공적으로 접수되었습니다.");
+          setReportContent("");
+          setReportReason("OTHER");
+          setShowReportModal(false);
         } else {
           console.error("신고를 접수하는 데 실패했습니다.");
         }
@@ -146,27 +166,30 @@ export function ShopReview() {
         console.error("신고를 접수하는 중 오류 발생:", error);
       }
     }
-    setShowReportModal(false);
-    setReportContent("");
-    setReportReason("OTHER");
   };
 
   const handleHelpfulClick = async (reviewId) => {
+    // 비회원일 경우 로그인 모달 표시
+    if (!userId) {
+      setShowLoginModal(true);
+      return;
+    }
     const currentStatus = helpfulReviews[reviewId];
     try {
       const url = currentStatus
-        ? `http://localhost:8080/api/reviews/${reviewId}/helpful?userId=1`
+        ? `http://localhost:8080/api/reviews/${reviewId}/helpful?userId=${userId}`
         : `http://localhost:8080/api/reviews/${reviewId}/helpful`;
       const options = {
         method: currentStatus ? "DELETE" : "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       };
   
       if (!currentStatus) {
         options.body = JSON.stringify({
-          userId: 1,
+          userId: userId,
           state: 1
         });
       }
@@ -241,6 +264,11 @@ export function ShopReview() {
     setReviewToDelete(reviewId);
     setShowDeleteModal(true);
   };
+  
+  const handleLoginClick = () => {
+    setShowLoginModal(false);
+    navigate("/login"); // 로그인 페이지 경로로 수정
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -265,9 +293,9 @@ export function ShopReview() {
             ) : (
               <p>가게 이미지가 없습니다.</p>
             )}
-            <p className="js-food-type">{restaurant.foodType} | {restaurant.neighborhood}</p>
-            <h2 className="fw-bold">{restaurant.name}</h2>
-            <p className="js-address">{restaurant.address}</p>
+            <p className="js-food-type">{restaurantData.foodType} | {restaurantData.neighborhood}</p>
+            <h2 className="fw-bold">{restaurantData.name}</h2>
+            <p className="js-address">{restaurantData.address}</p>
           </div>
         </Col>
       </Row>
@@ -321,7 +349,7 @@ export function ShopReview() {
         <Col>
           <h3 className="js-section-title mb-0">리뷰</h3>
           <ListGroup>
-            {reviews.map((review) => (
+            {reviews.slice(0, showReviewsCount).map((review) => (
               <ListGroup.Item key={review.reviewId} className="js-review-item">
                 <Row className="align-items-center">
                   <img
@@ -399,6 +427,11 @@ export function ShopReview() {
                 </Row>
               </ListGroup.Item>
             ))}
+            {reviews.length > showReviewsCount && (
+                <Button variant="primary" onClick={handleShowMoreReviews} className="js-more-btn mt-3">
+                  더보기
+                </Button>
+              )}
           </ListGroup>
         </Col>
       </Row>
@@ -456,6 +489,23 @@ export function ShopReview() {
           </Button>
           <Button variant="primary" onClick={handleReportSubmit}>
             신고하기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* 로그인 안내 모달 */}
+      <Modal show={showLoginModal} onHide={() => setShowLoginModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>로그인 필요</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>좋아요 기능을 사용하려면 로그인이 필요합니다.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowLoginModal(false)}>
+            닫기
+          </Button>
+          <Button variant="primary" onClick={handleLoginClick}>
+            로그인
           </Button>
         </Modal.Footer>
       </Modal>
