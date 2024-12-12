@@ -174,7 +174,7 @@ export function MyReview() {
           <ListGroup className="js-review-list">
             {Array.isArray(reviews) && reviews.length > 0 ? (
               reviews.slice(0, reviewsToShow).map((review) => {
-                const image = reviewImg.find((img) => img.reviewId === review.reviewId);
+                const images = reviewImg.filter((img) => img.reviewId === review.reviewId);
                 return (
                   <ListGroup.Item key={review.reviewId} className="js-review-item mb-3">
                     <Row className="align-items-center">
@@ -187,14 +187,17 @@ export function MyReview() {
                         <p className="text-muted small mb-0">{restaurant[0]?.foodType}</p>
                         <p className="mb-0 fw-bold">{restaurant[0]?.name}</p>
                       </Col>
-                      {/* 리뷰 이미지 */}
-                      {image && ( // 이미지가 존재할 경우에만 렌더링
-                        <div className="mt-4">
-                          <img
-                            src={image.imageUrl}
-                            alt={review.restaurantName}
-                            className="img-fluid rounded js-review-image"
-                          />
+                      {/* 여러 이미지 렌더링 */}
+                      {images.length > 0 && (
+                        <div className="mt-4 d-flex flex-wrap gap-2">
+                          {images.map((image, index) => (
+                            <img
+                              key={index}
+                              src={image.imageUrl}
+                              alt={`리뷰 이미지 ${index + 1}`}
+                              className="img-fluid rounded js-review-image"
+                            />
+                          ))}
                         </div>
                       )}
                       {/* 리뷰 내용 */}
