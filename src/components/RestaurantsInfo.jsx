@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, CardBody } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { StarFill } from 'react-bootstrap-icons';
-import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule } from '../pages/restaurants/api';
+import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule,getRestaurantImages } from '../pages/restaurants/api';
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
 import Map from './Map';
@@ -86,6 +86,9 @@ const formatTime = (timeString) => {
 
   const handleModalClose = () => {
     setShowModal(false);  // 모달 닫기
+  };
+  const handleReserveClick = () => {
+    navigate("/reserve");  // 모달 닫기
   };
 
   const handlePrevImage = () => {
@@ -197,11 +200,7 @@ const formatTime = (timeString) => {
 
         {/* 오른쪽 지도 섹션 */}
         <Col md={5} style={{overflow:"hidden"}}>
-      
-        
-          
-              <Map />
-              
+          <Map/>
         </Col>
       </Row>
 
