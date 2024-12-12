@@ -57,18 +57,34 @@ function RestaurantsInfo() {
     if (!schedule || schedule.length === 0) {
       setOpen(false);
       return <p className="text-muted">영업시간 정보가 없습니다.</p>;
-    } else{   setOpen(true);
-    return schedule.map((item) => (
-      <div key={item.scheduleId} className="mb-3">
-        <h6 className="mb-2">{item.openDate}</h6>
-        <h6 className="mb-2">{Number(item.isOpen) === 1 ? '영업 중' : '휴무'}</h6>
-        <p className="mb-1">영업시간 : {formatTime(item.startTime)} - {formatTime(item.endTime)}</p>
-        {item.breakStart && item.breakEnd && (
-          <p className="mb-0">휴식시간 : {formatTime(item.breakStart)} - {formatTime(item.breakEnd)}</p>
+    }
+  
+    const today = new Date().toISOString().slice(0, 10); // 오늘 날짜 (YYYY-MM-DD 형식)
+    const todaySchedule = schedule.find((item) => item.openDate === today);
+  
+    if (!todaySchedule) {
+      setOpen(false);
+      return <p className="text-muted">오늘은 영업하지 않습니다.</p>;
+    }
+  
+    setOpen(Number(todaySchedule.isOpen) === 1);
+  
+    return (
+      <div key={todaySchedule.scheduleId} className="mb-3">
+        <h6 className="mb-2">{todaySchedule.openDate}</h6>
+        <h6 className="mb-2">{Number(todaySchedule.isOpen) === 1 ? '영업 중' : '휴무'}</h6>
+        <p className="mb-1">
+          영업시간: {formatTime(todaySchedule.startTime)} - {formatTime(todaySchedule.endTime)}
+        </p>
+        {todaySchedule.breakStart && todaySchedule.breakEnd && (
+          <p className="mb-0">
+            휴식시간: {formatTime(todaySchedule.breakStart)} - {formatTime(todaySchedule.breakEnd)}
+          </p>
         )}
       </div>
-    ));}
+    );
   }, [schedule]);
+  
 
   const handleImageClick = useCallback((index) => {
     setSelectedImageIndex(index);
@@ -177,7 +193,6 @@ function RestaurantsInfo() {
               </div>
 
               <div className="mb-4">
-                <h3 className="h6 mb-3">영업시간</h3>
                 {formatSchedule}
               </div>
 
