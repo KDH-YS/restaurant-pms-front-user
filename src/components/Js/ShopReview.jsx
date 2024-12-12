@@ -13,6 +13,7 @@ export function ShopReview() {
   const [restaurantData, setRestaurantData] = useState({});
   const [restaurantImg, setRestaurantImg] = useState([]);
   // 유저
+  const [users, setUsers] = useState({});
   const [showLoginModal, setShowLoginModal] = useState(false);
   // 리뷰
   const [reviews, setReviews] = useState([]);
@@ -31,6 +32,7 @@ export function ShopReview() {
 
   // 주스탠드
   const { restaurant } = restaurantStore();
+  const restaurantId = restaurant.restaurantId
   const { token } = useAuthStore();
   const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
 
@@ -103,6 +105,30 @@ export function ShopReview() {
     }
   };
 
+  const fetchUsers = async () => {
+    if (restaurantId) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/js/users/${restaurantId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const usersData = {};
+          data.forEach((user) => {
+            if (user && user.userId && user.userName) {
+              usersData[user.userId] = user.userName;
+            }
+          });
+          setUsers(usersData);
+        } else {
+          console.error("유저 정보를 가져오는 데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error("유저 정보를 가져오는 중 오류 발생:", error);
+      }
+    }
+  };
+
   // 리뷰 수정 API 호출
   const handleEditSubmit = async (reviewId) => {
     try {
@@ -134,6 +160,7 @@ export function ShopReview() {
 
   useEffect(() => {
     fetchRestaurant();
+    fetchUsers();
     fetchReviews();
   }, [restaurant.restaurantId]);
 
@@ -354,10 +381,10 @@ export function ShopReview() {
                   <img
                     src={review.imageUrl || "https://via.placeholder.com/40x40"}
                     alt="리뷰 프로필 이미지"
-                    className="img-fluid rounded-circle"
+                    className="img-fluid rounded-circle mb-0"
                   />
                   <Col xs={8} className="d-flex flex-column">
-                    <p className="mb-0 fw-bold">{review.userName}</p>
+                    <p className="mb-0 fw-bold">{users[review.userId]}</p>
                     <p className="text-muted small mb-0">{formatDate(review.createdAt)}</p>
                   </Col>
                   <Col className="d-flex justify-content-end align-items-start">
@@ -382,8 +409,7 @@ export function ShopReview() {
                             key={index}
                             src={image.imageUrl}
                             alt={`리뷰 이미지 ${index + 1}`}
-                            className="img-fluid rounded shadow-sm me-2"
-                            style={{ maxWidth: "100px", maxHeight: "100px" }}
+                            className="img-fluid rounded"
                           />
                         ))}
                       </div>
