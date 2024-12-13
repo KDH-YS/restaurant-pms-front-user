@@ -24,7 +24,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
+      const response = await axios.post("http://localhost:8080/api/users/login", {
         userName: username,
         password: password,        
       },
