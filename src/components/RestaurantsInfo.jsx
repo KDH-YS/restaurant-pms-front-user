@@ -62,10 +62,7 @@ function RestaurantsInfo() {
     const today = new Date().toISOString().slice(0, 10); // 오늘 날짜 (YYYY-MM-DD 형식)
     const todaySchedule = schedule.find((item) => item.openDate === today);
   
-    if (!todaySchedule) {
-      setOpen(false);
-      return <p className="text-muted">오늘은 영업하지 않습니다.</p>;
-    }
+
   
     setOpen(Number(todaySchedule.isOpen) === 1);
   

@@ -40,8 +40,6 @@ function Map() {
       const map = sop.map(mapRef.current, {
         zoomControl: false,
         attributionControl: false,
-        scrollWheelZoom: false,
-        dragging: false,
         touchZoom: false,
         doubleClickZoom: false,
         boxZoom: false,

@@ -10,11 +10,8 @@ import { format, parseISO, isBefore, startOfDay, getWeek, getDate, startOfWeek, 
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
 // 주차 계산 함수
-const getWeekOfMonth = (date) => {
-  const start = startOfWeek(new Date(date.getFullYear(), date.getMonth(), 1), { weekStartsOn: 1 });
-  const week = getWeek(date, { weekStartsOn: 1 }) - getWeek(start, { weekStartsOn: 1 }) + 1;
-  return week;
-};
+
+
 
 const Manager = () => {
   const { token } = useAuthStore();
@@ -25,7 +22,20 @@ const Manager = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [scheduleExists, setScheduleExists] = useState(false); // Added state variable
   const timeOptions = generateTimeOptions();
+  const { startOfWeek, differenceInCalendarWeeks } = require('date-fns');
 
+  const getWeekOfMonth = (date) => {
+    // 해당 월의 첫날
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  
+    // 첫째 날 기준 주의 시작일
+    const start = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 });
+  
+    // 현재 날짜 기준 몇 번째 주인지 계산
+    const week = differenceInCalendarWeeks(date, start, { weekStartsOn: 1 }) + 1;
+  
+    return week;
+  };
   // 토요일에 특별한 스타일을 적용하는 함수
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
