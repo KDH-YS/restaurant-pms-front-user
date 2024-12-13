@@ -12,9 +12,9 @@ function Login() {
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [rememberMe,setRememberMe]= useState(false);
   // Zustand 스토어에서 상태 및 액션 가져오기
-  const {setUserId,setToken,setUserName,setUserRole} = useAuthStore();
+  const {setUserId,setToken,setUserName,setUserRole,userId} = useAuthStore();
 
   useEffect(() => {
     
@@ -23,32 +23,30 @@ function Login() {
   // 로그인 요청 처리
   const handleLogin = async (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
+  
     try {
-      const response = await axios.post("http://localhost:8080/api/users/login", {
-        userName: username,
-        password: password,        
-      },
-      {
-        headers: {
-          "Content-Type": "application/json", // JSON 형식으로 보내도록 설정
+      const response = await axios.post(
+        "http://localhost:8080/api/users/login",
+        {
+          userName: username,
+          password: password,
         },
-      }
-    );
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+  
       if (response.data.success) {
-        const token = response.data.data.token; // 서버에서 받은 JWT 토큰
+        const token = response.data.data.token;
         const userId = jwtDecode(token).userId;
-        const userName = response.data.data.userName; // 서버에서 받은 사용자 이름
-        const userRole = jwtDecode(token).auth; // 서버에서 받은 사용자 권한
-
-        // Zustand 스토어에 저장
-        
-        setUserId(userId);
-        setToken(token);
-        setUserName(userName);
-        setUserRole(userRole);
-
-        // 로컬 스토리지에도 저장 (선택 사항)
-        localStorage.setItem("token", token);
+        const userName = response.data.data.userName;
+        const userRole = jwtDecode(token).auth;
+  
+        // Zustand에 저장 (자동 로그인 여부에 따라)
+        setToken(token, rememberMe); // rememberMe 값에 따라 로컬 또는 세션 스토리지에 저장
+        setUserName(userName,rememberMe);
+  
+        console.log(userId);
         alert("로그인에 성공하였습니다.");
         window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
       } else {
@@ -58,6 +56,7 @@ function Login() {
       setError("로그인 중 오류가 발생했습니다.");
     }
   };
+  
 
   return (
     <div className="HjLogin">
@@ -71,22 +70,29 @@ function Login() {
           <h2 className='HjLoginTitle'>로그인</h2>
 
           {/* 로그인 입력칸 */}
-          <div className='HjInputBox'>
-              <input 
-                type='text' 
-                id='HjUserName' 
-                placeholder='아이디를 입력하세요.'
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input 
-                type='password' 
-                id='HjPassword' 
-                placeholder='비밀번호를 입력하세요.'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-          </div>
+          <div className="HjInputBox">
+  <input
+    type="text"
+    id="HjUserName"
+    placeholder="아이디를 입력하세요."
+    value={username}
+    onChange={(e) => setUsername(e.target.value)}
+  />
+  <input
+    type="password"
+    id="HjPassword"
+    placeholder="비밀번호를 입력하세요."
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+  />
+  <label style={{ display:"flex"}}> 자동 로그인 <input 
+      type="checkbox"
+      id="rememberMe"
+      checked={rememberMe}
+      onChange={(e) => setRememberMe(e.target.checked)}
+    /></label>
+</div>
+
           {/* 로그인 버튼 */}
           <button 
           type='submit' 
