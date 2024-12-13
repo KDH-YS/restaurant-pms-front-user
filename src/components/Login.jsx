@@ -26,8 +26,7 @@ function Login() {
     try {
       const response = await axios.post("http://localhost:8080/api/auth/login", {
         userName: username,
-        password: password,
-        
+        password: password,        
       },
       {
         headers: {
@@ -51,7 +50,7 @@ function Login() {
         // 로컬 스토리지에도 저장 (선택 사항)
         localStorage.setItem("token", token);
         alert("로그인에 성공하였습니다.");
-        // window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");
       }
