@@ -39,8 +39,6 @@ export function Header() {
         window.location.href = "/"; // 메인페이지로 이동
     };
 
-    console.log(token); // 상태 확인용 로그
-    console.log(userRole); // 권한 확인용 로그
 
     return (
         <Navbar expand="lg" className="navbar-custom">
