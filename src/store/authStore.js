@@ -9,7 +9,9 @@ export const useAuthStore = create(
       userId: null,
       userName: null, // 사용자 이름
       userRole: null, // 사용자 권한
+      restaurantId: null,
       setToken: (newToken) => set({ token: newToken }),
+      setrestaurantId: (newrestaurantId) => set({ restaurantId: newrestaurantId }),
       setUserId: (newUserId) => set({ userId: newUserId }),
       setUserName: (newUserName) => set({ userName: newUserName }),
       setUserRole: (newUserRole) => set({ userRole: newUserRole }),

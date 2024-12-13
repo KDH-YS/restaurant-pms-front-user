@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
-
+import { jwtDecode } from 'jwt-decode';
 function Login() {
 
   const [login, setLogin] = useState("");
@@ -14,10 +14,7 @@ function Login() {
   const [password, setPassword] = useState("");
 
   // Zustand 스토어에서 상태 및 액션 가져오기
-  const setToken = useAuthStore((state) => state.setToken);
-  const setUserId = useAuthStore((state) => state.setUserId);
-  const setUserName = useAuthStore((state) => state.setUserName);
-  const setUserRole = useAuthStore((state) => state.setUserRole);
+  const {setUserId,setToken,setUserName,setUserRole} = useAuthStore();
 
   useEffect(() => {
     
@@ -40,14 +37,13 @@ function Login() {
     );
       if (response.data.success) {
         const token = response.data.data.token; // 서버에서 받은 JWT 토큰
-        const userId = response.data.data.userId;
+        const userId = jwtDecode(token).userId;
         const userName = response.data.data.userName; // 서버에서 받은 사용자 이름
-        const userRole = response.data.data.authorities; // 서버에서 받은 사용자 권한
+        const userRole = jwtDecode(token).auth; // 서버에서 받은 사용자 권한
 
         // Zustand 스토어에 저장
-
+        
         setUserId(userId);
-        console.log(userRole);
         setToken(token);
         setUserName(userName);
         setUserRole(userRole);
@@ -55,7 +51,7 @@ function Login() {
         // 로컬 스토리지에도 저장 (선택 사항)
         localStorage.setItem("token", token);
         alert("로그인에 성공하였습니다.");
-        window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        // window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");
       }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 import 'css/Map.css';
 import axios from "axios";
 import { restaurantStore } from "store/restaurantStore";
@@ -11,6 +11,7 @@ function Map() {
   const mapRef = useRef(null);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  const [map, setMap] = useState(null); // 지도 상태 관리
 
   const searchmap = () => {
     // 요청할 도시 이름을 변수에 저장
@@ -37,7 +38,7 @@ function Map() {
 
   useEffect(() => {
     if (x !== 0 && y !== 0) {
-      const map = sop.map(mapRef.current, {
+      const mapInstance = sop.map(mapRef.current, {
         zoomControl: false,
         attributionControl: false,
         touchZoom: false,
@@ -46,20 +47,30 @@ function Map() {
         keyboard: false,
       });
 
-      map.setView(sop.utmk(x, y), 11);  // 지도 좌표로 설정
+      mapInstance.setView(sop.utmk(x, y), 11);  // 지도 좌표로 설정
+      setMap(mapInstance); // map 상태에 지도 인스턴스를 저장
 
       // 마커 추가
       const marker = new sop.Marker(sop.utmk(x, y));  // 마커 생성
-      marker.addTo(map);  // 맵에 마커 추가
+      marker.addTo(mapInstance);  // 맵에 마커 추가
 
       return () => {
-        map.remove();  // 컴포넌트 언마운트 시 맵 제거
+        mapInstance.remove();  // 컴포넌트 언마운트 시 맵 제거
       };
     }
   }, [x, y]);  // x, y 값이 변경될 때마다 실행
 
+  // 버튼 클릭 시 마커 위치로 이동하는 함수
+  const moveToMarker = () => {
+    if (map) {
+      map.setView(sop.utmk(x, y), 14); // 마커 위치로 맵 중심 이동
+    }
+  };
+
   return (
-    <Card id="map" ref={mapRef} style={{ width: '100%', height: '100%' }} />
+    <>
+      <Card id="map" ref={mapRef} style={{ width: '100%', height: '100%' }}/>
+    </>
   );
 }
 
