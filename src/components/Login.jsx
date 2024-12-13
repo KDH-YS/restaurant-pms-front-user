@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 import { jwtDecode } from 'jwt-decode';
+import restaurantIcon from '../img/restaurant_icon.png';
+
 function Login() {
 
   const [login, setLogin] = useState("");
@@ -24,7 +26,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
+      const response = await axios.post("http://localhost:8080/api/users/login", {
         userName: username,
         password: password,        
       },
@@ -65,7 +67,7 @@ function Login() {
         <form className='HjLoginForm'>
           {/* 로고 */}
           <div className='HjLoginFormLogo'>
-            <img src='/restaurant_icon.png' />
+            <img src={restaurantIcon} />
           </div>
           {/* 로그인 페이지 타이틀 */}
           <h2 className='HjLoginTitle'>로그인</h2>

@@ -77,11 +77,14 @@ const fetchReservations = async () => {
 
   const handleCancelReservation = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/user/${reservationId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ request: 'cancelrequest' }),
+      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
+        method: 'DELETE',
+        headers:{
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+          },
       });
+
       if (response.ok) {
         alert('예약이 취소되었습니다.');
         fetchReservations();
@@ -90,7 +93,7 @@ const fetchReservations = async () => {
       }
     } catch (error) {
       console.error('예약 취소 오류:', error);
-      alert('오류가 발생했습니다.');
+      alert('예약 취소 중 오류가 발생했습니다.');
     }
   };
 
@@ -172,6 +175,7 @@ const fetchReservations = async () => {
       });
 
       if (updateResponse.ok) {
+        window.location.reload();
         alert("결제가 성공적으로 완료되었습니다!");
       } else {
         alert("결제는 성공했으나 상태 업데이트에 실패했습니다.");
