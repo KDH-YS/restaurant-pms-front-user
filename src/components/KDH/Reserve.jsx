@@ -21,7 +21,7 @@ const StyledCard = styled.div`
 `;
 
 const Reserve = () => {
-  const { token } = useAuthStore();
+  const { token,userId } = useAuthStore();
   const { restaurant } = restaurantStore();
   
   const navigate = useNavigate();
@@ -127,7 +127,6 @@ const Reserve = () => {
   };
 
   const handleReserve = async () => {
-    const userId = 1; // 임시 사용자 ID
     const restaurantId = restaurant.restaurantId;
 
     const reservationData = {

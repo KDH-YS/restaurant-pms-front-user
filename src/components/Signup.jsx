@@ -52,6 +52,7 @@ function Signup() {
   const [formData, setFormData] = useState({
     userName: "",
     password: "",
+    passwordConfirm: "",
     name: "",
     email: "",
     authNum: "",
@@ -89,6 +90,12 @@ function Signup() {
     // 비밀번호 입력 체크
     if (!formData.password) {
       alert("비밀번호를 입력하세요.");
+      return;
+    }
+
+    // 비밀번호 확인 체크
+    if (formData.password !== formData.passwordConfirm) {
+      alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -202,6 +209,7 @@ function Signup() {
               placeholder="아이디를 입력하세요"
               value={formData.userName}
               onChange={handleInputChange}
+              autoComplete="off" // 자동완성 비활성화
             />
             <br />
 
@@ -212,6 +220,18 @@ function Signup() {
               placeholder="비밀번호를 입력하세요"
               value={formData.password}
               onChange={handleInputChange}
+              autoComplete="off" // 자동완성 비활성화
+            />
+            <br />
+
+            <label htmlFor="HjSignupInputPasswordConfirm" className="HjSignupLabel">비밀번호 확인:</label>
+            <input
+              type="password"
+              id="passwordConfirm"
+              placeholder="비밀번호를 다시 입력하세요"
+              value={formData.passwordConfirm}
+              onChange={handleInputChange}
+              autoComplete="off" // 자동완성 비활성화
             />
             <br />
 
@@ -222,6 +242,7 @@ function Signup() {
               placeholder="이름을 입력하세요"
               value={formData.name}
               onChange={handleInputChange}
+              autoComplete="off" // 자동완성 비활성화
             />
             <br />
 
@@ -232,6 +253,7 @@ function Signup() {
               placeholder="이메일을 입력하세요"
               value={formData.email}
               onChange={handleInputChange}
+              autoComplete="off" // 자동완성 비활성화
             />
             <button type="button" className="HjEmailSendBtn" onClick={handleSendEmail}>인증번호 받기</button>
 
@@ -242,6 +264,7 @@ function Signup() {
               placeholder="인증 번호를 입력하세요" 
               value={authNum}
               onChange={(e) => setAuthNum(e.target.value)}
+              autoComplete="off" // 자동완성 비활성화
             />
             <button type="button" className="HjEmailCheckBtn" onClick={handleEmailCheck}>인증번호 확인</button>
             <br />
@@ -253,6 +276,7 @@ function Signup() {
               placeholder="예: 010-1234-5678"
               value={formData.phone}
               onChange={handleInputChange}
+              autoComplete="off" // 자동완성 비활성화
             />
             <br />
 
@@ -279,35 +303,26 @@ function Signup() {
                 checked={checkboxState.HjSignupCheckTermsOfService} 
                 onChange={handleCheckboxChange} 
                 />
-                <label htmlFor="HjSignupCheckTermsOfService" className="HjSignupLabelCheckbox">[필수] 서비스 이용약관에 동의</label>
+                <label htmlFor="HjSignupCheckTermsOfService" className="HjSignupLabelCheckbox">이용약관 동의</label>
               </div>
-            
+
               <div>
                 <input type="checkbox" name="notificationAgreed" id="HjSignupCheckPersonalInformation" 
                 checked={checkboxState.HjSignupCheckPersonalInformation} 
                 onChange={handleCheckboxChange} 
                 />
-                <label htmlFor="HjSignupCheckPersonalInformation" className="HjSignupLabelCheckbox">[필수] 개인정보 수집 및 이용 동의</label>
+                <label htmlFor="HjSignupCheckPersonalInformation" className="HjSignupLabelCheckbox">개인정보 처리방침 동의</label>
               </div>
-           
-              <div>
-                <input type="checkbox" name="notificationAgreed" id="HjSignupCheckPersonalInformationSelect" 
-                checked={checkboxState.HjSignupCheckPersonalInformationSelect} 
-                onChange={handleCheckboxChange} 
-                />
-                <label htmlFor="HjSignupCheckPersonalInformationSelect" className="HjSignupLabelCheckbox">[선택] 개인정보 수집 및 이용 동의</label>
-              </div>
-           
               <div>
                 <input type="checkbox" name="notificationAgreed" id="HjSignupCheckNotificationAgreed" 
                 checked={checkboxState.HjSignupCheckNotificationAgreed} 
                 onChange={handleCheckboxChange} 
                 />
-                <label htmlFor="HjSignupCheckNotificationAgreed" className="HjSignupLabelCheckbox">[선택] 마케팅 정보 수신 동의</label>
+                <label htmlFor="HjSignupCheckNotificationAgreed" className="HjSignupLabelCheckbox">알림 수신 동의</label>
               </div>
             </div>
+            <button className="HjSignupBtn">회원가입</button>
           </div>
-          <button type="submit" className="HjSignupBtn">가입하기</button>
         </form>
       </div>
     </div>
