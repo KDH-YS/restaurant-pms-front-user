@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 import { jwtDecode } from 'jwt-decode';
+import restaurantIcon from '../img/restaurant_icon.png';
+
 function Login() {
 
   const [login, setLogin] = useState("");
@@ -64,7 +66,7 @@ function Login() {
         <form className='HjLoginForm'>
           {/* 로고 */}
           <div className='HjLoginFormLogo'>
-            <img src='/restaurant_icon.png' />
+            <img src={restaurantIcon} />
           </div>
           {/* 로그인 페이지 타이틀 */}
           <h2 className='HjLoginTitle'>로그인</h2>

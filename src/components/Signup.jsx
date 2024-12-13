@@ -118,7 +118,7 @@ function Signup() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/signup", {
+      const response = await axios.post("http://localhost:8080/api/users/signup", {
         userName: formData.userName,
         password: formData.password,
         name: formData.name,
@@ -147,7 +147,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/verify-email", {
+      const response = await axios.post("http://localhost:8080/api/users/verify-email", {
         email: formData.email,
       }, {
         headers: {
@@ -174,7 +174,7 @@ function Signup() {
     try {      
       console.log(formData.email);
       console.log(authNum);
-      const response = await axios.post("http://localhost:8080/api/auth/verify-emailCheck", {
+      const response = await axios.post("http://localhost:8080/api/users/verify-emailCheck", {
         email: formData.email,
         authNum: authNum
       }, {
@@ -303,7 +303,7 @@ function Signup() {
                 checked={checkboxState.HjSignupCheckTermsOfService} 
                 onChange={handleCheckboxChange} 
                 />
-                <label htmlFor="HjSignupCheckTermsOfService" className="HjSignupLabelCheckbox">이용약관 동의</label>
+                <label htmlFor="HjSignupCheckTermsOfService" className="HjSignupLabelCheckbox">[필수] 서비스 이용약관에 동의</label>
               </div>
 
               <div>
@@ -311,17 +311,24 @@ function Signup() {
                 checked={checkboxState.HjSignupCheckPersonalInformation} 
                 onChange={handleCheckboxChange} 
                 />
-                <label htmlFor="HjSignupCheckPersonalInformation" className="HjSignupLabelCheckbox">개인정보 처리방침 동의</label>
+                <label htmlFor="HjSignupCheckPersonalInformation" className="HjSignupLabelCheckbox">[필수] 개인정보 수집 및 이용 동의</label>
+              </div>
+              <div>
+                <input type="checkbox" name="notificationAgreed" id="HjSignupCheckPersonalInformationSelect" 
+                checked={checkboxState.HjSignupCheckPersonalInformationSelect} 
+                onChange={handleCheckboxChange} 
+                />
+                <label htmlFor="HjSignupCheckPersonalInformationSelect" className="HjSignupLabelCheckbox">[선택] 개인정보 수집 및 이용 동의</label>
               </div>
               <div>
                 <input type="checkbox" name="notificationAgreed" id="HjSignupCheckNotificationAgreed" 
                 checked={checkboxState.HjSignupCheckNotificationAgreed} 
                 onChange={handleCheckboxChange} 
                 />
-                <label htmlFor="HjSignupCheckNotificationAgreed" className="HjSignupLabelCheckbox">알림 수신 동의</label>
+                <label htmlFor="HjSignupCheckNotificationAgreed" className="HjSignupLabelCheckbox">[선택] 마케팅 정보 수신 동의</label>
               </div>
             </div>
-            <button className="HjSignupBtn">회원가입</button>
+            <button type="submit" className="HjSignupBtn">회원가입</button>
           </div>
         </form>
       </div>
