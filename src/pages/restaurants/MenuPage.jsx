@@ -75,9 +75,14 @@ const MenuPage = () => {
         const imagesData = await Promise.all(
           response.content.map(async (restaurant) => {
             const images = await getRestaurantImages(restaurant.restaurantId);
+            const representativeImage = images.find(image => image.imageOrder);  // 대표 이미지가 있으면 그것을 사용
+            
+            // 대표 이미지가 없으면 첫 번째 이미지를 사용
+          const imageUrl = representativeImage ? representativeImage.imageUrl : (images.length > 0 ? images[0].imageUrl : defaultImage);
+
             return {
               restaurantId: restaurant.restaurantId,
-              imageUrl: images.length > 0 ? images[0].imageUrl : defaultImage,
+              imageUrl: imageUrl,
             };
           })
         );

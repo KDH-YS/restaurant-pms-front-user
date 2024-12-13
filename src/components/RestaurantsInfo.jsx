@@ -7,6 +7,7 @@ import { restaurantStore } from '../store/restaurantStore';
 import { useAuthStore } from '../store/authStore';
 import Map from './Map';
 import { Link } from "react-router-dom";
+import "../css/ReserveMain.css";
 
 function RestaurantsInfo() {
   const { token } = useAuthStore();
@@ -137,39 +138,86 @@ function RestaurantsInfo() {
   if (error) return <Container className="text-center py-5"><h3 className="text-danger">{error}</h3></Container>;
 
   return (
-    <Container className="py-4">
-      {/* 이미지 갤러리 */}
-      {images.length > 0 && (
+    <div>
+       {/* 이미지 갤러리 */}
+       {images.length > 0 && (
         <div className="imageGalleryJh">
-          <h3>식당 이미지</h3>
+          {/* <h3>식당 이미지</h3> */}
           <Row>
-            {images.slice(0, 3).map((image, index) => (
-              <Col key={index} xs={3} sm={3} md={3} lg={3} className='mb-4'>
-                <Card className="galleryCardJh">
-                  <div className="galleryImageContainerJh">
-                    <Card.Img
-                      variant="top"
-                      src={image.imageUrl}
-                      alt="식당 이미지"
-                      className="galleryImageJh"
-                      onClick={() => handleImageClick(index)}
-                    />
-                  </div>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          {images.length > 3 && (
-            <Button
-              variant="primary"
-              className="moreImagesBtnJh"
-              onClick={() => handleImageClick(3)}
-            >
-              +{images.length - 3}개 더 보기
-            </Button>
-          )}
-        </div>
+        {/* 이미지를 3개까지 표시 (기본 이미지 포함) */}
+        {images.slice(0, 3).map((image, index) => (
+          <Col key={index} xs={4} sm={4} md={4} lg={4} className="mb-4">
+            <Card className="galleryCardJh">
+              <div className="galleryImageContainerJh">
+                <Card.Img
+                  variant="top"
+                  src={image.imageUrl || '/fc7ece8e8ee1f5db97577a4622f33975.jpg'} // 기본 이미지 경로
+                  alt="식당 이미지"
+                  className="galleryImageJh"
+                  onClick={() => handleImageClick(index)}
+                />
+              </div>
+            </Card>
+          </Col>
+        ))}
+        
+        {/* 부족한 이미지를 기본 이미지로 채워주기 */}
+        {images.length < 3 && (
+          Array.from({ length: 3 - images.length }).map((_, index) => (
+            <Col key={`default-${index}`} xs={4} sm={4} md={4} lg={4} className="mb-4">
+              <Card className="galleryCardJh">
+                <div className="galleryImageContainerJh">
+                  <Card.Img
+                    variant="top"
+                    src='/fc7ece8e8ee1f5db97577a4622f33975.jpg' // 기본 이미지
+                    alt="기본 식당 이미지"
+                    className="galleryImageJh"
+                  />
+                </div>
+              </Card>
+            </Col>
+          ))
+        )}
+      </Row>
+
+      {/* 더 보기 버튼 (조건부로 표시) */}
+      {images.length > 3 && (
+        <Button
+          variant="primary"
+          className="moreImagesBtnJh"
+          onClick={() => handleImageClick(3)}
+        >
+          +{images.length - 3}개 더 보기
+        </Button>
       )}
+    </div>
+  )}
+
+  {/* 이미지가 아예 없을 경우 기본 이미지 3개 */}
+  {images.length === 0 && (
+    <div className="imageGalleryJh">
+      <Row>
+        {/* 기본 이미지 3개 추가 */}
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Col key={`default-${index}`} xs={4} sm={4} md={4} lg={4} className="mb-4">
+            <Card className="galleryCardJh">
+              <div className="galleryImageContainerJh">
+                <Card.Img
+                  variant="top"
+                  src='/fc7ece8e8ee1f5db97577a4622f33975.jpg' // 기본 이미지
+                  alt="기본 식당 이미지"
+                  className="galleryImageJh"
+                />
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </div>
+  )}
+
+    <Container className="py-4">
+     
 
       {/* 레스토랑 이름과 별점 */}
       <div className="text-center mb-5">
@@ -281,6 +329,7 @@ function RestaurantsInfo() {
         </Modal.Body>
       </Modal>
     </Container>
+    </div>
   );
 }
 
