@@ -1,8 +1,8 @@
 import {Link} from "react-router-dom";
-import '../css/main.css';
-import '../css/MyPage.css';
-import '../css/Header.css';
-import { useAuthStore } from '../store/authStore';
+import '../../css/main.css';
+import '../../css/MyPage.css';
+import '../../css/Header.css';
+import { useAuthStore } from '../../store/authStore';
 
 function MyPage() {
 

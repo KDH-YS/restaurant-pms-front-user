@@ -1,12 +1,12 @@
 import React from 'react';
-import '../css/main.css';
-import '../css/login.css';
+import '../../css/main.css';
+import '../../css/login.css';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../../store/authStore';
 import { jwtDecode } from 'jwt-decode';
-import restaurantIcon from '../img/restaurant_icon.png';
+import restaurantIcon from '../../img/restaurant_icon.png';
 
 function Login() {
 

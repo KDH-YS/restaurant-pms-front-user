@@ -1,6 +1,6 @@
 import React from "react";
-import '../css/main.css';
-import '../css/signup.css';
+import '../../css/signup.css';
+import '../../css/signup.css';
 import { useState } from "react";
 import axios from "axios";
 
@@ -8,6 +8,7 @@ function Signup() {
 
   // 모든 체크박스 상태를 관리
   const [checkboxState, setCheckboxState] = useState({
+    HjSignupCheckOwner: false,
     HjSignupCheckAll: false,
     HjSignupCheckAgeOlder: false,
     HjSignupCheckTermsOfService: false,
@@ -20,6 +21,7 @@ function Signup() {
   const handleCheckAll = (e) => {
     const isChecked = e.target.checked;
     setCheckboxState({
+      ...checkboxState,
       HjSignupCheckAll: isChecked,
       HjSignupCheckAgeOlder: isChecked,
       HjSignupCheckTermsOfService: isChecked,
@@ -39,8 +41,13 @@ function Signup() {
     };
 
     // 모든 체크박스가 체크되었는지 확인 (전체 동의 체크박스 상태 변경)
-    const allChecked = Object.keys(updatedState)
-      .filter((key) => key !== "HjSignupCheckAll") // HjSignupCheckAll 제외
+    const allChecked = [
+      "HjSignupCheckAgeOlder",
+      "HjSignupCheckTermsOfService",
+      "HjSignupCheckPersonalInformation",
+      "HjSignupCheckPersonalInformationSelect",
+      "HjSignupCheckNotificationAgreed"
+    ]
       .every((key) => updatedState[key]); // 나머지 체크박스들이 모두 체크되었는지 확인
 
     updatedState.HjSignupCheckAll = allChecked; // 모든 체크박스가 체크되면 전체 동의 체크박스도 체크
@@ -125,6 +132,7 @@ function Signup() {
         email: formData.email,
         phone: formData.phone,
         notificationAgreed: checkboxState.HjSignupCheckNotificationAgreed ? 1 : 0,
+        isOwner: checkboxState.HjSignupCheckOwner ? 1 : 0,
       }, {
         headers: {
           "Content-Type": "application/json",
@@ -278,6 +286,16 @@ function Signup() {
               onChange={handleInputChange}
               autoComplete="off" // 자동완성 비활성화
             />
+            <br />
+
+            {/* 사업자 여부 체크박스 */}
+            <div className="HjOwnerCheck">
+              <input type="checkbox" name="checkOwner" id="HjSignupCheckOwner" 
+                checked={checkboxState.HjSignupCheckOwner}
+                onChange={handleCheckboxChange}
+              />
+              <label htmlFor="HjSignupCheckOwner">사업자 입니다.</label>
+            </div>
             <br />
 
             {/* 체크박스 */}
