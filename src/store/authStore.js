@@ -13,7 +13,7 @@ const getDecodedTokenValue = (key) => {
 export const useAuthStore = create((set) => ({
   token: getStorageValue("token"),
   userId: getDecodedTokenValue("userId"),
-  userName: getStorageValue("userName"),
+  userName: getDecodedTokenValue("sub"),
   userRole: getDecodedTokenValue("auth"),
   restaurantId: getDecodedTokenValue("restaurantId"),
 
@@ -38,7 +38,7 @@ export const useAuthStore = create((set) => ({
 
   setUserName: (newUserName, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("userName", newUserName);
+    storage.setItem("sub", newUserName);
     set({ userName: newUserName });
   },
 
