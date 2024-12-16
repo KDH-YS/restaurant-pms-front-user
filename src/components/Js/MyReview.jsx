@@ -59,7 +59,7 @@ export function MyReview() {
     try {
       const userId = jwtDecode(token).userId;
       const response = await fetch(
-        `http://localhost:8080/api/mypage/${userId}/reviews`,
+        `http://localhost:8080/api/reviews/mypage/${userId}`,
         {
           method: "GET",
           headers: {
@@ -537,7 +537,7 @@ export function MyReview() {
       </Row>
 
       {/* 리뷰 삭제 모달 */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>리뷰 삭제</Modal.Title>
         </Modal.Header>
@@ -553,7 +553,7 @@ export function MyReview() {
       </Modal>
       
       {/* 신고 취소 모달 */}
-      <Modal show={showCancleModal} onHide={() => setShowCancleModal(false)}>
+      <Modal show={showCancleModal} onHide={() => setShowCancleModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>신고 취소</Modal.Title>
         </Modal.Header>
