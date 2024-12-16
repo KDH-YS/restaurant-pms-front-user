@@ -87,12 +87,17 @@ function Login() {
     value={password}
     onChange={(e) => setPassword(e.target.value)}
   />
-  <label style={{ display:"flex"}}> 자동 로그인 <input 
-      type="checkbox"
-      id="rememberMe"
-      checked={rememberMe}
-      onChange={(e) => setRememberMe(e.target.checked)}
-    /></label>
+  
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:"10px" }}>
+      <span>자동 로그인</span>
+      <input
+        type="checkbox"
+        id="rememberMe"
+        checked={rememberMe}
+        onChange={(e) => setRememberMe(e.target.checked)}
+        style={{ margin:"5px 0px 5px auto" ,width:"5%" }} // 체크박스를 오른쪽으로 밀어냄
+      />
+    </div>
 </div>
 
           {/* 로그인 버튼 */}
