@@ -95,7 +95,7 @@ function Login() {
         id="rememberMe"
         checked={rememberMe}
         onChange={(e) => setRememberMe(e.target.checked)}
-        style={{ margin:"5px 0px 5px auto" ,width:"5%" }} // 체크박스를 오른쪽으로 밀어냄
+        style={{ margin:"5px 0px 5px auto" ,width:"5%",height:"16px" }} // 체크박스를 오른쪽으로 밀어냄
       />
     </div>
 </div>
