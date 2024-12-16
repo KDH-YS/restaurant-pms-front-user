@@ -1,79 +1,86 @@
-
-* {
-  list-style: none;
-}
-
 /* Title */
 .HjMypageTitle {
-  margin-left : 30px;
+  margin-left: 30px;
+  font-size: 45px;
 }
 
 /* UserProfile */
 .HjUserProfile {
-  margin : 0 30px;
-  margin-bottom : 30px;
-  padding : 15px;
-  display : flex;
+  margin: 0 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+  display: flex;
 }
 
-.HjUserProfile > .UserName {
-  margin-left : auto;
-  background-position: center;
-  background-size : cover;
+.HjUserProfile img {
+  width: 250px;
 }
 
-.HjUserProfile > .editUserProfile {
-  margin-top : auto;
-  background-position: center;
-  background-size: cover;
+.HjUserName {
+  margin-left: 20px;
+  font-size: 24px;
+}
+
+.HjEditUserProfile {
+  margin-left: auto;
+  align-self: center;
+  text-decoration: none;
+  color: blue;
 }
 
 /* Reservation */
 .HjReservation {
-  border : solid 1px black;
-  border-radius : 12px;
-  margin : 0 30px;
-  margin-bottom : 30px;
-  padding : 15px;
+  border: solid 1px black;
+  border-radius: 12px;
+  margin: 0 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+}
+
+.HjReservationHeader {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .HjReservationHistory {
-  margin-left : auto;
-  background-position: center;
-  background-size: cover;
+  margin-left: auto;
+  text-decoration: none;
+  color: blue;
 }
 
 /* MyReviewList */
 .HjMyReviewList {
-  border : solid 1px black;
-  border-radius : 12px;
-  margin : 0 30px;
-  margin-bottom : 30px;
-  padding : 15px;
+  border: solid 1px black;
+  border-radius: 12px;
+  margin: 0 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+}
+
+.HjMyReviewListHeader {
   display: flex;
-  flex-direction: column; /* 세로 정렬 */
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .HjMyReviewListAll {
-  margin-left : auto;
-  background-position: center;
-  background-size: cover;
+  text-decoration: none;
+  color: blue;
 }
 
 .HjMyReviewList-list {
   border: solid 1px black;
-  width: 100%; /* 부모의 가로 너비를 채움 */
+  width: 100%;
   padding: 5px;
-  margin-top: 10px; /* 상단 여백 추가 */
+  margin-top: 10px;
 }
 
 .HjMyReviewList-detail {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  width: 100%; /* 부모의 가로 너비를 채움 */
+  width: 100%;
 }
 
 .HjCreateDate {
@@ -82,16 +89,21 @@
 
 /* Favorites */
 .HjFavorites {
-  border : solid 1px black;
-  border-radius : 12px;
-  margin : 0 30px;
-  margin-bottom : 30px;
-  padding : 15px;
+  border: solid 1px black;
+  border-radius: 12px;
+  margin: 0 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+}
+
+.HjFavoritesHeader {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .HjFavoritesAll {
-  margin-left : auto;
-  background-position: center;
-  background-size: cover;
+  margin-left: auto;
+  text-decoration: none;
+  color: blue;
 }

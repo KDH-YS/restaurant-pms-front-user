@@ -1,128 +1,165 @@
 /* 전체 화면 레이아웃 */
 .HjSignup {
-  width: 100vw;           /* 화면 너비 전체 사용 */
-  background-color: #f9f9f9;
-  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
+  background-color: #f8f9fa;
+  font-family: 'Arial', sans-serif;
+  padding: 40px 0;
 }
 
 /* 회원가입 컨텐츠 전체 */
 .HjSignupContent {
   width: 100%;
-  max-width: 800px;        /* 최대 너비 제한 (원하는 값으로 조정 가능) */
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 600px;
+  padding: 40px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 /* 폼 제목 */
 .HjSignupForm h2 {
-  font-size: 32px;
-  color: #333;             /* 제목 색상 */
-  margin-bottom: 20px;     /* 제목 아래 여백 */
-  text-align: left;        /* 제목 정렬 (왼쪽) */
+  font-size: 28px;
+  font-weight: bold;
+  color: #343a40;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 /* 레이블 스타일 */
 .HjSignupLabel {
-  display: block;          /* 레이블을 블록 요소로 */
-  margin-bottom: 8px;      /* 입력 필드와 간격 */
-  font-size: 16px;
-  color: #555;           /* 텍스트 색상 */
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #495057;
+  font-weight: bold;
 }
 
 /* 입력 필드 스타일 */
-.HjSignupForm input {
+.HjSignupForm input[type="text"],
+.HjSignupForm input[type="password"],
+.HjSignupForm input[type="email"] {
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;     /* 필드 간 간격 */
-  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  border: 1px solid #ced4da;
   border-radius: 5px;
   font-size: 16px;
   box-sizing: border-box;
 }
 
+/* 이메일 관련 버튼 컨테이너 */
+.HjEmailBtnContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
 /* 버튼 스타일 */
-.HjEmailSendBtn {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: #007BFF;    /* 버튼 배경색 */
-  color: white;                 /* 글자 색상 */
+.HjEmailSendBtn, .HjEmailCheckBtn {
+  flex: 1; /* 버튼이 가능한 공간을 모두 차지하도록 설정 */
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
   font-size: 16px;
-  border: none;                 /* 테두리 제거 */
-  border-radius: 5px;           /* 둥근 모서리 */
-  cursor: pointer;              /* 클릭 커서 */
-  margin-bottom: 20px;          /* 버튼 아래 간격 */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
 }
 
-.HjEmailCheckBtn {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: #007BFF;    /* 버튼 배경색 */
-  color: white;                 /* 글자 색상 */
-  font-size: 16px;
-  border: none;                 /* 테두리 제거 */
-  border-radius: 5px;           /* 둥근 모서리 */
-  cursor: pointer;              /* 클릭 커서 */
-  margin-bottom: 20px;          /* 버튼 아래 간격 */
+.HjEmailSendBtn:hover, .HjEmailCheckBtn:hover {
+  background-color: #2980b9;
 }
 
-/* 버튼 호버 효과 */
-.HjEmailSendBtn:hover {
-  background-color: #0056b3;
+/* 사업자 여부 체크박스 */
+.HjOwnerCheck {
+  margin-bottom: 20px;
 }
 
-.HjEmailCheckBtn:hover {
-  background-color: #0056b3;
+.HjOwnerCheck label {
+  font-size: 14px;
+  color: #495057;
 }
 
-/* 체크박스 */
+/* 체크박스 컨테이너 */
 .HjSignupCheckBoxContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;              /* 항목 간격 */
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.HjSignupCheckBoxContainer input {
-  width: 15px;
-  margin-right: 15px;
-  transform: scale(1.5);
-  float: left;
+/* 체크박스 및 레이블 */
+.HjSignupCheckBoxContainer input[type="checkbox"] {
+  appearance: none; /* 기본 체크박스 스타일 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 10px;
+  position: relative;
+}
+
+/* 체크박스 체크 표시 */
+.HjSignupCheckBoxContainer input[type="checkbox"]:checked::before {
+  content: '\2713'; /* 체크 표시 (유니코드) */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #3498db;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .HjSignupCheckBoxContainer label {
-  display: flex;
-  align-items: center; /* 체크박스와 텍스트 세로 정렬 */
-  gap: 8px;            /* 체크박스와 텍스트 간격 */
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+  display: flex; /* 체크박스와 텍스트 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
 }
 
 /* 가입하기 버튼 */
 .HjSignupBtn {
   width: 100%;
-  margin-top: 30px;
-  padding: 12px 24px;
-  background-color: #007BFF;    /* 버튼 배경색 */
-  color: white;                 /* 글자 색상 */
-  font-size: 16px;
-  border: none;                 /* 테두리 제거 */
-  border-radius: 5px;           /* 둥근 모서리 */
-  cursor: pointer;              /* 클릭 커서 */
-  margin-bottom: 20px;          /* 버튼 아래 간격 */
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .HjSignupBtn:hover {
-  background-color: #0056b3;
+  background-color: #218838;
 }
 
 /* 반응형 */
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .HjSignupContent {
-    padding: 15px;         /* 작은 화면에서는 패딩 줄임 */
-  }
-  
-  .HjSignupForm h2 {
-    font-size: 28px;       /* 제목 크기 줄임 */
+    padding: 20px;
   }
 
-  .HjSignupForm input, .HjEmailSendBtn {
-    font-size: 14px;       /* 입력 필드 및 버튼 글씨 크기 줄임 */
+  .HjSignupForm h2 {
+    font-size: 24px;
+  }
+
+  .HjSignupForm input,
+  .HjEmailSendBtn,
+  .HjEmailCheckBtn {
+    font-size: 14px;
   }
 }

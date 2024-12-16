@@ -21,7 +21,7 @@ const StyledCard = styled.div`
 `;
 
 const Reserve = () => {
-  const { token } = useAuthStore();
+  const { token,userId } = useAuthStore();
   const { restaurant } = restaurantStore();
   
   const navigate = useNavigate();
@@ -87,17 +87,29 @@ const Reserve = () => {
     const schedule = schedules[selectedDateStr];
     if (schedule && schedule.isOpen && schedule.startTime && schedule.endTime) {
       const times = [];
-      let currentTime = schedule.startTime.slice(0, 5); // Remove seconds
-      const endTime = schedule.endTime.slice(0, 5); // Remove seconds
+      const now = new Date();
+      let currentTime = schedule.startTime; // 초기 시간
+      const endTime = schedule.endTime;
+  
       while (currentTime <= endTime) {
-        if (!schedule.breakStart || !schedule.breakEnd || 
-            currentTime < schedule.breakStart.slice(0, 5) || currentTime > schedule.breakEnd.slice(0, 5)) {
+        const [hours, minutes] = currentTime.split(':').map(Number);
+  
+        const scheduleDateTime = new Date(date); // 선택한 날짜에 대해 예약 시간 생성
+        scheduleDateTime.setHours(hours, minutes, 0, 0);
+  
+        // 현재 시간보다 이후 시간만 추가
+        if (
+          scheduleDateTime > now &&
+          (!schedule.breakStart || !schedule.breakEnd ||
+            currentTime < schedule.breakStart || currentTime > schedule.breakEnd)
+        ) {
           times.push(currentTime);
         }
-        const [hours, minutes] = currentTime.split(':').map(Number);
+  
+        // 시간 증가
         let newHours = hours + 1;
         if (newHours >= 24) {
-          break;  // 24시를 넘어가면 루프 종료
+          break; // 24시 이후는 처리하지 않음
         }
         currentTime = `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
       }
@@ -106,6 +118,7 @@ const Reserve = () => {
       setAvailableTimes([]);
     }
   };
+  
 
   const handlePeopleChange = (e) => {
     const numberOfPeople = parseInt(e.target.value);
@@ -114,7 +127,6 @@ const Reserve = () => {
   };
 
   const handleReserve = async () => {
-    const userId = 1; // 임시 사용자 ID
     const restaurantId = restaurant.restaurantId;
 
     const reservationData = {
@@ -145,8 +157,10 @@ const Reserve = () => {
       alert(`예약 요청 중 오류가 발생했습니다: ${error.message}`);
     }
   };
-
   const tileClassName = ({ date, view }) => {
+    if(view === 'month' && date.getDay() === 6){
+      return 'saturday';
+    }
     if (view === 'month') {
       const dateStr = format(date, 'yyyy-MM-dd');
       if (schedules[dateStr] && schedules[dateStr].isOpen) {

@@ -7,6 +7,8 @@ import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
 import { jwtDecode } from 'jwt-decode';
 import { useAuthStore } from 'store/authStore';
+import { isPast, format } from 'date-fns';
+
 const ReservationStatus = () => {
   const [reservations, setReservations] = useState([]); // 예약 리스트
   const [selectedReservation, setSelectedReservation] = useState(null); // 선택된 예약
@@ -75,11 +77,14 @@ const fetchReservations = async () => {
 
   const handleCancelReservation = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/user/${reservationId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ request: 'cancelrequest' }),
+      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
+        method: 'DELETE',
+        headers:{
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+          },
       });
+
       if (response.ok) {
         alert('예약이 취소되었습니다.');
         fetchReservations();
@@ -88,11 +93,16 @@ const fetchReservations = async () => {
       }
     } catch (error) {
       console.error('예약 취소 오류:', error);
-      alert('오류가 발생했습니다.');
+      alert('예약 취소 중 오류가 발생했습니다.');
     }
   };
 
   const handleSaveChanges = async () => {
+    const selectedDateTime = new Date(`${newDate}T${newTime}`);
+    if (isPast(selectedDateTime)) {
+      alert('이전 날짜와 시간은 선택할 수 없습니다.');
+      return;
+    }
     const updatedReservation = {
       restaurantName: selectedReservation.restaurantName,
       reservationTime: `${newDate}T${newTime}:00`,
@@ -128,7 +138,7 @@ const fetchReservations = async () => {
     const storeId = "store-69e65e79-61d9-4e6c-a0da-a06c6e32e37b";
     const channelKey = "channel-key-5e0eb0b0-5c03-4514-85a3-38dbc688666c";
     const paymentId = `payment-${crypto.randomUUID()}`;
-    const orderName = `${reservation.restaurantName} 예약`;
+      const orderName = `${reservation.restaurantName} 예약`;
     const totalAmount = reservation.numberOfPeople * 10000;
 
     try {
@@ -146,7 +156,9 @@ const fetchReservations = async () => {
 
       const paymentResponse = await fetch(`http://localhost:8080/payment`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json" },
         body: JSON.stringify({ paymentId, reservationId: reservation.reservationId, amount: totalAmount }),
       });
 
@@ -156,11 +168,14 @@ const fetchReservations = async () => {
 
       const updateResponse = await fetch(`http://localhost:8080/payment`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json" },
         body: JSON.stringify(reservation.reservationId),
       });
 
       if (updateResponse.ok) {
+        window.location.reload();
         alert("결제가 성공적으로 완료되었습니다!");
       } else {
         alert("결제는 성공했으나 상태 업데이트에 실패했습니다.");
@@ -176,12 +191,12 @@ const fetchReservations = async () => {
     const reservationTime = new Date(reservation.reservationTime);
     const currentTime = new Date();
     const timeDifference = currentTime - reservationTime;
-    const oneHour = 60 * 60 * 500; // 1시간을 밀리초로 변환
+    const oneHour = 60 * 30 * 1000;
 
     if (timeDifference >= oneHour) {
-      history.push('/review/reviewform');
+      history(`/review/reviewform/${reservation.restaurantId}/${reservation.reservationId}`);
     } else {
-      alert("리뷰는 예약 시간으로부터 1시간이 지난 후에 작성 가능합니다.");
+      alert("리뷰는 예약 시간으로부터 30분이 지난 후에 작성 가능합니다.");
     }
   };
 
@@ -265,13 +280,18 @@ const fetchReservations = async () => {
 
           {/* 예약 취소 및 예약 변경 버튼을 오른쪽 아래로 배치 */}
           <div className="d-flex justify-content-end p-3">
-            <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>예약 취소</Button>&ensp;
-            <Button variant="secondary" onClick={() => handleOpenChangeModal(reservation)}>예약 변경</Button>&ensp;
-            {/* 결제 및 리뷰 버튼 */}
+            {!isPast(new Date(reservation.reservationTime)) && (
+              <>
+                <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>예약 취소</Button>&ensp;
+                <Button variant="secondary" onClick={() => handleOpenChangeModal(reservation)}>예약 변경</Button>&ensp;
+              </>
+            )}
             {reservation.status === "PENDING" && (
-              <Button variant="primary" onClick={() => handlePay(reservation)}>결제</Button>)}
+              <Button variant="primary" onClick={() => handlePay(reservation)}>결제</Button>
+            )}
             {reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && (
-              <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>)}
+              <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>
+            )}
           </div>
         </Card>
       </Col>
@@ -290,11 +310,21 @@ const fetchReservations = async () => {
       <Form>
         <Form.Group controlId="formDate">
           <Form.Label>날짜</Form.Label>
-          <Form.Control type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+          <Form.Control
+            type="date"
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+            min={format(new Date(), 'yyyy-MM-dd')}
+          />
         </Form.Group>
         <Form.Group controlId="formTime">
           <Form.Label>시간</Form.Label>
-          <Form.Control type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+          <Form.Control
+            type="time"
+            value={newTime}
+            onChange={(e) => setNewTime(e.target.value)}
+            min={newDate === format(new Date(), 'yyyy-MM-dd') ? format(new Date(), 'HH:mm') : '00:00'}
+          />
         </Form.Group>
         <Form.Group controlId="formPeople">
           <Form.Label>인원</Form.Label>
@@ -316,3 +346,4 @@ const fetchReservations = async () => {
 };
 
 export default ReservationStatus;
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Row, Col } from 'react-bootstrap';
 
 const SearchBar = ({ searchParams, handleInputChange, handleCheckboxChange, handleSearch }) => {
   // 검색 폼 제출을 막는 함수
@@ -40,30 +40,35 @@ const SearchBar = ({ searchParams, handleInputChange, handleCheckboxChange, hand
         </Form.Control>
       </Form.Group>
 
-      {/* 주차 가능 여부 체크박스 */}
-      <Form.Group controlId="formParkingAvailable">
-        <Form.Check
-          type="checkbox"
-          name="parkingAvailable"
-          label="주차 가능"
-          checked={searchParams.parkingAvailable}
-          onChange={handleCheckboxChange}
-        />
-      </Form.Group>
+      {/* 체크박스와 검색 버튼을 같은 행에 배치 */}
+      <Row className="align-items-center">
+  <Col>
+    <Form.Group controlId="formReservationAvailable">
+      <Form.Check
+        type="checkbox"
+        name="reservationAvailable"
+        label="예약 가능"
+        checked={searchParams.reservationAvailable}
+        onChange={handleCheckboxChange}
+      />
+    </Form.Group>
+    <Form.Group controlId="formParkingAvailable">
+      <Form.Check
+        type="checkbox"
+        name="parkingAvailable"
+        label="주차 가능"
+        checked={searchParams.parkingAvailable}
+        onChange={handleCheckboxChange}
+      />
+    </Form.Group>
+  </Col>
 
-      {/* 예약 가능 여부 체크박스 */}
-      <Form.Group controlId="formReservationAvailable">
-        <Form.Check
-          type="checkbox"
-          name="reservationAvailable"
-          label="예약 가능"
-          checked={searchParams.reservationAvailable}
-          onChange={handleCheckboxChange}
-        />
-      </Form.Group>
+  {/* 검색 버튼을 오른쪽 끝에 배치 */}
+  <Col className="d-flex justify-content-end">
+    <Button type="submit">검색</Button>
+  </Col>
+</Row>
 
-      {/* 검색 버튼 */}
-      <Button type="submit">검색</Button> {/* submit type 버튼 */}
     </Form>
   );
 };
