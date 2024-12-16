@@ -12,6 +12,7 @@ import ReservationStatusPage from "./Router/ReservationStatusPage.jsx";
 import LoginRouter from "./Router/LoginRouter.jsx";
 import SignupRouter from "./Router/SignupRouter.jsx";
 import Mypage from "./Router/Mypage.jsx"
+import EditUser from "./Router/EditUserProfile.jsx"
 import MyReview from "./Router/MyReview.jsx"
 import ShopReview from "./Router/ShopReview.jsx"
 import ReviewForm from "./Router/ReviewForm.jsx"
@@ -63,6 +64,7 @@ function App() {
           <Route path="/Login" element={<LoginRouter />} />
           <Route path="/Signup" element={<SignupRouter />} />
           <Route path="/Mypage" element={<Mypage />} />
+          <Route path="/editUserProfile" element={<EditUser />} />
           <Route 
             path="/review/myreview" 
             element={
