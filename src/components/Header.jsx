@@ -17,7 +17,7 @@ const CustomDropdownMenu = styled(Dropdown.Menu)`
 `;
 
 export function Header() {
-    const { token, userName, clearAuth,userRole } = useAuthStore();
+    const { token, name, clearAuth,userRole } = useAuthStore();
     const [restaurantId, setRestaurantId] = useState(null);
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export function Header() {
                     <CustomDropdownMenu>
                         {token ? (
                             <>
-                                <Dropdown.ItemText>{userName}님 환영합니다.</Dropdown.ItemText>
+                                <Dropdown.ItemText>{name}님 환영합니다.</Dropdown.ItemText>
                                 <Dropdown.Divider />
                                 <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
                                 <Dropdown.Item as={Link} to="/MyPage">마이페이지</Dropdown.Item>

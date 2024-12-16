@@ -6,7 +6,7 @@ import { useAuthStore } from '../../store/authStore';
 
 function MyPage() {
 
-  const userName = useAuthStore((state) => state.userName);
+  const name = useAuthStore((state) => state.name);
 
   return (
     <div className="HjMyPage">
@@ -16,7 +16,7 @@ function MyPage() {
         {/* 유저 프로필 : 사진, 이름, 프로필 수정 버튼 */}
         <div className='HjUserProfile'>
           <img src='/icon-user.png'></img>
-          <h2 className='HjUserName'>{userName}</h2>
+          <h2 className='HjUserName'>{name}</h2>
           <Link className="HjEditUserProfile" to="/editUserProfile">프로필 수정</Link>
         </div>
 
