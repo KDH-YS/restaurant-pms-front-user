@@ -38,8 +38,6 @@ export function Header() {
         alert("로그아웃되었습니다.");
         window.location.href = "/"; // 메인페이지로 이동
     };
-
-    console.log(userRole);
     return (
         <Navbar expand="lg" className="navbar-custom">
             <Container fluid>

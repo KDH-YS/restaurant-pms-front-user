@@ -16,7 +16,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe,setRememberMe]= useState(false);
   // Zustand 스토어에서 상태 및 액션 가져오기
-  const {setUserId,setToken,setUserName,setUserRole,userId} = useAuthStore();
+  const {setToken} = useAuthStore();
 
   useEffect(() => {
     
@@ -40,17 +40,31 @@ function Login() {
   
       if (response.data.success) {
         const token = response.data.data.token;
-        const userId = jwtDecode(token).userId;
-        const userName = response.data.data.userName;
-        const userRole = jwtDecode(token).auth;
   
-        // Zustand에 저장 (자동 로그인 여부에 따라)
-        setToken(token, rememberMe); // rememberMe 값에 따라 로컬 또는 세션 스토리지에 저장
-        setUserName(userName,rememberMe);
-        setUserRole(userRole, rememberMe); // userRole 저장 추가
+        // 토큰 디코딩 후 상태 업데이트
+        const decodeToken = () => {
+          const decoded = jwtDecode(token);
   
+          // Zustand 상태 업데이트 및 로컬/세션 스토리지 저장
+          setToken(token, rememberMe);
+  
+          if (rememberMe) {
+            localStorage.setItem("userId", decoded.userId);
+            localStorage.setItem("userName", decoded.sub);
+            localStorage.setItem("userRole", decoded.auth);
+            localStorage.setItem("restaurantId", decoded.restaurantId);
+          } else {
+            sessionStorage.setItem("userId", decoded.userId);
+            sessionStorage.setItem("userName", decoded.sub);
+            sessionStorage.setItem("userRole", decoded.auth);
+            sessionStorage.setItem("restaurantId", decoded.restaurantId);
+          }
+        };
+  
+        decodeToken();
         alert("로그인에 성공하였습니다.");
-        // window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        // 페이지 새로 고침 없이 상태를 반영하도록
+        window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");
       }
@@ -58,6 +72,7 @@ function Login() {
       setError("로그인 중 오류가 발생했습니다.");
     }
   };
+  
 
   return (
     <div className="HjLogin">

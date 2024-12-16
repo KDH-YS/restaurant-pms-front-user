@@ -19,6 +19,7 @@ function Map() {
 
     // axios GET 요청 보내기
     axios.get(`http://localhost:8080/api/map`, {
+      
       params: {
         address: address,  // 쿼리 파라미터에 도시 이름 전달
       }

@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
-
 function Main() {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
-
   const handleInputChange = (e) => {
     setQuery(e.target.value);
   };
@@ -18,7 +16,6 @@ function Main() {
       navigate(`/restaurant?query=${query}`);
     }
   };
-
   return (
     <div className="App">
       {/* 전체 컨테이너 */}
