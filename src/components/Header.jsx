@@ -39,7 +39,6 @@ export function Header() {
         window.location.href = "/"; // 메인페이지로 이동
     };
 
-
     return (
         <Navbar expand="lg" className="navbar-custom">
             <Container fluid>
@@ -55,6 +54,7 @@ export function Header() {
                         {token ? (
                             <>
                                 <Dropdown.ItemText>{userName}님 환영합니다.</Dropdown.ItemText>
+                                <Dropdown.Divider />
                                 <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
                                 <Dropdown.Item as={Link} to="/MyPage">마이페이지</Dropdown.Item>
                             </>
@@ -64,19 +64,23 @@ export function Header() {
                                 <Dropdown.Item as={Link} to="/signup">회원가입</Dropdown.Item>
                             </>
                         )}
-                        <Dropdown.Item as={Link} to="/inquiry">문의하기</Dropdown.Item>
                         <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/inquiry">문의하기</Dropdown.Item>
 
                         {/* restaurantId가 존재할 경우 레스토랑 관련 메뉴 추가 */}
                         {restaurantId && (
                             <>
+                                <Dropdown.Divider />
                                 <Dropdown.Item as={Link} to="/manager/schedule">레스토랑 스케줄</Dropdown.Item>
                                 <Dropdown.Item as={Link} to="/manager/reserve">레스토랑 예약현황</Dropdown.Item>
                             </>
                         )}
 
                         {token && userRole=='ROLE_ADMIN' && (
-                            <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+                            <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+                            </>
                         )}  
                     </CustomDropdownMenu>
                 </Dropdown>

@@ -505,10 +505,10 @@ export function ShopReview() {
                 value={reportReason}
                 onChange={(e) => setReportReason(e.target.value)}
               >
-                <option value="OTHER">기타</option>
-                <option value="INAPPROPRIATE">부적절한 내용</option>
-                <option value="FAKE">가짜 리뷰</option>
-                <option value="OFFENSIVE">모욕적 언어 사용</option>
+                <option value="기타">기타</option>
+                <option value="부적절한 내용">부적절한 내용</option>
+                <option value="인증되지 않은 글">인증되지 않은 글</option>
+                <option value="모욕적">모욕적 언어 사용</option>
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="reportContent">

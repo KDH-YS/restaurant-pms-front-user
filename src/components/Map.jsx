@@ -54,22 +54,20 @@ function Map() {
       const marker = new sop.Marker(sop.utmk(x, y));  // 마커 생성
       marker.addTo(mapInstance);  // 맵에 마커 추가
 
+      // 마커 클릭 이벤트 추가
+      marker.on('click', () => {
+        mapInstance.setView(sop.utmk(x, y), 14);  // 클릭 시 마커 위치 출력
+      });
+
       return () => {
         mapInstance.remove();  // 컴포넌트 언마운트 시 맵 제거
       };
     }
   }, [x, y]);  // x, y 값이 변경될 때마다 실행
 
-  // 버튼 클릭 시 마커 위치로 이동하는 함수
-  const moveToMarker = () => {
-    if (map) {
-      map.setView(sop.utmk(x, y), 14); // 마커 위치로 맵 중심 이동
-    }
-  };
-
   return (
     <>
-      <Card id="map" ref={mapRef} style={{ width: '100%', height: '100%' }}/>
+      <Card id="map" ref={mapRef} style={{ width: '100%', height: '100%' }} />
     </>
   );
 }
