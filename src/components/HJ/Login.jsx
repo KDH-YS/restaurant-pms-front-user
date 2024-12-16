@@ -63,10 +63,7 @@ function Login() {
   
         decodeToken();
         alert("로그인에 성공하였습니다.");
-<<<<<<< HEAD
-        // 페이지 새로 고침 없이 상태를 반영하도록
-=======
->>>>>>> front/js
+
         window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");
