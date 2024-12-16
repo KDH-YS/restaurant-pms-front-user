@@ -63,5 +63,5 @@
   "devDependencies": {
     "husky": "^9.1.6"
   },
-  "proxy": "https://sgisapi.kostat.go.kr"
+  "proxy": "https://localhost:8080"
 }

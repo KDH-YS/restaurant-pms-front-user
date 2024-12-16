@@ -1,42 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card, Pagination } from "react-bootstrap";
 import "../../css/inquiry.css";
 
-export function Inquiry() {
-  const [inquiries, setInquiries] = useState([
-    {
-      id: 1,
-      title: "최신 문의사항",
-      author: "홍길동",
-      date: "2024.12.24",
-      content: "문의사항의 내용입니다.",
-    },
-    {
-      id: 2,
-      title: "질문",
-      author: "이순신",
-      date: "2024.12.23",
-      content: "질문 내용이 여기에 나옵니다.",
-    },
-  ]);
-
-  const [selectedInquiryId, setSelectedInquiryId] = useState(null);
+export function NoticeBoard() {
+  const [notices, setNotices] = useState([]);
+  const [selectedNoticeId, setSelectedNoticeId] = useState(null);
   const [replyContent, setReplyContent] = useState("");
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const [currentPage, setCurrentPage] = useState(2);
-  const [showNewInquiryForm, setShowNewInquiryForm] = useState(false);
-  const [newInquiry, setNewInquiry] = useState({ title: "", content: "" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showNewNoticeForm, setShowNewNoticeForm] = useState(false);
+  const [newNotice, setNewNotice] = useState({ title: "", content: "" });
+
+  useEffect(() => {
+    // API 호출을 위해 fetch 사용
+    const fetchNotices = async () => {
+      const requestData = {
+        bbsId: "BBSMSTR_AAAAAAAAAAAA",
+        pageIndex: "1",
+        searchCnd: "0",
+        searchWrd: ""
+      };
+
+      try {
+        // GET 요청을 위한 URL 및 쿼리 파라미터 추가
+        const response = await fetch("http://13.124.43.252/board?" + new URLSearchParams(requestData), {
+          method: 'GET',
+        });
+        
+        const data = await response.json();
+        
+        // 응답 코드가 200일 경우 공지사항 데이터 업데이트
+        if (data.resultCode === 200) {
+          setNotices(data.result.resultList);
+        } else {
+          console.error("Failed to load notices:", data.resultMessage);
+        }
+      } catch (error) {
+        console.error("API 호출 중 오류 발생:", error);
+      }
+    };
+
+    // 데이터 가져오기
+    fetchNotices();
+  }, []);
 
   const handleSearch = (event) => {
     event.preventDefault();
     alert("검색 기능은 현재 구현되지 않았습니다.");
   };
 
-  const handleSelectInquiry = (inquiryId) => {
-    if (selectedInquiryId === inquiryId) {
-      setSelectedInquiryId(null);
+  const handleSelectNotice = (noticeId) => {
+    if (selectedNoticeId === noticeId) {
+      setSelectedNoticeId(null);
     } else {
-      setSelectedInquiryId(inquiryId);
+      setSelectedNoticeId(noticeId);
       setShowReplyForm(false);
     }
   };
@@ -55,31 +72,31 @@ export function Inquiry() {
     setCurrentPage(pageNumber);
   };
 
-  const handleNewInquirySubmit = (event) => {
+  const handleNewNoticeSubmit = (event) => {
     event.preventDefault();
-    if (newInquiry.title.trim() && newInquiry.content.trim()) {
-      setInquiries([
-        ...inquiries,
+    if (newNotice.title.trim() && newNotice.content.trim()) {
+      setNotices([
+        ...notices,
         {
-          id: inquiries.length + 1,
-          title: newInquiry.title,
+          id: notices.length + 1,
+          title: newNotice.title,
           date: new Date().toISOString().split("T")[0],
-          content: newInquiry.content,
+          content: newNotice.content,
         },
       ]);
-      setNewInquiry({ title: "", content: "" });
-      setShowNewInquiryForm(false);
+      setNewNotice({ title: "", content: "" });
+      setShowNewNoticeForm(false);
     } else {
       alert("모든 필드를 작성해주세요.");
     }
   };
 
   return (
-    <Container className="js-inquiry-container mt-4">
+    <Container className="js-notice-container mt-4">
       {/* Header Section */}
       <Row className="js-header align-items-center mb-3 p-3 rounded">
         <Col>
-          <h3 className="fw-bold">문의사항</h3>
+          <h3 className="fw-bold">공지사항</h3>
         </Col>
         <Col md={4}>
           <Form onSubmit={handleSearch}>
@@ -93,29 +110,29 @@ export function Inquiry() {
         </Col>
       </Row>
 
-      {/* Inquiry Table Section */}
-      <div className="js-inquiry-table mb-4">
-        {inquiries.map((inquiry) => (
-          <React.Fragment key={inquiry.id}>
+      {/* Notice Table Section */}
+      <div className="js-notice-table mb-4">
+        {notices.map((notice) => (
+          <React.Fragment key={notice.id}>
             <div
-              className="js-inquiry-row d-flex justify-content-between align-items-center rounded p-3 mb-2"
-              onClick={() => handleSelectInquiry(inquiry.id)}
+              className="js-notice-row d-flex justify-content-between align-items-center rounded p-3 mb-2"
+              onClick={() => handleSelectNotice(notice.id)}
               style={{ cursor: "pointer", borderBottom: "1px solid #ddd" }}
             >
-              <div className="js-inquiry-title">
-                <strong>{inquiry.title}</strong>
+              <div className="js-notice-title">
+                <strong>{notice.title}</strong>
               </div>
-              <div className="js-inquiry-meta d-flex">
-                <div className="js-inquiry-date text-end" style={{ minWidth: "100px" }}>
-                  {inquiry.date}
+              <div className="js-notice-meta d-flex">
+                <div className="js-notice-date text-end" style={{ minWidth: "100px" }}>
+                  {notice.date}
                 </div>
               </div>
             </div>
-            {selectedInquiryId === inquiry.id && (
-              <div className="js-inquiry-detail rounded p-4 mt-3">
-                <Card className="js-inquiry-card rounded border-0">
+            {selectedNoticeId === notice.id && (
+              <div className="js-notice-detail rounded p-4 mt-3">
+                <Card className="js-notice-card rounded border-0">
                   <Card.Body>
-                    <Card.Text className="js-inquiry-content mb-4">{inquiry.content}</Card.Text>
+                    <Card.Text className="js-notice-content mb-4">{notice.content}</Card.Text>
                   </Card.Body>
                   <Card.Footer className="text-end text-muted">
                     {showReplyForm && (
@@ -132,25 +149,15 @@ export function Inquiry() {
                     )}
                     <div className="js-reply-buttons d-flex justify-content-end">
                       {!showReplyForm ? (
-                        <Button
-                          variant="secondary"
-                          onClick={handleToggleReplyForm}
-                        >
+                        <Button variant="secondary" onClick={handleToggleReplyForm}>
                           답글 작성
                         </Button>
                       ) : (
                         <>
-                          <Button
-                            variant="secondary"
-                            className="me-2"
-                            onClick={handleToggleReplyForm}
-                          >
+                          <Button variant="secondary" className="me-2" onClick={handleToggleReplyForm}>
                             답글 취소
                           </Button>
-                          <Button
-                            variant="primary"
-                            onClick={handleReplySubmit}
-                          >
+                          <Button variant="primary" onClick={handleReplySubmit}>
                             답글 등록
                           </Button>
                         </>
@@ -166,40 +173,37 @@ export function Inquiry() {
 
       {/* 글쓰기 버튼 */}
       <div className="js-write-button d-flex justify-content-end mb-4">
-        <Button
-          variant="primary"
-          onClick={() => setShowNewInquiryForm(true)}
-        >
+        <Button variant="primary" onClick={() => setShowNewNoticeForm(true)}>
           글쓰기
         </Button>
       </div>
 
-      {/* New Inquiry Form */}
-      {showNewInquiryForm && (
-        <Card className="js-new-inquiry-form mb-4 p-4 border-0 rounded">
+      {/* New Notice Form */}
+      {showNewNoticeForm && (
+        <Card className="js-new-notice-form mb-4 p-4 border-0 rounded">
           <Card.Body>
-            <Form onSubmit={handleNewInquirySubmit}>
-              <Form.Group controlId="newInquiryTitle" className="mb-3">
+            <Form onSubmit={handleNewNoticeSubmit}>
+              <Form.Group controlId="newNoticeTitle" className="mb-3">
                 <Form.Label>제목</Form.Label>
                 <Form.Control
                   type="text"
-                  value={newInquiry.title}
-                  onChange={(e) => setNewInquiry({ ...newInquiry, title: e.target.value })}
+                  value={newNotice.title}
+                  onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
                   placeholder="제목을 입력하세요"
                 />
               </Form.Group>
-              <Form.Group controlId="newInquiryContent" className="mb-3">
+              <Form.Group controlId="newNoticeContent" className="mb-3">
                 <Form.Label>내용</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={5}
-                  value={newInquiry.content}
-                  onChange={(e) => setNewInquiry({ ...newInquiry, content: e.target.value })}
+                  value={newNotice.content}
+                  onChange={(e) => setNewNotice({ ...newNotice, content: e.target.value })}
                   placeholder="내용을 입력하세요"
                 />
               </Form.Group>
               <div className="d-flex justify-content-end">
-                <Button variant="secondary" className="me-2" onClick={() => setShowNewInquiryForm(false)}>
+                <Button variant="secondary" className="me-2" onClick={() => setShowNewNoticeForm(false)}>
                   취소
                 </Button>
                 <Button type="submit" variant="primary">
@@ -216,11 +220,7 @@ export function Inquiry() {
         <Col md="auto">
           <Pagination>
             {[1, 2, 3, 4, 5].map((page) => (
-              <Pagination.Item
-                key={page}
-                active={page === currentPage}
-                onClick={() => handlePaginationClick(page)}
-              >
+              <Pagination.Item key={page} active={page === currentPage} onClick={() => handlePaginationClick(page)}>
                 {page}
               </Pagination.Item>
             ))}
@@ -231,4 +231,4 @@ export function Inquiry() {
   );
 }
 
-export default Inquiry;
+export default NoticeBoard;
