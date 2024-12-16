@@ -16,7 +16,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe,setRememberMe]= useState(false);
   // Zustand 스토어에서 상태 및 액션 가져오기
-  const {setToken} = useAuthStore();
+  const {setUserId,setToken,setUserName,setUserRole,userId} = useAuthStore();
 
   useEffect(() => {
     
@@ -40,31 +40,20 @@ function Login() {
   
       if (response.data.success) {
         const token = response.data.data.token;
+        const userId = jwtDecode(token).userId;
+        const userName = response.data.data.userName;
+        const userRole = jwtDecode(token).auth;
   
-        // 토큰 디코딩 후 상태 업데이트
-        const decodeToken = () => {
-          const decoded = jwtDecode(token);
-  
-          // Zustand 상태 업데이트 및 로컬/세션 스토리지 저장
-          setToken(token, rememberMe);
-  
-          if (rememberMe) {
-            localStorage.setItem("userId", decoded.userId);
-            localStorage.setItem("userName", decoded.sub);
-            localStorage.setItem("userRole", decoded.auth);
-            localStorage.setItem("restaurantId", decoded.restaurantId);
-          } else {
-            sessionStorage.setItem("userId", decoded.userId);
-            sessionStorage.setItem("userName", decoded.sub);
-            sessionStorage.setItem("userRole", decoded.auth);
-            sessionStorage.setItem("restaurantId", decoded.restaurantId);
-          }
-        };
-  
-        decodeToken();
-        alert("로그인에 성공하였습니다.");
-
-        window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        // Zustand에 저장 (자동 로그인 여부에 따라)
+        setToken(token, rememberMe); // rememberMe 값에 따라 로컬 또는 세션 스토리지에 저장
+        setUserName(userName,rememberMe);
+        setUserRole(userRole, rememberMe); // userRole 저장 추가
+        console.log(userRole);
+        // 상태가 모두 저장된 후에 리다이렉트
+        setTimeout(() => {
+          alert("로그인에 성공하였습니다.");
+          window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        }, 100); // 약간의 딜레이를 추가
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");
       }
@@ -72,7 +61,6 @@ function Login() {
       setError("로그인 중 오류가 발생했습니다.");
     }
   };
-  
 
   return (
     <div className="HjLogin">
@@ -87,32 +75,32 @@ function Login() {
 
           {/* 로그인 입력칸 */}
           <div className="HjInputBox">
-  <input
-    type="text"
-    id="HjUserName"
-    placeholder="아이디를 입력하세요."
-    value={username}
-    onChange={(e) => setUsername(e.target.value)}
-  />
-  <input
-    type="password"
-    id="HjPassword"
-    placeholder="비밀번호를 입력하세요."
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-  />
-  
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:"10px" }}>
-      <span>자동 로그인</span>
-      <input
-        type="checkbox"
-        id="rememberMe"
-        checked={rememberMe}
-        onChange={(e) => setRememberMe(e.target.checked)}
-        style={{ margin:"5px 0px 5px auto" ,width:"5%",height:"16px" }} // 체크박스를 오른쪽으로 밀어냄
-      />
-    </div>
-</div>
+          <input
+            type="text"
+            id="HjUserName"
+            placeholder="아이디를 입력하세요."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            id="HjPassword"
+            placeholder="비밀번호를 입력하세요."
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:"10px" }}>
+              <span>자동 로그인</span>
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ margin:"5px 0px 5px auto" ,width:"5%",height:"16px" }} // 체크박스를 오른쪽으로 밀어냄
+              />
+            </div>
+        </div>
 
           {/* 로그인 버튼 */}
           <button 
