@@ -48,9 +48,12 @@ function Login() {
         setToken(token, rememberMe); // rememberMe 값에 따라 로컬 또는 세션 스토리지에 저장
         setUserName(userName,rememberMe);
         setUserRole(userRole, rememberMe); // userRole 저장 추가
-  
-        alert("로그인에 성공하였습니다.");
-        window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        console.log(userRole);
+        // 상태가 모두 저장된 후에 리다이렉트
+        setTimeout(() => {
+          alert("로그인에 성공하였습니다.");
+          window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+        }, 100); // 약간의 딜레이를 추가
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");
       }
@@ -72,32 +75,32 @@ function Login() {
 
           {/* 로그인 입력칸 */}
           <div className="HjInputBox">
-  <input
-    type="text"
-    id="HjUserName"
-    placeholder="아이디를 입력하세요."
-    value={username}
-    onChange={(e) => setUsername(e.target.value)}
-  />
-  <input
-    type="password"
-    id="HjPassword"
-    placeholder="비밀번호를 입력하세요."
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-  />
-  
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:"10px" }}>
-      <span>자동 로그인</span>
-      <input
-        type="checkbox"
-        id="rememberMe"
-        checked={rememberMe}
-        onChange={(e) => setRememberMe(e.target.checked)}
-        style={{ margin:"5px 0px 5px auto" ,width:"5%",height:"16px" }} // 체크박스를 오른쪽으로 밀어냄
-      />
-    </div>
-</div>
+          <input
+            type="text"
+            id="HjUserName"
+            placeholder="아이디를 입력하세요."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            id="HjPassword"
+            placeholder="비밀번호를 입력하세요."
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:"10px" }}>
+              <span>자동 로그인</span>
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ margin:"5px 0px 5px auto" ,width:"5%",height:"16px" }} // 체크박스를 오른쪽으로 밀어냄
+              />
+            </div>
+        </div>
 
           {/* 로그인 버튼 */}
           <button 
