@@ -16,7 +16,7 @@ export const useAuthStore = create((set) => ({
   userName: getDecodedTokenValue("userName"),
   name: getDecodedTokenValue("name"),
   userRole: getDecodedTokenValue("auth"),
-  restaurantId: getDecodedTokenValue("restaurantId"),
+  restaurantId: getDecodedTokenValue("restaurantId")?.[0]?.restaurantId || null,// 레스토랑이 여러개일경우 처리 필요
 
   setToken: (newToken, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage;

@@ -27,7 +27,7 @@ export function Header() {
         alert("로그아웃되었습니다.");
         window.location.href = "/";
     };
-
+    console.log(token);
     return (
         <Navbar expand="lg" className="navbar-custom">
             <Container fluid>
@@ -60,19 +60,19 @@ export function Header() {
                         <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
                         <Dropdown.Item as={Link} to="/inquiry">문의하기</Dropdown.Item>
 
-                        {restaurantId && (
-                            <>
-                                <Dropdown.Divider />
-                                <Dropdown.Item as={Link} to="/manager/schedule">레스토랑 스케줄</Dropdown.Item>
-                                <Dropdown.Item as={Link} to="/manager/reserve">레스토랑 예약현황</Dropdown.Item>
-                            </>
-                        )}
+                        {userRole && userRole.split(',').includes('OWNER') && (
+    <>
+        <Dropdown.Divider />
+        <Dropdown.Item as={Link} to="/manager/schedule">레스토랑 스케줄</Dropdown.Item>
+        <Dropdown.Item as={Link} to="/manager/reserve">레스토랑 예약현황</Dropdown.Item>
+    </>
+)}
 
-                        {token && userRole === 'ROLE_ADMIN' && (
-                            <>
-                                <Dropdown.Divider />
-                                <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
-                            </>
+{token && userRole && userRole.split(',').includes('ADMIN') && (
+    <>
+        <Dropdown.Divider />
+        <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+    </>
                         )}
                     </Dropdown.Menu>
                 </Dropdown>

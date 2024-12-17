@@ -7,18 +7,18 @@ import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
 import 'css/KDH/ManagerReserve.css';
 import { useAuthStore } from 'store/authStore';
-import { jwtDecode } from 'jwt-decode';
+
 const ManagerReserve = () => {
-  const {token}=useAuthStore();
+  const { token, restaurantId } = useAuthStore();
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [statusUpdates, setStatusUpdates] = useState({});
   const itemsPerPage = 6;
   const itemsPerGroup = 300;
-  const statusOptions = ['전체', '취소 요청', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
+  const statusOptions = ['전체', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
   const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
-  const restaurantId= jwtDecode(token).restaurantId;
+
   useEffect(() => {
     fetchReservations();
   }, []);
@@ -27,11 +27,11 @@ const ManagerReserve = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`,
         {
-          method:'get',
-          headers:{
-            'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-            }
+          }
         }
       );
       const data = await response.json();
@@ -64,10 +64,10 @@ const ManagerReserve = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
         method: 'PUT',
-        headers:{
-          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-          },
+        },
         body: JSON.stringify({ status: Object.keys(statusLabels).find(key => statusLabels[key] === updatedStatus) }),
       });
 
@@ -87,10 +87,10 @@ const ManagerReserve = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
         method: 'DELETE',
-        headers:{
-          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+        headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-          },
+        },
       });
 
       if (response.ok) {
@@ -110,7 +110,6 @@ const ManagerReserve = () => {
   };
 
   const statusLabels = {
-    CANCELREQUEST: '취소 요청',
     COMPLETED: '방문 완료',
     RESERVING: '예약 중',
     PENDING: '결제 대기중',
@@ -146,10 +145,10 @@ const ManagerReserve = () => {
       </Row>
 
       <Card className="mb-4">
-      <Card.Body>
+        <Card.Body>
           <Calendar tileContent={tileContent} tileClassName={tileClassName} />
-          </Card.Body>
-        </Card>
+        </Card.Body>
+      </Card>
 
       <Row className="mb-3">
         <Col className='text-end'>
@@ -208,7 +207,7 @@ const ManagerReserve = () => {
                       {statusUpdates[reservation.reservationId] || '상태 변경'}
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      {statusOptions.map((status) => (
+                      {statusOptions.filter(status => status !== '전체').map((status) => (
                         <Dropdown.Item
                           key={status}
                           onClick={() => setReservationStatus(reservation.reservationId, status)}
@@ -224,9 +223,11 @@ const ManagerReserve = () => {
                   >
                     예약 변경
                   </Button>&ensp;
-                  <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>
-                    예약 취소
-                  </Button>
+                  {reservation.status !== 'COMPLETED' && reservation.status !== 'NOSHOW' && (
+                    <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>
+                      예약 취소
+                    </Button>
+                  )}
                 </div>
               </Card.Body>
             </Card>
@@ -240,3 +241,4 @@ const ManagerReserve = () => {
 };
 
 export default ManagerReserve;
+

@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
-
+import { useAuthStore } from 'store/authStore';
 function Main() {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
-
   const handleInputChange = (e) => {
     setQuery(e.target.value);
   };
@@ -18,7 +17,6 @@ function Main() {
       navigate(`/restaurant?query=${encodeURIComponent(query)}`);
     }
   };
-
   return (
     <div className="App">
       {/* 메인 이미지 배경 */}

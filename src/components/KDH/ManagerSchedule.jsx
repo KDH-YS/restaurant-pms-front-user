@@ -5,7 +5,6 @@ import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import 'css/KDH/ManagerSchedule.css';
 import { useAuthStore } from 'store/authStore';
 import { format, parseISO, isBefore, startOfDay, getWeek, getDate, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 // 시간 옵션 생성 함수
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
@@ -15,10 +14,9 @@ const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String
 
 
 const Manager = () => {
-  const { token } = useAuthStore();
+  const { token ,restaurantId} = useAuthStore();
   const [date, setDate] = useState(new Date());
   const [schedules, setSchedules] = useState({});
-  const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [savedSchedules, setSavedSchedules] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [scheduleExists, setScheduleExists] = useState(false); // Added state variable
@@ -77,12 +75,11 @@ const Manager = () => {
       },
     }));
   };
-  const jtoken = jwtDecode(token);
   // 저장된 스케줄을 불러오는 함수
   const fetchSavedSchedules = useCallback(async () => {
     try {
       
-      const response = await fetch(`http://localhost:8080/api/restaurants/schedule?restaurantId=${jtoken.restaurantId}`, {
+      const response = await fetch(`http://localhost:8080/api/restaurants/schedule?restaurantId=${restaurantId}`, {
         method: 'get',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -107,7 +104,7 @@ const Manager = () => {
     const dateKey = format(date, 'yyyy-MM-dd');
     const schedule = schedules[dateKey] || {};
     const newSchedule = {
-      restaurantId: jtoken.restaurantId,
+      restaurantId: restaurantId,
       openDate: dateKey,
       startTime: schedule.startTime || '',
       endTime: schedule.endTime || '',
