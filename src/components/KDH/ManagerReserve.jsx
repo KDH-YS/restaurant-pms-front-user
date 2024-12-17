@@ -13,15 +13,18 @@ const ManagerReserve = () => {
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [statusFilter, setStatusFilter] = useState('전체');
-  const [statusUpdates, setStatusUpdates] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null);
   const itemsPerPage = 6;
   const itemsPerGroup = 300;
   const statusOptions = ['전체', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
   const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
-
   useEffect(() => {
     fetchReservations();
   }, []);
+
+  useEffect(() => {
+    filterReservations(statusFilter, selectedDate);
+  }, [statusFilter, selectedDate, reservations]);
 
   const fetchReservations = async () => {
     try {
@@ -43,44 +46,20 @@ const ManagerReserve = () => {
     }
   };
 
-  const filterReservations = (status) => {
+  const filterReservations = (status, date) => {
     let filtered = reservations;
     if (status !== '전체') {
-      filtered = reservations.filter((reservation) => statusLabels[reservation.status] === status);
+      filtered = filtered.filter((reservation) => statusLabels[reservation.status] === status);
+    }
+    if (date) {
+      filtered = filtered.filter((reservation) => {
+        const reservationDate = new Date(reservation.reservationTime);
+        return reservationDate.toDateString() === date.toDateString();
+      });
     }
     setFilteredReservations(filtered);
     setCurrentPage(1);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
-  };
-
-  const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
-
-  const updateReservationStatus = async (reservationId, updatedStatus) => {
-    if (!updatedStatus) {
-      alert('상태를 선택하세요.');
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status: Object.keys(statusLabels).find(key => statusLabels[key] === updatedStatus) }),
-      });
-
-      if (response.ok) {
-        alert('예약 상태가 변경되었습니다.');
-        fetchReservations();
-      } else {
-        alert('예약 상태 변경에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('예약 상태 변경 오류:', error);
-      alert('예약 상태 변경 중 오류가 발생했습니다.');
-    }
   };
 
   const handleCancelReservation = async (reservationId) => {
@@ -92,7 +71,6 @@ const ManagerReserve = () => {
           'Content-Type': 'application/json'
         },
       });
-
       if (response.ok) {
         alert('예약이 취소되었습니다.');
         fetchReservations();
@@ -103,10 +81,6 @@ const ManagerReserve = () => {
       console.error('예약 취소 오류:', error);
       alert('예약 취소 중 오류가 발생했습니다.');
     }
-  };
-
-  const setReservationStatus = (reservationId, status) => {
-    setStatusUpdates((prev) => ({ ...prev, [reservationId]: status }));
   };
 
   const statusLabels = {
@@ -136,6 +110,10 @@ const ManagerReserve = () => {
     }
   };
 
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
   return (
     <Container className="reservation-status-container">
       <Row className="mb-3" style={{ marginTop: "20px" }}>
@@ -146,7 +124,12 @@ const ManagerReserve = () => {
 
       <Card className="mb-4">
         <Card.Body>
-          <Calendar tileContent={tileContent} tileClassName={tileClassName} />
+          <Calendar 
+            tileContent={tileContent} 
+            tileClassName={({ date, view }) => view === 'month' && date.getDay() === 6 ? 'saturday' : null}
+            onChange={handleDateChange}
+            value={selectedDate}
+          />
         </Card.Body>
       </Card>
 
@@ -161,10 +144,7 @@ const ManagerReserve = () => {
               {statusOptions.map((status) => (
                 <Dropdown.Item 
                   key={status}
-                  onClick={() => {
-                    setStatusFilter(status);
-                    filterReservations(status);
-                  }}
+                  onClick={() => setStatusFilter(status)}
                 >
                   {status}
                 </Dropdown.Item>
@@ -202,27 +182,6 @@ const ManagerReserve = () => {
                   </Card.Text>
                 </div>
                 <div className="d-flex justify-content-end p-3">
-                  <Dropdown>
-                    <Dropdown.Toggle variant="secondary" id={`status-update-${reservation.reservationId}`}>
-                      {statusUpdates[reservation.reservationId] || '상태 변경'}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {statusOptions.filter(status => status !== '전체').map((status) => (
-                        <Dropdown.Item
-                          key={status}
-                          onClick={() => setReservationStatus(reservation.reservationId, status)}
-                        >
-                          {status}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>&ensp;
-                  <Button
-                    variant="primary"
-                    onClick={() => updateReservationStatus(reservation.reservationId, statusUpdates[reservation.reservationId])}
-                  >
-                    예약 변경
-                  </Button>&ensp;
                   {reservation.status !== 'COMPLETED' && reservation.status !== 'NOSHOW' && (
                     <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>
                       예약 취소
