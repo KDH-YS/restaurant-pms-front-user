@@ -295,10 +295,10 @@ const fetchRestaurantsByQuery = async (query, page = 1) => {
                     <Card.Img variant="top" src={imageUrl} className="cardImage" />
                   </div>
                   <Card.Body>
+                    {/* <Card.Text><strong>전화:</strong> {restaurant.phone}</Card.Text> */}
                     <Card.Title className='listNameJh mb-0'>{restaurant.name}</Card.Title>
                     <Card.Text className='listFoodJh text-muted small'> {restaurant.foodType}</Card.Text>
                     <Card.Text className='listAddrJh small'> {restaurant.roadAddr || restaurant.jibunAddr}</Card.Text>
-                    {/* <Card.Text><strong>전화:</strong> {restaurant.phone}</Card.Text> */}
                     <Card.Text className='small'>
                       <span 
                         className={`badge ${restaurant.reservationAvailable ? 'bg-danger' : ''} rounded-pill me-1 px-2 py-2`}
