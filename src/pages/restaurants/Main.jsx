@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
@@ -19,16 +19,63 @@ function Main() {
     }
   };
 
+  const [translateX, setTranslateX] = useState("-100%"); // 이동 값 상태 관리
+  const [images, setImages] = useState([
+    '/img/foodimg1.jpg',
+    '/img/foodimg1.jpg',
+    '/img/foodimg1.jpg',
+    '/img/foodimg1.jpg',
+    '/img/foodimg1.jpg',
+  ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // 1. 이미지 이동
+      document.querySelector('.image-wrapper').style.transition = "transform 1s ease-in-out";
+      document.querySelector('.image-wrapper').style.transform = "translateX(-200%)";
+
+      // 2. 애니메이션이 끝난 후 첫 번째 이미지를 배열 끝으로 이동
+      setTimeout(() => {
+        setImages((prevImages) => {
+          const [first, ...rest] = prevImages;
+          return [...rest, first]; // 첫 번째 이미지를 배열 끝에 추가
+        });
+
+        // 3. 이동 값을 초기화 (순간적으로 첫 번째 위치로 복귀)
+        document.querySelector('.image-wrapper').style.transition = "none";
+        document.querySelector('.image-wrapper').style.transform = "translateX(-100%)";
+      }, 1000); // 이동 애니메이션 시간과 일치
+    }, 5000); // 5초마다 실행
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="App">
       {/* 메인 이미지 배경 */}
       <Container fluid className="main-banner p-0 position-relative">
-        <img src="/img/foodimg1.jpg" alt="Food" className="w-100 main-image" />
+        <div className="image-wrapper">
+          {images.map((src, index) => (
+            <div key={index} className="image-container position-relative">
+              <img src={src} alt="Food" className="main-image" />
+              {/* 가게 정보 */}
+              <div className="store-info">
+                <p className="mb-0">한식</p>
+                <h5 className="mb-2">가게이름 {index + 1}</h5>
+                <p>설명 및 간단한 소개글</p>
+              </div>
+              {/* 보러가기 버튼 */}
+              <Link to="/restaurant"><button className="visit-btn">보러가기</button></Link>
+            </div>
+          ))}
+        </div>
 
         {/* 검색 영역 */}
         <div className="search-container">
-          <h2 className="search-title text-white mb-3">Rechelin에서 원하는
-            <br/>맛집을 찾아보세요.</h2>
+          <h2 className="search-title text-white mb-3">
+            Rechelin에서 원하는
+            <br />맛집을 찾아보세요.
+          </h2>
           <Form className="d-flex" onSubmit={handleSearch}>
             <Form.Control
               type="text"
@@ -38,8 +85,11 @@ function Main() {
               onChange={handleInputChange}
             />
             {/* 검색 아이콘 */}
-            <img src="/icons/search.svg" alt="검색 아이콘" className="search-icon position-absolute" />
-            
+            <img
+              src="/icons/search.svg"
+              alt="검색 아이콘"
+              className="search-icon position-absolute"
+            />
           </Form>
         </div>
       </Container>
@@ -48,7 +98,7 @@ function Main() {
       <Container className="js-shop">
         <div className="d-flex justify-content-between align-items-center">
           <h2 className="section-title">레스토랑</h2>
-          <Link to="" className="mb-0 d-flex align-items-center">전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" /></Link>
+          <Link to="/restaurant" className="mb-0 d-flex align-items-center">전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" /></Link>
         </div>
         <Row>
           {[1, 2, 3].map((_, index) => (
