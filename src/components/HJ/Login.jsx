@@ -2,7 +2,7 @@ import React from 'react';
 import '../../css/main.css';
 import '../../css/login.css';
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import { jwtDecode } from 'jwt-decode';
@@ -16,11 +16,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe,setRememberMe]= useState(false);
   // Zustand 스토어에서 상태 및 액션 가져오기
-  const {setUserId,setToken,setUserName,setUserRole,userId} = useAuthStore();
-
-  useEffect(() => {
-    
-  }, []);
+  const {setToken, setUserName, setName, setUserRole} = useAuthStore();
 
   // 로그인 요청 처리
   const handleLogin = async (e) => {
@@ -42,6 +38,7 @@ function Login() {
         const token = response.data.data.token;
         const userId = jwtDecode(token).userId;
         const userName = response.data.data.userName;
+        const name = response.data.data.name;
         const userRole = jwtDecode(token).auth;
   
         // Zustand에 저장 (자동 로그인 여부에 따라)
