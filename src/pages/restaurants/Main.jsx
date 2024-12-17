@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
 
 function Main() {
@@ -46,7 +46,10 @@ function Main() {
 
       {/* 레스토랑 섹션 */}
       <Container className="js-shop">
-        <h2 className="section-title">레스토랑</h2>
+        <div className="d-flex justify-content-between align-items-center">
+          <h2 className="section-title">레스토랑</h2>
+          <Link to="" className="mb-0 d-flex align-items-center">전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" /></Link>
+        </div>
         <Row>
           {[1, 2, 3].map((_, index) => (
             <Col key={index} md={4} className="restaurant-card">
@@ -81,7 +84,10 @@ function Main() {
 
       {/* 공지사항 섹션 */}
       <Container fluid className="announcement-section py-3 bg-light">
-        <h2 className="section-title">공지사항</h2>
+        <div className="d-flex justify-content-between align-items-center">
+          <h2 className="section-title">공지사항</h2>
+          <Link to="" className="mb-0 d-flex align-items-center">전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" /></Link>
+        </div>
         <ul className="list-group list-group-flush">
           <li className="list-group-item">테스트입니다. <span className="text-muted">2024-12-13</span></li>
           <li className="list-group-item">테스트입니다. <span className="text-muted">2024-12-13</span></li>
