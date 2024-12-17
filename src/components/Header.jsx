@@ -56,7 +56,6 @@ export function Header() {
                             </>
                         )}
                         <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
-                        <Dropdown.Item as={Link} to="/inquiry">문의하기</Dropdown.Item>
 
                         {userRole && userRole.split(',').includes('OWNER') && (
     <>

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Form, Container, Row, Col } from 'react-bootstrap';
+import { Modal,Button, Form, Container, Row, Col, ListGroupItem, ListGroup } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
 import { fetchRestaurants, getRestaurantImages } from './api';
+import axios from 'axios';
 
 function Main() {
   const [query, setQuery] = useState('');
@@ -13,7 +14,10 @@ function Main() {
   const [error, setError] = useState(null);             // 에러 상태
   const isRequestPending = useRef(false);
   const defaultImage = '/fc7ece8e8ee1f5db97577a4622f33975.jpg';  // 기본 이미지 경로
-  
+  const [notices, setNotices] = useState([]);           // 공지사항 상태
+  const [totalPages, setTotalPages] = useState(0);      // 전체 페이지 수
+  const [selectedNotice, setSelectedNotice]= useState(null);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   // 검색 이벤트 핸들러
@@ -77,6 +81,7 @@ function Main() {
 
   useEffect(() => {
     fetchRestaurantsData(); 
+    fetchNotices()
   }, []);
 
   const imageWrapperRef = useRef(null); // 이미지 컨테이너 Ref
@@ -101,7 +106,45 @@ function Main() {
 
     return () => clearInterval(interval); // 정리 함수
   }, []);
-
+const fetchNotices = (pageIndex = 1) => {
+  axios.get('http://jennysoft.kr:8080/board', {
+    params: {
+      bbsId: 'BBSMSTR_AAAAAAAAAAAA',
+      pageIndex: pageIndex,
+      searchCnd: 0,
+      searchWrd: ' '
+    }
+  })
+  .then(response => {
+    console.log(response);
+    if (response.data.resultCode === 200) {
+      const resultList = response.data.result.resultList.slice(0, 3); // 3개만 가져오기
+      const totalRecordCount = response.data.result.resultCnt;
+      const totalPages = Math.ceil(totalRecordCount / 10); // 페이지 수 계산
+      setNotices(resultList);
+      setTotalPages(totalPages);
+    } else {
+      throw new Error('API 응답 오류');
+    }
+  })
+  .catch(error => {
+    console.error('API 호출 중 오류 발생:', error);
+  });
+};
+const fetchNoticeDetail = (bbsId, nttId) => {
+  axios.get(`http://jennysoft.kr:8080/board/${bbsId}/${nttId}`)
+    .then(response => {
+      if (response.data.resultCode === 200) {
+        setSelectedNotice(response.data.result.boardVO); // 응답값에서 공지사항 데이터 추출
+        setShowModal(true); // 모달 열기
+      } else {
+        console.error('공지사항을 가져오는 데 실패했습니다.');
+      }
+    })
+    .catch(error => {
+      console.error('공지사항 상세 정보를 가져오는 데 실패했습니다:', error);
+    });
+};
   const ResImg = [
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20221114_279%2F1668411417939IQUlP_JPEG%2F601522EE-8C9D-48E6-9205-D10B8887E07F.jpeg",
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220505_190%2F165169820357548FLT_JPEG%2FScreenshot_20210825-093244_Instagram_resized.jpg",
@@ -197,18 +240,45 @@ function Main() {
         </div>
       </Container>
 
+
       {/* 공지사항 섹션 */}
       <Container fluid className="announcement-section py-3 bg-light">
-        <div className="d-flex justify-content-between align-items-center">
-          <h2 className="section-title">공지사항</h2>
-          <Link to="" className="mb-0 d-flex align-items-center">전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" /></Link>
-        </div>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">테스트입니다. <span className="text-muted">2024-12-13</span></li>
-          <li className="list-group-item">테스트입니다. <span className="text-muted">2024-12-13</span></li>
-          <li className="list-group-item">테스트입니다. <span className="text-muted">2024-12-13</span></li>
-        </ul>
+        <Row className="d-flex justify-content-between align-items-center">
+          <Col xs="auto">
+            <h2 className="section-title">공지사항</h2>
+          </Col>
+          <Col xs="auto">
+            <Link to="http://13.124.43.252/" className="mb-0 d-flex align-items-center" style={{color:"gray"}}>
+              전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" />
+            </Link>
+          </Col>
+        </Row>
+        <ListGroup variant="flush">
+          {notices.map((notice, index) => (
+            <ListGroupItem
+              key={index}
+               // 클릭 시 상세 보기
+            >
+              <strong style={{cursor:"pointer"}} onClick={() => fetchNoticeDetail(notice.bbsId, notice.nttId)}>{notice.nttSj}</strong> <span className="text-muted">{notice.frstRegisterPnttm}</span>
+            </ListGroupItem>
+          ))}
+        </ListGroup>
       </Container>
+      {/* 공지사항 상세 모달 */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedNotice?.nttSj}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{selectedNotice?.nttCn}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 }
