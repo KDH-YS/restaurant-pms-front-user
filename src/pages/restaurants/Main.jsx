@@ -34,11 +34,12 @@ function Main() {
     try {
       const response = await fetchRestaurants(5);
       if (response.content) {
-        setRestaurants(response.content);
+        const limitedRestaurants = response.content.slice(0, 5); // 처음 5개 가져오기
+        setRestaurants(limitedRestaurants);
 
         // 각 레스토랑에 대한 이미지 요청 (병렬 처리)
         const imagesData = await Promise.all(
-          response.content.map(async (restaurant) => {
+          limitedRestaurants.map(async (restaurant) => {
             const images = await getRestaurantImages(restaurant.restaurantId);
             const representativeImage = images.find((image) => image.imageOrder);
 
@@ -74,15 +75,10 @@ function Main() {
     }
   };
 
-  console.log(restaurants);
-
-  const [images, setImages] = useState([
-    '/img/foodimg1.jpg',
-    '/img/foodimg1.jpg',
-    '/img/foodimg1.jpg',
-    '/img/foodimg1.jpg',
-    '/img/foodimg1.jpg',
-  ]);
+  useEffect(() => {
+    fetchRestaurantsData(); 
+  }, []);
+console.log(restaurantImages)
 
   const imageWrapperRef = useRef(null); // 이미지 컨테이너 Ref
 
@@ -107,26 +103,39 @@ function Main() {
     return () => clearInterval(interval); // 정리 함수
   }, []);
 
+  const ResImg = [
+    "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20221114_279%2F1668411417939IQUlP_JPEG%2F601522EE-8C9D-48E6-9205-D10B8887E07F.jpeg",
+    "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220505_190%2F165169820357548FLT_JPEG%2FScreenshot_20210825-093244_Instagram_resized.jpg",
+    "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20211230_220%2F1640873782183b88p5_JPEG%2FOld_Meets_New_%25B7%25CE%25B0%25ED-02.jpg",
+    "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20241103_88%2F17306136505694RmW9_JPEG%2F1000009833.jpg",
+    "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fsearchad-phinf.pstatic.net%2FMjAyNDAyMjRfMjMg%2FMDAxNzA4NzQzMjUzNTA3.RQ5AtZR_ik2FheavCnJ0nA-XAd_l5w62-VGrSEuI_KUg.R8I2Z7_aBfbhUMEGJfX3nQmbnrWrxnIr2W1JDRLvUWkg.PNG%2F3038352-982b6b0c-f66c-49db-aed7-eff835913286.png%26_type%3Dad"
+  ];
+console.log(restaurants)
   return (
     <div className="App">
       <Container fluid className="main-banner p-0">
-        <div className="image-wrapper" ref={imageWrapperRef}>
-          {images.map((src, index) => (
-            <div key={index} className="image-container">
-              <img src={src} alt="Food" className="main-image" />
-              {/* 가게 정보 */}
-              <div className="store-info">
-                <p className="mb-0">한식</p>
-                <h5 className="mb-2">가게이름 {index + 1}</h5>
-                <p>설명 및 간단한 소개글</p>
-              </div>
-              {/* 보러가기 버튼 */}
-              <Link to="/restaurant">
-                <button className="visit-btn">보러가기</button>
-              </Link>
+      <div className="image-wrapper" ref={imageWrapperRef}>
+        {restaurants.map((restaurant, index) => (
+          <div key={restaurant.restaurantId || index} className="image-container">
+            {/* 이미지 */}
+            <img
+              src={ResImg[index % ResImg.length]} // 대표 이미지 또는 기본 이미지
+              alt={restaurant.name || "Restaurant"}
+              className="main-image"
+            />
+            {/* 가게 정보 */}
+            <div className="store-info">
+              <p className="mb-0">{restaurant.foodtype}</p>
+              <h5 className="mb-2">{restaurant.name || `가게이름 ${index + 1}`}</h5>
+              <p>{restaurant.description || "설명 및 간단한 소개글"}</p>
             </div>
-          ))}
-        </div>
+            {/* 보러가기 버튼 */}
+            <Link to={`/restaurant/${restaurant.restaurantId}`}>
+              <button className="visit-btn">보러가기</button>
+            </Link>
+          </div>
+        ))}
+      </div>
           
         {/* 검색 영역 */}
         <div className="search-container">

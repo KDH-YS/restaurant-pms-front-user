@@ -22,10 +22,9 @@
   }
   
   .main-image {
-    width: 1320px;
+    width: 100%;
     max-width: 1320px;
     height: 600px;
-    object-fit: cover;
   }
 
 /* 고정된 반투명 오버레이 */
