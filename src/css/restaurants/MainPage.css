@@ -1,21 +1,100 @@
 /* 메인 이미지 배경 */
 .main-banner {
     position: relative;
+    width: 100% !important;
+    max-width: 1980px !important;
     height: 600px;
     overflow: hidden;
+    margin: 0 auto;
+  }
+  
+  .image-wrapper {
+    display: flex;
+    max-width: 1320px;
+    margin: 0 auto;
+    transform: translateX(-100%);
+  }
+  
+  .image-container {
+    position: relative;
+    flex-shrink: 0;
+    width: 100%; /* 이미지 크기 */
+  }
+  
+  .main-image {
+    width: 100%;
+    max-width: 1320px;
+    height: 600px;
+  }
+
+/* 고정된 반투명 오버레이 */
+.main-banner::before,
+.main-banner::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 반투명 검정색 */
+    pointer-events: none; /* 클릭 이벤트 방지 */
+    z-index: 1; /* 이미지 위에 표시 */
+}
+.main-banner::before {
+    left: -60%;
+    width: 100%; /* 첫 번째 이미지 영역 */
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.5), transparent); /* 왼쪽에서 투명하게 그라디언트 */
+}
+.main-banner::after {
+    left: 60%;
+    width: 100%; /* 첫 번째 이미지 영역 */
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.5), transparent); /* 오른쪽에서 투명하게 그라디언트 */
 }
 
-.main-image {
-    height: 100%;
-    object-fit: cover;
-}
+  /* 가게 정보 */
+  .store-info {
+    position: absolute;
+    bottom: 20px; /* 왼쪽 아래로 배치 */
+    left: 40px;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  /* 보러가기 버튼 */
+  .visit-btn {
+    position: absolute;
+    bottom: 40px; /* 오른쪽 아래로 배치 */
+    right: 40px;
+    background-color: #ff5733;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .visit-btn:hover {
+    background-color: #e64a19;
+  }
+
 
 /* 검색 컨테이너 */
 .search-container {
     position: absolute;
     top: 200px;
-    left: 40px;
+    left: 18%;
     max-width: 800px;
+    z-index: 20;
+}
+
+/* 화면 너비가 1200px 이하일 때 */
+@media (max-width: 1200px) {
+    .search-container {
+        left: 5%;
+    }
 }
 
 .search-title {
@@ -42,19 +121,6 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
-}
-
-.search-btn {
-    background-color: #FF5733;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 12px 20px;
-    font-size: 1.1rem;
-}
-
-.search-btn:hover {
-    background-color: #E64A19;
 }
 
 /* 섹션 타이틀 */
