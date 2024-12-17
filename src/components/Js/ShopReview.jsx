@@ -29,6 +29,7 @@ export function ShopReview() {
   const [reportReason, setReportReason] = useState("OTHER");
   // 도움
   const [helpfulReviews, setHelpfulReviews] = useState({});
+  const [helpfulCount, setHelpfulCount] = useState([]);
 
   // 주스탠드
   const { restaurant } = restaurantStore();
@@ -88,10 +89,12 @@ export function ShopReview() {
           isHelpful: reviewData.isHelpful, // 좋아요 여부 필드 추가
           helpfulCount: reviewData.helpfulCount // 좋아요 수 추가
         }));
-  
+
+        const helpfulCounts = data.reviews.map((review) => review.helpfulCount);
+
+        setHelpfulCount(helpfulCounts);
         setReviews(reviewsData);
         setReviewImages(data.reviewImages);
-      console.log(reviewsData);
         // 좋아요 상태 설정
         const helpfulStatus = {};
         reviewsData.forEach(review => {
@@ -202,11 +205,25 @@ export function ShopReview() {
       setShowLoginModal(true);
       return;
     }
-    const currentStatus = helpfulReviews[reviewId];
+  
+    const currentStatus = helpfulReviews[reviewId]; // 현재 좋아요 상태
+    const updatedReviews = reviews.map((review) => {
+      if (review.reviewId === reviewId) {
+        return {
+          ...review,
+          helpfulCount: currentStatus
+            ? review.helpfulCount - 1 // 현재 좋아요 상태일 때 취소
+            : review.helpfulCount + 1, // 좋아요 추가
+        };
+      }
+      return review;
+    });
+  
     try {
       const url = currentStatus
         ? `http://localhost:8080/api/reviews/${reviewId}/helpful?userId=${userId}`
         : `http://localhost:8080/api/reviews/${reviewId}/helpful`;
+  
       const options = {
         method: currentStatus ? "DELETE" : "POST",
         headers: {
@@ -218,42 +235,39 @@ export function ShopReview() {
       if (!currentStatus) {
         options.body = JSON.stringify({
           userId: userId,
-          state: 1
+          state: 1,
         });
       }
   
-      // 서버 요청 전 UI 상태 업데이트 (로딩 상태 표현)
+      // 서버 요청 전 UI를 바로 반영
       setHelpfulReviews((prev) => ({
         ...prev,
-        [reviewId]: null,  // null 값으로 설정하여 로딩 중인 상태 표시
+        [reviewId]: !currentStatus,
       }));
+      setReviews(updatedReviews);
   
       const response = await fetch(url, options);
   
-      // 서버 응답이 성공적일 때만 상태를 업데이트
-      if (response.ok) {
-        setHelpfulReviews((prev) => ({
-          ...prev,
-          [reviewId]: !currentStatus,
-        }));
-        console.log(currentStatus ? "도움이 취소되었습니다." : "도움이 되었습니다.");
-      } else {
-        // 서버 요청 실패 시 원래 상태 복구
+      if (!response.ok) {
+        // 서버 오류 시 원래 상태로 복구
         setHelpfulReviews((prev) => ({
           ...prev,
           [reviewId]: currentStatus,
         }));
-        console.error("도움이 되었습니다/취소를 처리하는 데 실패했습니다.");
+        setReviews(reviews);
+        console.error("서버 오류로 인해 좋아요 처리가 실패했습니다.");
       }
     } catch (error) {
-      // 에러 발생 시 원래 상태 복구
+      // 에러 시 상태 복구
       setHelpfulReviews((prev) => ({
         ...prev,
         [reviewId]: currentStatus,
       }));
+      setReviews(reviews);
       console.error("도움이 되었습니다/취소를 처리하는 중 오류 발생:", error);
     }
   };
+  
 
   const confirmDelete = async () => {
     try {
