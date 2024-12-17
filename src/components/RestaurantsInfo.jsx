@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
-import { StarFill } from 'react-bootstrap-icons';
+import { ArrowLeft, StarFill } from 'react-bootstrap-icons';
 import { fetchRestaurantDetail, fetchRestaurantMenu, fetchRestaurantSchedule, getRestaurantImages } from '../pages/restaurants/api';
 import { restaurantStore } from '../store/restaurantStore';
 import { useAuthStore } from '../store/authStore';
@@ -22,7 +22,11 @@ function RestaurantsInfo() {
   const [showModal, setShowModal] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [open, setOpen] = useState(true);
-
+  const PhoneIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style={{height:"20px"}}>
+      <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
+    </svg>
+  );
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -69,14 +73,19 @@ function RestaurantsInfo() {
   
     return (
       <div key={todaySchedule.scheduleId} className="mb-3">
-        <h6 className="mb-2">{todaySchedule.openDate}</h6>
-        <h6 className="mb-2">{Number(todaySchedule.isOpen) === 1 ? '영업 중' : '휴무'}</h6>
+        {/* <h6 className="mb-2">{todaySchedule.openDate}</h6> */}
+        {/* <h6 className="mb-2">{Number(todaySchedule.isOpen) === 1 ? '영업 중' : '휴무'}</h6> */}
+        <span 
+          className={`badge ${Number(todaySchedule.isOpen) === 1 ? 'bg-primary' : 'bg-danger'} mb-2 px-2 py-2`}
+          >
+            {Number(todaySchedule.isOpen) === 1 ? 'OPEN' : 'CLOSE'}
+            </span>
         <p className="mb-1">
-          영업시간: {formatTime(todaySchedule.startTime)} - {formatTime(todaySchedule.endTime)}
+          <span className='badge bg-secondary'>Open-Time</span> {formatTime(todaySchedule.startTime)} - {formatTime(todaySchedule.endTime)}
         </p>
         {todaySchedule.breakStart && todaySchedule.breakEnd && (
           <p className="mb-0">
-            휴식시간: {formatTime(todaySchedule.breakStart)} - {formatTime(todaySchedule.breakEnd)}
+            <span className='badge bg-secondary'>Break-Time</span> {formatTime(todaySchedule.breakStart)} - {formatTime(todaySchedule.breakEnd)}
           </p>
         )}
       </div>
@@ -131,19 +140,24 @@ function RestaurantsInfo() {
     }
   }, [open]);
 
+  const handleGoBack = () => {
+    navigate(-1);  // 한 페이지 뒤로 가기
+  };
+
   if (loading) return <p>로딩 중...</p>;
   if (error) return <Container className="text-center py-5"><h3 className="text-danger">{error}</h3></Container>;
 
   return (
     <div>
+     
        {/* 이미지 갤러리 */}
        {images.length > 0 && (
-        <div className="imageGalleryJh">
+        <div className="imageGalleryJh mb-4">
           {/* <h3>식당 이미지</h3> */}
           <Row>
         {/* 이미지를 3개까지 표시 (기본 이미지 포함) */}
         {images.slice(0, 3).map((image, index) => (
-          <Col key={index} xs={4} sm={4} md={4} lg={4} className="mb-4">
+          <Col key={index} xs={4} sm={4} md={4} lg={4} className="">
             <Card className="galleryCardJh">
               <div className="galleryImageContainerJh">
                 <Card.Img
@@ -180,13 +194,31 @@ function RestaurantsInfo() {
       {/* 더 보기 버튼 (조건부로 표시) */}
       {images.length > 3 && (
         <Button
-          variant="primary"
+          variant=""
           className="moreImagesBtnJh"
           onClick={() => handleImageClick(3)}
         >
-          +{images.length - 3}개 더 보기
+          +{images.length - 3}
         </Button>
       )}
+       {/* 뒤로가기 버튼 */}
+       <Button 
+        variant="link" 
+        onClick={handleGoBack} 
+        className="go-back-btn"
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: '20px',
+          background: 'transparent',
+          border: 'none',
+          fontSize: '30px',
+          color: 'white',
+          padding: '0',
+        }}
+      >
+        <ArrowLeft /> {/* 아이콘 사용 */}
+      </Button>
     </div>
   )}
 
@@ -219,7 +251,7 @@ function RestaurantsInfo() {
       {/* 레스토랑 이름과 별점 */}
       <div className="text-center mb-5">
         <h1 className="restaurant-title mb-3">{restaurant?.name}</h1>
-        <div className="d-flex justify-content-center gap-1">
+        {/* <div className="d-flex justify-content-center gap-1">
           {[...Array(5)].map((_, i) => (
             <StarFill 
               key={i} 
@@ -227,6 +259,10 @@ function RestaurantsInfo() {
               style={{ opacity: i < (restaurant?.averageRating || 0) ? 1 : 0.3 }}
             />
           ))}
+        </div> */}
+        <div>
+        {/* <h2 className="h5">매장소개</h2> */}
+        <p className="text-muted small mt-4">{restaurant?.description}</p>
         </div>
       </div>
 
@@ -235,20 +271,20 @@ function RestaurantsInfo() {
         <Col md={7}>
           <Card className="mb-4 bg-light" style={{height:"100%"}}>
             <Card.Body>
-              <h2 className="h5 mb-4">매장소개</h2>
-              <p className="text-muted mb-4">{restaurant?.description}</p>
+              
 
-              <div className="mb-4">
-                <h3 className="h6 mb-3">주소</h3>
-                <p className="mb-1">{restaurant?.jibunAddr}</p>
-                <p className="mb-3">{restaurant?.roadAddr}</p>
-                <p className="mb-0"><strong>총 좌석 수:</strong> {restaurant?.totalSeats}</p>
+              <div className="mb-2">
+                {/* <h3 className="h6 mb-3">주소</h3> */}
+                <p className="mb-3 fw-semibold medium">{restaurant?.roadAddr || restaurant?.jibunAddr}</p>
+                {/* <p className="mb-3">{restaurant?.roadAddr}</p> */}
+                <p className="mb-3 me-3 text-muted small"><PhoneIcon/> {restaurant?.phone}</p>
+                <p className="mb-3 me-3 text-muted small"><img src="/icons/chair.png" alt="" style={{height:"23px"}}/> {restaurant?.totalSeats}석</p>
               </div>
 
               <div className="mb-4">
                 {formatSchedule}
               </div>
-
+              <hr className='border-dark mt-4'/>
               <div>
                 <h3 className="h6 mb-3">메뉴</h3>
                 {menus.length > 0 ? (

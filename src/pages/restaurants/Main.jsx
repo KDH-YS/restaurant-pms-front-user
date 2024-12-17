@@ -159,7 +159,7 @@ function Main() {
               <br/> 편리한 예약 시스템을 이용 해보세요.
             </p>
           </div>
-          <a href="/가게등록" className="d-flex align-items-center js-together">
+          <a href="/myPage" className="d-flex align-items-center js-together">
             <p className="">Rechelin과 함께하기</p>
             <img src="/icons/right-white.svg" alt=""/>
           </a>

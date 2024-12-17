@@ -44,11 +44,11 @@ const MenuPage = () => {
       const response = await fetchRestaurants(page, 24);
       if (response.content) {
         setRestaurants(response.content);
+        loadRestaurantImages(response.content);
         setTotalPages(response.totalPages);
         setTotalRestaurants(response.totalElements);  // 전체 레스토랑 수 업데이트
 
         // 이미지는 별도의 함수에서 처리
-        loadRestaurantImages(response.content);
       } else {
         setRestaurants([]);
         setTotalPages(1);
@@ -152,6 +152,7 @@ const MenuPage = () => {
 
       if (response.content) {
         setRestaurants(response.content);
+        loadRestaurantImages(response.content);
         setTotalPages(response.totalPages);
         setTotalRestaurants(response.totalElements);  // 검색 조건에 맞는 레스토랑 수 업데이트
         setCurrentPage(page);  // 검색 후 currentPage를 올바르게 업데이트
