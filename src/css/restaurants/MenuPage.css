@@ -14,3 +14,13 @@
     object-fit: cover; /* 이미지 비율을 유지하면서 잘라내기 */
     transform: translate(-50%, -50%); /* 이미지를 정확히 가운데로 이동 */
   }
+
+  .listAddrJh {
+    /* font-size: 13px; */
+  }
+  .listNameJh {
+    /* font-size: 25px; */
+  }
+  .listFoodJh {
+    /* font-size: 13px; */
+  }

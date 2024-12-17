@@ -1,6 +1,8 @@
 import React from 'react';
+import { Pagination } from 'react-bootstrap';
+import '../../css/restaurants/pagination.css';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
   // 페이지 범위 계산 (최대 10개 페이지 버튼을 보여주기 위한 함수)
   const calculatePageRange = (currentPage, totalPages) => {
     const pagesToShow = 10;  // 최대 10개까지 페이지를 보이게 한다
@@ -35,64 +37,43 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   }
 
   return (
-    <ul className="pagination">
+    <Pagination className="d-flex justify-content-center mt-4 mb-4">
       {/* 첫 페이지 버튼 */}
-      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => onPageChange(1)}
-          disabled={currentPage === 1}
-        >
-          &laquo;&laquo; {/* 두 개의 화살표로 첫 페이지 */}
-        </button>
-      </li>
-
+      <Pagination.First
+        onClick={() => onPageChange(1)}
+        disabled={currentPage === 1}
+      />
+      
       {/* 이전 페이지 버튼 */}
-      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          이전
-        </button>
-      </li>
+      <Pagination.Prev
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      />
 
       {/* 페이지 번호 버튼 */}
       {pageNumbers.map((pageNumber) => (
-        <li key={pageNumber} className={`page-item ${currentPage === pageNumber ? 'active' : ''}`}>
-          <button
-            className="page-link"
-            onClick={() => onPageChange(pageNumber)}
-          >
-            {pageNumber}
-          </button>
-        </li>
+        <Pagination.Item
+          key={pageNumber}
+          active={currentPage === pageNumber}
+          onClick={() => onPageChange(pageNumber)}
+        >
+          {pageNumber}
+        </Pagination.Item>
       ))}
 
       {/* 다음 페이지 버튼 */}
-      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          다음
-        </button>
-      </li>
-
+      <Pagination.Next
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      />
+      
       {/* 마지막 페이지 버튼 */}
-      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => onPageChange(totalPages)}
-          disabled={currentPage === totalPages}
-        >
-          &raquo;&raquo; {/* 두 개의 화살표로 마지막 페이지 */}
-        </button>
-      </li>
-    </ul>
+      <Pagination.Last
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage === totalPages}
+      />
+    </Pagination>
   );
 };
 
-export default Pagination;
+export default PaginationComponent;

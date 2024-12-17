@@ -297,28 +297,27 @@ function RestaurantsInfo() {
       {/* 모달: 이미지 확대 보기 */}
       <Modal show={showModal} onHide={handleModalClose} centered size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>이미지 확대보기</Modal.Title>
+          {/* <Modal.Title></Modal.Title> */}
         </Modal.Header>
         <Modal.Body>
-          <div className="modal-image-container">
-            <button className="prev-button" onClick={handlePrevImage}>◀</button>
+          <div className="modalImageContainerJh">
+            <button className="modalPrevButtonJh" onClick={handlePrevImage}>◀</button>
             <img
               src={images[selectedImageIndex]?.imageUrl}
               alt="Restaurant"
               style={{ width: '70%', height: 'auto' }}
             />
-            <button className="next-button" onClick={handleNextImage}>▶</button>
+            <button className="modalNextButtonJh" onClick={handleNextImage}>▶</button>
           </div>
 
           {/* 이미지 썸네일 리스트 */}
-          <div className="thumbnail-list">
+          <div className="thumbnailListJh">
             {images.map((image, index) => (
               <img
                 key={index}
                 src={image.imageUrl}
                 alt={`Thumbnail ${index}`}
-                style={{ width: '10%', height: 'auto'}}
-                className={`thumbnail-image ${index === selectedImageIndex ? 'active' : ''}`}
+                className={`thumbnailImageJh ${index === selectedImageIndex ? 'active' : ''}`}
                 onClick={() => setSelectedImageIndex(index)}
               />
             ))}

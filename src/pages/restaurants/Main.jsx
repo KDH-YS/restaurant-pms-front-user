@@ -14,8 +14,8 @@ function Main() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (query) {
-      // 검색어를 URL 쿼리 파라미터로 전달
-      navigate(`/restaurant?query=${query}`);
+      // 검색어를 URL 쿼리 파라미터로 전달하여 MenuPage로 이동
+      navigate(`/restaurant?query=${encodeURIComponent(query)}`);
     }
   };
 
