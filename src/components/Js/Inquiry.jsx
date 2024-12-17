@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card, Pagination } from "react-bootstrap";
+import axios from 'axios'; // axios 추가
 import "../../css/inquiry.css";
 
 export function NoticeBoard() {
@@ -11,36 +12,32 @@ export function NoticeBoard() {
   const [showNewNoticeForm, setShowNewNoticeForm] = useState(false);
   const [newNotice, setNewNotice] = useState({ title: "", content: "" });
 
-  useEffect(() => {
-    // API 호출을 위해 fetch 사용
-    const fetchNotices = async () => {
-      const requestData = {
-        bbsId: "BBSMSTR_AAAAAAAAAAAA",
-        pageIndex: "1",
-        searchCnd: "0",
-        searchWrd: ""
-      };
-
-      try {
-        // GET 요청을 위한 URL 및 쿼리 파라미터 추가
-        const response = await fetch("http://13.124.43.252/board?" + new URLSearchParams(requestData), {
-          method: 'GET',
-        });
-        
-        const data = await response.json();
-        
-        // 응답 코드가 200일 경우 공지사항 데이터 업데이트
-        if (data.resultCode === 200) {
-          setNotices(data.result.resultList);
-        } else {
-          console.error("Failed to load notices:", data.resultMessage);
-        }
-      } catch (error) {
-        console.error("API 호출 중 오류 발생:", error);
+  // Axios를 사용하여 공지사항을 가져오는 함수
+  const fetchNotices = () => {
+    axios.get('http://jennysoft.kr:8080/board', {
+      params: {
+        bbsId: 'BBSMSTR_AAAAAAAAAAAA',
+        pageIndex: 1,
+        searchCnd: 0,
+        searchWrd: ' '
       }
-    };
+      
+    })
+    .then(response => {
+      console.log(response);
+      if (!response.ok) {
+        throw new Error('API 응답 오류');
+        
+      }
+     
+    })
+    .catch(error => {
+      console.error('API 호출 중 오류 발생:', error);
+    });
+  };
 
-    // 데이터 가져오기
+  // useEffect를 사용하여 컴포넌트가 마운트될 때 공지사항 데이터를 가져옴
+  useEffect(() => {
     fetchNotices();
   }, []);
 

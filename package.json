@@ -63,5 +63,5 @@
   "devDependencies": {
     "husky": "^9.1.6"
   },
-  "proxy": "https://localhost:8080"
+  "proxy": "http://localhost:8080"
 }

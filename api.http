@@ -87,3 +87,19 @@ Content-Type: application/json
 ### 스케쥴 가져오기
 GET http://localhost:8080/api/schedule/1
 Content-Type: application/json
+
+
+### 로그인 요청
+POST http://jennysoft.kr:8080/auth/login-jwt
+Content-Type: application/json
+
+{
+    "id": "admin",
+    "password": "1",
+    "userSe": "USR"
+}
+
+
+### 게시판 GET 요청
+GET http://jennysoft.kr:8080/board?bbsId=BBSMSTR_AAAAAAAAAAAA&pageIndex=1&searchCnd=0&searchWrd= HTTP/1.1
+Content-Type: application/json

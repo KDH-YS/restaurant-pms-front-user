@@ -183,14 +183,13 @@ const ManagerReserve = () => {
               <Card.Body style={{ cursor: 'default' }}>
                 <div className="d-flex">
                   <img
-                    src={reservation.user?.profileImageUrl}
-                    alt={reservation.user?.userName}
+                    src="/icon-user.png"
+                    alt={reservation.user?.Name}
                     style={{
                       width: '80px',
                       height: '80px',
                       objectFit: 'cover',
                       borderRadius: '50%',
-                      border: '1px solid black',
                       marginRight: '20px',
                     }}
                   />
