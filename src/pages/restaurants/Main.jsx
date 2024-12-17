@@ -1,25 +1,81 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
+import { fetchRestaurants, getRestaurantImages } from './api';
 
 function Main() {
   const [query, setQuery] = useState('');
+  // 레스토랑
+  const [restaurants, setRestaurants] = useState([]);  // 레스토랑 목록
+  const [restaurantImages, setRestaurantImages] = useState({});  // 레스토랑 이미지
+  const [loading, setLoading] = useState(false);        // 로딩 상태
+  const [error, setError] = useState(null);             // 에러 상태
+  const isRequestPending = useRef(false);
+  const defaultImage = '/fc7ece8e8ee1f5db97577a4622f33975.jpg';  // 기본 이미지 경로
+  
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setQuery(e.target.value);
-  };
-
+  // 검색 이벤트 핸들러
+  const handleInputChange = (e) => setQuery(e.target.value);
   const handleSearch = (e) => {
     e.preventDefault();
-    if (query) {
-      // 검색어를 URL 쿼리 파라미터로 전달
-      navigate(`/restaurant?query=${query}`);
+    if (query) navigate(`/restaurant?query=${query}`);
+  };
+
+  // 전체 레스토랑 데이터 가져오기
+  const fetchRestaurantsData = async () => {
+    if (isRequestPending.current) return;
+
+    isRequestPending.current = true;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchRestaurants(5);
+      if (response.content) {
+        setRestaurants(response.content);
+
+        // 각 레스토랑에 대한 이미지 요청 (병렬 처리)
+        const imagesData = await Promise.all(
+          response.content.map(async (restaurant) => {
+            const images = await getRestaurantImages(restaurant.restaurantId);
+            const representativeImage = images.find((image) => image.imageOrder);
+
+            // 대표 이미지가 없으면 첫 번째 이미지를 사용
+            const imageUrl = representativeImage
+              ? representativeImage.imageUrl
+              : images.length > 0
+              ? images[0].imageUrl
+              : defaultImage;
+
+            return {
+              restaurantId: restaurant.restaurantId,
+              imageUrl: imageUrl,
+            };
+          })
+        );
+
+        // 이미지 데이터를 restaurantImages 상태에 병합
+        const imagesMap = imagesData.reduce((acc, { restaurantId, imageUrl }) => {
+          acc[restaurantId] = imageUrl;
+          return acc;
+        }, {});
+        setRestaurantImages(imagesMap);
+      } else {
+        setRestaurants([]);
+      }
+    } catch (err) {
+      console.error("레스토랑 목록을 가져오는 데 실패했습니다:", err);
+      setError("레스토랑 목록을 가져오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
+      isRequestPending.current = false;
     }
   };
 
-  const [translateX, setTranslateX] = useState("-100%"); // 이동 값 상태 관리
+  console.log(restaurants);
+
   const [images, setImages] = useState([
     '/img/foodimg1.jpg',
     '/img/foodimg1.jpg',
@@ -28,35 +84,35 @@ function Main() {
     '/img/foodimg1.jpg',
   ]);
 
+  const imageWrapperRef = useRef(null); // 이미지 컨테이너 Ref
+
   useEffect(() => {
     const interval = setInterval(() => {
-      // 1. 이미지 이동
-      document.querySelector('.image-wrapper').style.transition = "transform 1s ease-in-out";
-      document.querySelector('.image-wrapper').style.transform = "translateX(-200%)";
+      if (imageWrapperRef.current) {
+        const imageWrapper = imageWrapperRef.current;
+        const firstImage = imageWrapper.children[0]; // 첫 번째 이미지 선택
 
-      // 2. 애니메이션이 끝난 후 첫 번째 이미지를 배열 끝으로 이동
-      setTimeout(() => {
-        setImages((prevImages) => {
-          const [first, ...rest] = prevImages;
-          return [...rest, first]; // 첫 번째 이미지를 배열 끝에 추가
-        });
+        // 1초 후 첫 번째 이미지를 마지막으로 이동
+        setTimeout(() => {
+          imageWrapper.appendChild(firstImage); // 첫 번째 이미지를 append
+        }, 1000);
 
-        // 3. 이동 값을 초기화 (순간적으로 첫 번째 위치로 복귀)
-        document.querySelector('.image-wrapper').style.transition = "none";
-        document.querySelector('.image-wrapper').style.transform = "translateX(-100%)";
-      }, 1000); // 이동 애니메이션 시간과 일치
+        // 이동 후 위치 초기화
+        setTimeout(() => {
+          imageWrapper.style.transition = "none";
+        }, 1000);
+      }
     }, 5000); // 5초마다 실행
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // 정리 함수
   }, []);
 
   return (
     <div className="App">
-      {/* 메인 이미지 배경 */}
-      <Container fluid className="main-banner p-0 position-relative">
-        <div className="image-wrapper">
+      <Container fluid className="main-banner p-0">
+        <div className="image-wrapper" ref={imageWrapperRef}>
           {images.map((src, index) => (
-            <div key={index} className="image-container position-relative">
+            <div key={index} className="image-container">
               <img src={src} alt="Food" className="main-image" />
               {/* 가게 정보 */}
               <div className="store-info">
@@ -65,11 +121,13 @@ function Main() {
                 <p>설명 및 간단한 소개글</p>
               </div>
               {/* 보러가기 버튼 */}
-              <Link to="/restaurant"><button className="visit-btn">보러가기</button></Link>
+              <Link to="/restaurant">
+                <button className="visit-btn">보러가기</button>
+              </Link>
             </div>
           ))}
         </div>
-
+          
         {/* 검색 영역 */}
         <div className="search-container">
           <h2 className="search-title text-white mb-3">
