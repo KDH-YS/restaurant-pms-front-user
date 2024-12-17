@@ -20,11 +20,6 @@ function Main() {
   const handleInputChange = (e) => setQuery(e.target.value);
   const handleSearch = (e) => {
     e.preventDefault();
-<<<<<<< HEAD
-    if (query) {
-      // 검색어를 URL 쿼리 파라미터로 전달하여 MenuPage로 이동
-      navigate(`/restaurant?query=${encodeURIComponent(query)}`);
-=======
     if (query) navigate(`/restaurant?query=${query}`);
   };
 
@@ -77,7 +72,6 @@ function Main() {
     } finally {
       setLoading(false);
       isRequestPending.current = false;
->>>>>>> front/js
     }
   };
 
