@@ -3,7 +3,6 @@ import { useAuthStore } from '../store/authStore';
 import { Navbar, Dropdown, Container } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
-import menubuger from 'img/menubuger.png';
 import '../css/Header.css'; // CSS 파일 import
 
 export function Header() {
@@ -27,7 +26,6 @@ export function Header() {
         alert("로그아웃되었습니다.");
         window.location.href = "/";
     };
-    console.log(token);
     return (
         <Navbar expand="lg" className="navbar-custom">
             <Container fluid>

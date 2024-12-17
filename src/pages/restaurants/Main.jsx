@@ -78,7 +78,6 @@ function Main() {
   useEffect(() => {
     fetchRestaurantsData(); 
   }, []);
-console.log(restaurantImages)
 
   const imageWrapperRef = useRef(null); // 이미지 컨테이너 Ref
 
@@ -110,7 +109,6 @@ console.log(restaurantImages)
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20241103_88%2F17306136505694RmW9_JPEG%2F1000009833.jpg",
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fsearchad-phinf.pstatic.net%2FMjAyNDAyMjRfMjMg%2FMDAxNzA4NzQzMjUzNTA3.RQ5AtZR_ik2FheavCnJ0nA-XAd_l5w62-VGrSEuI_KUg.R8I2Z7_aBfbhUMEGJfX3nQmbnrWrxnIr2W1JDRLvUWkg.PNG%2F3038352-982b6b0c-f66c-49db-aed7-eff835913286.png%26_type%3Dad"
   ];
-console.log(restaurants)
   return (
     <div className="App">
       <Container fluid className="main-banner p-0">
