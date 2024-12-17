@@ -19,6 +19,10 @@ export function ShopReview() {
   const [reviews, setReviews] = useState([]);
   const [reviewImages, setReviewImages] = useState({});
   const [reviewToDelete, setReviewToDelete] = useState(null);
+  const [ratingDistribution, setRatingDistribution] = useState({});
+  const [ratingCount, setRatingCount] = useState({});
+  // 평점
+  const averageRating = reviews[0]?.averageRating || 0; // 평균 평점이 존재하면 사용, 없으면 0
   // 수정
   const [isEditing, setIsEditing] = useState(null); // 수정 중인 리뷰 ID
   const [editedContent, setEditedContent] = useState(""); // 수정 중인 내용
@@ -29,7 +33,6 @@ export function ShopReview() {
   const [reportReason, setReportReason] = useState("OTHER");
   // 도움
   const [helpfulReviews, setHelpfulReviews] = useState({});
-  const [helpfulCount, setHelpfulCount] = useState([]);
 
   // 주스탠드
   const { restaurant } = restaurantStore();
@@ -85,20 +88,23 @@ export function ShopReview() {
   
         // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
         const reviewsData = data.reviews.map(reviewData => ({
-          ...reviewData.review, // 리뷰 관련 필드
-          isHelpful: reviewData.isHelpful, // 좋아요 여부 필드 추가
-          helpfulCount: reviewData.helpfulCount // 좋아요 수 추가
+          ...reviewData.review,
+          isHelpful: reviewData.isHelpful,
+          helpfulCount: reviewData.helpfulCount
         }));
-
-        const helpfulCounts = data.reviews.map((review) => review.helpfulCount);
-
-        setHelpfulCount(helpfulCounts);
+  
         setReviews(reviewsData);
         setReviewImages(data.reviewImages);
+  
+        // 평점 비율 계산 및 상태 업데이트
+        const { ratingCount, ratingDistribution } = calculateRatingDistribution(reviewsData);
+        setRatingCount(ratingCount);
+        setRatingDistribution(ratingDistribution);
+  
         // 좋아요 상태 설정
         const helpfulStatus = {};
         reviewsData.forEach(review => {
-          helpfulStatus[review.reviewId] = review.isHelpful; // 서버에서 가져온 좋아요 상태 반영
+          helpfulStatus[review.reviewId] = review.isHelpful;
         });
         setHelpfulReviews(helpfulStatus);
       } else {
@@ -107,6 +113,24 @@ export function ShopReview() {
     } catch (error) {
       console.error("리뷰 정보를 가져오는 중 오류 발생:", error);
     }
+  };
+  // 평점 비율 계산 함수
+  const calculateRatingDistribution = (reviews) => {
+    const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const totalReviews = reviews.length;
+
+    reviews.forEach((review) => {
+      if (ratingCount[review.rating] !== undefined) {
+        ratingCount[review.rating] += 1;
+      }
+    });
+
+    const ratingDistribution = {};
+    for (let i = 1; i <= 5; i++) {
+      ratingDistribution[i] = totalReviews > 0 ? Math.round((ratingCount[i] / totalReviews) * 100) : 0;
+    }
+
+    return { ratingCount, ratingDistribution };
   };
 
   const fetchUsers = async () => {
@@ -347,14 +371,14 @@ export function ShopReview() {
         <Row md={12} className="text-center js-rating-section">
           <Col md={4} className="js-star-rating">
             <span className="fs-1 text-warning">★</span>
-            <span className="fs-3 fw-bold">4.5</span>
+            <span className="fs-3 fw-bold">{averageRating}</span>
           </Col>
           <Col>
-            <ProgressBar now={80} label="5점 (100개)" className="mb-2" />
-            <ProgressBar now={10} label="4점 (10개)" className="mb-2" />
-            <ProgressBar now={5} label="3점 (5개)" className="mb-2" />
-            <ProgressBar now={2} label="2점 (2개)" className="mb-2" />
-            <ProgressBar now={1} label="1점 (1개)" />
+            <ProgressBar now={ratingDistribution[5]} label={`5점 (${ratingCount[5]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[4]} label={`4점 (${ratingCount[4]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[3]} label={`3점 (${ratingCount[3]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[2]} label={`2점 (${ratingCount[2]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[1]} label={`1점 (${ratingCount[1]}개)`} />
           </Col>
         </Row>
       </Row>
