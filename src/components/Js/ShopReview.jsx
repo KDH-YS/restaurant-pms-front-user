@@ -85,12 +85,13 @@ export function ShopReview() {
         // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
         const reviewsData = data.reviews.map(reviewData => ({
           ...reviewData.review, // 리뷰 관련 필드
-          isHelpful: reviewData.isHelpful // 좋아요 여부 필드 추가
+          isHelpful: reviewData.isHelpful, // 좋아요 여부 필드 추가
+          helpfulCount: reviewData.helpfulCount // 좋아요 수 추가
         }));
   
         setReviews(reviewsData);
         setReviewImages(data.reviewImages);
-  
+      console.log(reviewsData);
         // 좋아요 상태 설정
         const helpfulStatus = {};
         reviewsData.forEach(review => {
@@ -387,18 +388,19 @@ export function ShopReview() {
                     <p className="mb-0 fw-bold">{users[review.userId]}</p>
                     <p className="text-muted small mb-0">{formatDate(review.createdAt)}</p>
                   </Col>
-                  <Col className="d-flex justify-content-end align-items-start">
-                    <img
-                      src="/icons/siren.png"
-                      alt="신고하기"
-                      onClick={() => handleReportClick(review.reviewId)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
+                  <Col className="d-flex justify-content-end align-items-start gap-2">
                     <img
                       src={helpfulReviews[review.reviewId] ? "/icons/heart.svg" : "/icons/heart-regular.svg"}
                       alt="좋아요"
                       onClick={() => handleHelpfulClick(review.reviewId)}
                       style={{ cursor: "pointer" }}
+                    />
+                    <p className="small text-muted">{review.helpfulCount}명의 좋아요</p>
+                    <img
+                      src="/icons/siren.png"
+                      alt="신고하기"
+                      onClick={() => handleReportClick(review.reviewId)}
+                      style={{ cursor: "pointer", marginRight: "10px" }}
                     />
                   </Col>
                   {/* 리뷰 이미지가 있을 경우 표시 */}
