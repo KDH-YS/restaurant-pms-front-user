@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card, Form, Modal, Dropdown } from 'react-bootstrap';
-import 'css/KDH/ReservationStatus.css';
 import * as PortOne from '@portone/browser-sdk/v2';
 import { useNavigate } from 'react-router-dom';
 import usePaginationStore from 'store/pagination';

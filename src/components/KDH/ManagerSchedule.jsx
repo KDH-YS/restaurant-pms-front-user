@@ -5,7 +5,6 @@ import { format, parseISO, isBefore, startOfWeek, endOfWeek, eachDayOfInterval, 
 import { useAuthStore } from 'store/authStore';
 import BulkScheduleModal from './BulkScheduleModal';
 import 'react-calendar/dist/Calendar.css';
-import 'css/KDH/ManagerSchedule.css';
 
 // 시간 옵션 생성 함수
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
@@ -219,85 +218,89 @@ const Manager = () => {
   };
 
   return (
-    <div className="container mt-5 schedulecontainer">
+    <Container className="mt-5 mb-5">
       <h2>영업시간 및 상태 설정</h2>
 
       {/* 캘린더 및 설정 카드 */}
-      <div className="row">
-        <div className="col-md-6">
-          <Card className="schedulecard mt-4">
-            <Card.Body>
-              <Calendar onChange={setDate} value={date} tileClassName={tileClassName} minDate={currentDateTime} />
-            </Card.Body>
-          </Card>
-        </div>
-        <div className="col-md-6">
-          <Card className="schedulecard mt-4">
-            <Card.Body>
-              <Card.Header>{format(date, 'yyyy년 MM월 dd일')} 설정</Card.Header>
-              <Form.Check
-                type="checkbox"
-                label="오픈 상태 (열림/닫힘)"
-                checked={currentSchedule.isOpen || false}
-                onChange={handleOpenChange}
-                disabled={scheduleExists}
-              />
+      <Row className='d-flex h-100'>
+  <Col md={6} className="d-flex">
+    <Card className="mt-4 flex-fill">
+      <Card.Body>
+        <Calendar onChange={setDate} value={date} tileClassName={tileClassName} minDate={currentDateTime} />
+      </Card.Body>
+    </Card>
+  </Col>
+  <Col md={6} className="d-flex">
+    <Card className="schedulecard mt-4 flex-fill">
+      <Card.Body>
+        <Card.Header className='mt-2'>{format(date, 'yyyy년 MM월 dd일')} 설정</Card.Header>
+        <Form.Check
+          className='mt-1'
+          type="checkbox"
+          label="오픈 상태 (열림/닫힘)"
+          checked={currentSchedule.isOpen || false}
+          onChange={handleOpenChange}
+          disabled={scheduleExists}
+        />
 
-              {/* 시간 설정 */}
-              <Row>
-                {['startTime', 'endTime', 'breakStart', 'breakEnd'].map((field) => (
-                  <Col key={field} md={6}>
-                    <Form.Group controlId={`form${field}`}>
-                      <Form.Label style={{ marginTop: '5px' }}>
-                        {field === 'startTime' ? '영업 시작'
-                          : field === 'endTime' ? '영업 종료'
-                          : field === 'breakStart' ? '브레이크 시작'
-                          : '브레이크 종료'} 시간
-                      </Form.Label>
-                      <Form.Control
-                        style={{ marginTop: '5px' }}
-                        as="select"
-                        value={currentSchedule[field] || ''}
-                        onChange={(e) => handleInputChange(field, e.target.value)}
-                        disabled={!currentSchedule.isOpen || scheduleExists}
-                      >
-                        <option value="">선택</option>
-                        {timeOptions.map((time) => (
-                          <option key={time} value={time}>
-                            {time}
-                          </option>
-                        ))}
-                      </Form.Control>
-                    </Form.Group>
-                  </Col>
-                ))}
-              </Row>
-                <Container className="d-flex p-0">
-              <Button 
-                
-                variant="primary" 
-                className="mt-3" 
-                onClick={handleSaveSchedule}
-                disabled={scheduleExists}
-              >
-                일정 저장
-              </Button>
-              <Button 
-                variant="secondary" 
-                className="mt-3 ml-2 ms-auto" 
-                style={{marginLeft:"auto"}}
-                onClick={() => setShowBulkModal(true)}
-              >
-                일괄 일정 입력
-              </Button>
-              </Container>
-              {scheduleExists && (
-                <p className="text-danger mt-2">이 날짜에 이미 일정이 존재합니다. 수정하려면 기존 일정을 삭제해주세요.</p>
-              )}
-            </Card.Body>
-          </Card>
-        </div>
-      </div>
+        {/* 시간 설정 */}
+        <Row className='mt-1'>
+          {['startTime', 'endTime', 'breakStart', 'breakEnd'].map((field) => (
+            <Col key={field} md={6} className='mt-1'>
+              <Form.Group controlId={`form${field}`}>
+                <Form.Label className='mt-2' style={{ marginTop: '5px' }}>
+                  {field === 'startTime' ? '영업 시작'
+                    : field === 'endTime' ? '영업 종료'
+                    : field === 'breakStart' ? '브레이크 시작'
+                    : '브레이크 종료'} 시간
+                </Form.Label>
+                <Form.Control
+                  style={{ marginTop: '5px' }}
+                  as="select"
+                  value={currentSchedule[field] || ''}
+                  onChange={(e) => handleInputChange(field, e.target.value)}
+                  disabled={!currentSchedule.isOpen || scheduleExists}
+                >
+                  <option value="">선택</option>
+                  {timeOptions.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
+          ))}
+        </Row>
+
+        <Container className="d-flex p-0">
+          <Button
+            variant="primary"
+            className="mt-3"
+            onClick={handleSaveSchedule}
+            disabled={scheduleExists}
+          >
+            일정 저장
+          </Button>
+          <Button 
+            variant="secondary"
+            className="mt-3 ms-auto"
+            style={{ marginLeft: 'auto' }}
+            onClick={() => setShowBulkModal(true)}
+          >
+            일괄 일정 입력
+          </Button>
+        </Container>
+
+        {scheduleExists && (
+          <p className="text-danger mt-3 mb-0">이 날짜에 이미 일정이 존재합니다. 수정하려면 기존 일정을 삭제해주세요.</p>
+        )}
+      </Card.Body>
+    </Card>
+  </Col>
+</Row>
+
+
       {/* 저장된 일정 */}
       <div className="mt-5 savedschedule">
         <div className="d-flex justify-content-between align-items-center">
@@ -306,6 +309,7 @@ const Manager = () => {
             {format(date, 'M')}월 {getWeekOfMonth(date)}주차
           </span>
         </div>
+
         {filteredSchedules.length === 0 ? (
           <p>저장된 일정이 없습니다.</p>
         ) : (
@@ -365,6 +369,7 @@ const Manager = () => {
           </Button>
         </div>
       </div>
+
       <BulkScheduleModal
         show={showBulkModal}
         onHide={() => setShowBulkModal(false)}
@@ -372,9 +377,9 @@ const Manager = () => {
         generateTimeOptions={generateTimeOptions}
         savedSchedules={savedSchedules}
       />
-    </div>
+    </Container>
   );
-};
+}
 
 export default Manager;
 

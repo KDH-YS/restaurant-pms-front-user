@@ -188,7 +188,7 @@ const Reserve = () => {
             <Card.Text className="text-muted">{restaurant.roadAddr}</Card.Text>
           </Card.Body>
         </Card>
-
+  
         <Card className="mb-4">
           <Card.Body>
             <Calendar
@@ -203,6 +203,7 @@ const Reserve = () => {
             />
           </Card.Body>
         </Card>
+  
         <Card className="mb-4">
           <Card.Body>
             <Card.Title className="h5 mb-3 reservetimebutton">예약시간</Card.Title>
@@ -221,7 +222,7 @@ const Reserve = () => {
             </Row>
           </Card.Body>
         </Card>
-
+  
         <Card className="mb-4">
           <Card.Body>
             <Card.Title className="h5 mb-3">인원 수</Card.Title>
@@ -238,7 +239,7 @@ const Reserve = () => {
             </Form.Control>
           </Card.Body>
         </Card>
-
+  
         <Card className="mb-4">
           <Card.Body>
             <Card.Title className="h5 mb-3">요청사항</Card.Title>
@@ -251,7 +252,7 @@ const Reserve = () => {
             />
           </Card.Body>
         </Card>
-
+  
         <Card>
           <Card.Body className="d-flex justify-content-between align-items-center">
             <div className="h5 mb-0">
@@ -269,7 +270,8 @@ const Reserve = () => {
         </Card>
       </Container>
     </StyledCard>
-  );
+  )
+  ;
 };
 
 export default Reserve;
