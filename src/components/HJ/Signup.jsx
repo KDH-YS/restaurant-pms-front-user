@@ -66,6 +66,10 @@ function Signup() {
     phone: "",
   });
 
+  // 아이디 중복 확인 상태 및 메시지
+  const [isIdAvailable, setIsIdAvailable] = useState(null);
+  const [idCheckMessage, setIdCheckMessage] = useState("");
+
   // 입력 값 변경 핸들러
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -73,6 +77,42 @@ function Signup() {
       ...prevState,
       [id]: value,
     }));
+
+    // 아이디 입력 필드가 변경되면 중복 확인 상태 초기화
+    if (id === "userName") {
+      setIsIdAvailable(null);
+      setIdCheckMessage("");
+    }
+  };
+
+  // 아이디 중복 확인 함수
+  const handleCheckIdAvailability = async () => {
+    const { userName } = formData;
+
+    // 아이디가 비어있는 경우
+    if (!userName) {
+      setIsIdAvailable(false);
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/users/checkId/${userName}`
+      );
+
+      if (response.data.success) {
+        setIsIdAvailable(true);
+        alert("사용 가능한 아이디입니다.");
+      } else {
+        setIsIdAvailable(false);
+        alert("이미 사용 중인 아이디입니다.");
+      }
+    } catch (error) {
+      console.error("아이디 중복 확인 중 오류 발생:", error);
+      setIsIdAvailable(false);
+      alert("중복 확인 중 오류가 발생했습니다.");
+    }
   };
 
   // 이메일 인증 상태 관리
@@ -220,7 +260,11 @@ function Signup() {
                   onChange={handleInputChange}
                   autoComplete="off"
                 />
-                <button type="button" className="HjSignupIdCheckBtn">중복확인</button>
+                <button 
+                  type="button" 
+                  className="HjSignupIdCheckBtn"
+                  onClick={handleCheckIdAvailability}
+                >중복확인</button>
               </div>
             </div>
             <br />

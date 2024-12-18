@@ -51,6 +51,20 @@
   box-sizing: border-box;
 }
 
+/* 아이디 중복 확인 메시지 */
+.id-check-message {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.id-check-message.success {
+  color: green;
+}
+
+.id-check-message.error {
+  color: red;
+}
+
 /* 이메일 관련 버튼 컨테이너 */
 .HjEmailBtnContainer {
   display: flex;
