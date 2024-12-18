@@ -62,7 +62,10 @@ function RestaurantsInfo() {
   
     const today = new Date().toISOString().slice(0, 10); // 오늘 날짜 (YYYY-MM-DD 형식)
     const todaySchedule = schedule.find((item) => item.openDate === today);
-  
+
+    if (!todaySchedule) {
+      return <p className="text-muted">오늘의 영업시간 정보가 없습니다.</p>;
+    }
 
   
     setOpen(Number(todaySchedule.isOpen) === 1);
@@ -122,7 +125,7 @@ function RestaurantsInfo() {
           onClick={handleReserveClick}
           style={{backgroundColor: "#f28d28", border:"none"}}
           className="reservation-btn"
-          disabled
+          
           title="가게에 문의해주세요"
         >
           예약하기

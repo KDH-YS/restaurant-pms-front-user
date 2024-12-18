@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Button, Form, Card, Row, Col } from 'react-bootstrap';
+import { Button, Form, Card, Row, Col, Container } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import { format, parseISO, isBefore, startOfWeek, endOfWeek, eachDayOfInterval, differenceInCalendarWeeks } from 'date-fns';
 import { useAuthStore } from 'store/authStore';
@@ -272,22 +272,25 @@ const Manager = () => {
                   </Col>
                 ))}
               </Row>
-
+                <Container className="d-flex p-0">
               <Button 
+                
                 variant="primary" 
                 className="mt-3" 
                 onClick={handleSaveSchedule}
                 disabled={scheduleExists}
               >
-                설정 저장
+                일정 저장
               </Button>
               <Button 
                 variant="secondary" 
-                className="mt-3 ml-2" 
+                className="mt-3 ml-2 ms-auto" 
+                style={{marginLeft:"auto"}}
                 onClick={() => setShowBulkModal(true)}
               >
                 일괄 일정 입력
               </Button>
+              </Container>
               {scheduleExists && (
                 <p className="text-danger mt-2">이 날짜에 이미 일정이 존재합니다. 수정하려면 기존 일정을 삭제해주세요.</p>
               )}
