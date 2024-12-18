@@ -1,39 +1,32 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
-import 'css/KDH/ManagerSchedule.css';
+import Calendar from 'react-calendar';
+import { format, parseISO, isBefore, startOfWeek, endOfWeek, eachDayOfInterval, differenceInCalendarWeeks } from 'date-fns';
 import { useAuthStore } from 'store/authStore';
-import { format, parseISO, isBefore, startOfDay, getWeek, getDate, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import BulkScheduleModal from './BulkScheduleModal';
+import 'react-calendar/dist/Calendar.css';
+import 'css/KDH/ManagerSchedule.css';
+
 // 시간 옵션 생성 함수
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
 // 주차 계산 함수
-
-
+const getWeekOfMonth = (date) => {
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const start = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 });
+  return differenceInCalendarWeeks(date, start, { weekStartsOn: 1 }) + 1;
+};
 
 const Manager = () => {
-  const { token ,restaurantId} = useAuthStore();
+  const { token, restaurantId } = useAuthStore();
   const [date, setDate] = useState(new Date());
   const [schedules, setSchedules] = useState({});
   const [savedSchedules, setSavedSchedules] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [scheduleExists, setScheduleExists] = useState(false); // Added state variable
+  const [scheduleExists, setScheduleExists] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
   const timeOptions = generateTimeOptions();
-  const { startOfWeek, differenceInCalendarWeeks } = require('date-fns');
-  const getWeekOfMonth = (date) => {
-    // 해당 월의 첫날
-    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  
-    // 첫째 날 기준 주의 시작일
-    const start = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 });
-  
-    // 현재 날짜 기준 몇 번째 주인지 계산
-    const week = differenceInCalendarWeeks(date, start, { weekStartsOn: 1 }) + 1;
-  
-    return week;
-  };
+
   // 토요일에 특별한 스타일을 적용하는 함수
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
@@ -75,10 +68,10 @@ const Manager = () => {
       },
     }));
   };
+
   // 저장된 스케줄을 불러오는 함수
   const fetchSavedSchedules = useCallback(async () => {
     try {
-      
       const response = await fetch(`http://localhost:8080/api/restaurants/schedule?restaurantId=${restaurantId}`, {
         method: 'get',
         headers: {
@@ -93,11 +86,11 @@ const Manager = () => {
       console.error('스케줄 불러오기 오류:', error);
       alert(error.message);
     }
-  }, [token]);
+  }, [token, restaurantId]);
 
   useEffect(() => {
     fetchSavedSchedules();
-  }, [token, fetchSavedSchedules]); // token이 변경될 때마다 스케줄을 다시 불러옵니다.
+  }, [fetchSavedSchedules]);
 
   // 스케줄 저장 함수
   const handleSaveSchedule = async () => {
@@ -156,18 +149,17 @@ const Manager = () => {
       );
       if (!response.ok) throw new Error('일정 삭제에 실패했습니다.');
       alert('일정이 삭제되었습니다.');
-      fetchSavedSchedules(); // 삭제 후 최신 데이터 다시 불러오기
+      fetchSavedSchedules();
     } catch (error) {
       console.error('스케줄 삭제 오류:', error);
       alert(error.message);
     }
   };
-  
 
   // 현재 선택된 날짜의 스케줄 정보
   const currentSchedule = schedules[format(date, 'yyyy-MM-dd')] || {};
 
-  useEffect(() => { // Modified useEffect hook
+  useEffect(() => {
     const checkExistingSchedule = () => {
       const dateKey = format(date, 'yyyy-MM-dd');
       const existingSchedule = savedSchedules.find(s => s.openDate === dateKey);
@@ -186,6 +178,45 @@ const Manager = () => {
       })
       .sort((a, b) => parseISO(a.openDate) - parseISO(b.openDate));
   }, [savedSchedules, date]);
+
+  const handleBulkSave = async (startDate, endDate, scheduleDetails) => {
+    const dates = eachDayOfInterval({ start: startDate, end: endDate });
+  
+    let savedCount = 0;
+    let errorCount = 0;
+
+    for (const date of dates) {
+      const schedule = {
+        restaurantId: restaurantId,
+        openDate: format(date, 'yyyy-MM-dd'),
+        ...scheduleDetails
+      };
+
+      try {
+        const response = await fetch('http://localhost:8080/api/restaurants/schedule', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(schedule),
+        });
+
+        if (response.ok) {
+          savedCount++;
+        } else {
+          errorCount++;
+          console.error(`Failed to save schedule for ${schedule.openDate}`);
+        }
+      } catch (error) {
+        errorCount++;
+        console.error(`Error saving schedule for ${schedule.openDate}:`, error);
+      }
+    }
+
+    alert(`일괄 일정 입력 완료:\n저장된 일정: ${savedCount}개\n저장 실패: ${errorCount}개`);
+    fetchSavedSchedules();
+  };
 
   return (
     <div className="container mt-5 schedulecontainer">
@@ -209,7 +240,7 @@ const Manager = () => {
                 label="오픈 상태 (열림/닫힘)"
                 checked={currentSchedule.isOpen || false}
                 onChange={handleOpenChange}
-                disabled={scheduleExists} // Added disabled prop
+                disabled={scheduleExists}
               />
 
               {/* 시간 설정 */}
@@ -228,7 +259,7 @@ const Manager = () => {
                         as="select"
                         value={currentSchedule[field] || ''}
                         onChange={(e) => handleInputChange(field, e.target.value)}
-                        disabled={!currentSchedule.isOpen || scheduleExists} // Added disabled prop
+                        disabled={!currentSchedule.isOpen || scheduleExists}
                       >
                         <option value="">선택</option>
                         {timeOptions.map((time) => (
@@ -246,11 +277,18 @@ const Manager = () => {
                 variant="primary" 
                 className="mt-3" 
                 onClick={handleSaveSchedule}
-                disabled={scheduleExists} // Added disabled prop
+                disabled={scheduleExists}
               >
                 설정 저장
               </Button>
-              {scheduleExists && ( // Added message for existing schedule
+              <Button 
+                variant="secondary" 
+                className="mt-3 ml-2" 
+                onClick={() => setShowBulkModal(true)}
+              >
+                일괄 일정 입력
+              </Button>
+              {scheduleExists && (
                 <p className="text-danger mt-2">이 날짜에 이미 일정이 존재합니다. 수정하려면 기존 일정을 삭제해주세요.</p>
               )}
             </Card.Body>
@@ -324,10 +362,16 @@ const Manager = () => {
           </Button>
         </div>
       </div>
+      <BulkScheduleModal
+        show={showBulkModal}
+        onHide={() => setShowBulkModal(false)}
+        onSave={handleBulkSave}
+        generateTimeOptions={generateTimeOptions}
+        savedSchedules={savedSchedules}
+      />
     </div>
   );
 };
-
 
 export default Manager;
 

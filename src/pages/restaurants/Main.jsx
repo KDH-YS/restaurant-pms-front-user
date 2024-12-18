@@ -116,7 +116,6 @@ const fetchNotices = (pageIndex = 1) => {
     }
   })
   .then(response => {
-    console.log(response);
     if (response.data.resultCode === 200) {
       const resultList = response.data.result.resultList.slice(0, 3); // 3개만 가져오기
       const totalRecordCount = response.data.result.resultCnt;
