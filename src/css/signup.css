@@ -59,7 +59,7 @@
 }
 
 /* 버튼 스타일 */
-.HjEmailSendBtn, .HjEmailCheckBtn {
+.HjSignupIdCheckBtn, .HjEmailSendBtn, .HjEmailCheckBtn {
   flex: 1; /* 버튼이 가능한 공간을 모두 차지하도록 설정 */
   margin-bottom: 15px;
   padding: 10px;
@@ -72,18 +72,50 @@
   transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
 }
 
-.HjEmailSendBtn:hover, .HjEmailCheckBtn:hover {
+.HjSignupIdCheckBtn:hover, .HjEmailSendBtn:hover, .HjEmailCheckBtn:hover {
   background-color: #2980b9;
 }
 
 /* 사업자 여부 체크박스 */
 .HjOwnerCheck {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 20px;
+}
+
+.HjOwnerCheck input[type="checkbox"] {
+  appearance: none; /* 기본 체크박스 스타일 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 10px;
+  position: relative;
+}
+
+.HjOwnerCheck input[type="checkbox"]:checked::before {
+  content: '\2713'; /* 체크 표시 (유니코드) */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #3498db;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .HjOwnerCheck label {
   font-size: 14px;
   color: #495057;
+  cursor: pointer;
+  display: flex; /* 체크박스와 텍스트 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
 }
 
 /* 체크박스 컨테이너 */

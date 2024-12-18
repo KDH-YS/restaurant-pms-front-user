@@ -209,16 +209,20 @@ function Signup() {
           <h2>회원가입</h2>
           <br />
           <div className="HjSignupLabelContainer">
-
-            <label htmlFor="HjSignupInputId" className="HjSignupLabel">아이디:</label>
-            <input
-              type="text"
-              id="userName"
-              placeholder="아이디를 입력하세요"
-              value={formData.userName}
-              onChange={handleInputChange}
-              autoComplete="off" // 자동완성 비활성화
-            />
+            <div className="HjSignupInputGroup">
+              <label htmlFor="userName" className="HjSignupLabel">아이디:</label>
+              <div className="HjSignupInputWithButton">
+                <input
+                  type="text"
+                  id="userName"
+                  placeholder="아이디를 입력하세요"
+                  value={formData.userName}
+                  onChange={handleInputChange}
+                  autoComplete="off"
+                />
+                <button type="button" className="HjSignupIdCheckBtn">중복확인</button>
+              </div>
+            </div>
             <br />
 
             <label htmlFor="HjSignupInputPassword" className="HjSignupLabel">비밀번호:</label>
@@ -243,7 +247,7 @@ function Signup() {
             />
             <br />
 
-            <label htmlFor="HjSignupInputName" className="HjSignupLabel">이름:</label>
+            <label htmlFor="HjSignupInputName" className="HjSignupLabel">닉네임:</label>
             <input
               type="text"
               id="name"
