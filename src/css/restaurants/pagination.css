@@ -1,0 +1,24 @@
+/* MenuPage.css 혹은 원하는 CSS 파일에 추가 */
+.pagination .page-item.active .page-link {
+    background-color: #6c757d; /* secondary color */
+    border-color: #6c757d;
+    color: #fff;
+
+  }
+  
+  .pagination .page-item .page-link {
+    color: #6c757d;  /* secondary text color */
+    border: 1px solid #6c757d;
+  }
+  
+  .pagination .page-item.disabled .page-link {
+    color: #ddd;  /* disabled 색상 */
+    border: 1px solid #ddd;
+  }
+  
+  .pagination .page-item:hover .page-link {
+    background-color: #5a6268; /* secondary hover effect */
+    border-color: #5a6268;
+    color: #fff;
+  }
+  

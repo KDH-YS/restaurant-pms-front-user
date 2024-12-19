@@ -2,16 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/ReviewForm.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export function ReviewForm() {
   const [reviewContent, setReviewContent] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [tasteRating, setTasteRating] = useState(0);
-  const [serviceRating, setServiceRating] = useState(0);
-  const [atmosphereRating, setAtmosphereRating] = useState(0);
-  const [valueRating, setValueRating] = useState(0);
+  const [rating, setRating] = useState(0);
   const [userId] = useState(1);
   const [restaurant, setRestaurant] = useState(null);
   const [restaurantImg, setRestaurantImg] = useState(null);
@@ -19,6 +16,7 @@ export function ReviewForm() {
   const fileInputRef = useRef(null); // Ref for file input
   
   const { restaurantId,reservationId } = useParams();
+  const navigate = useNavigate(); // 네비게이트 훅 사용
 
   const fetchRestaurant = async () => {
     try {
@@ -61,8 +59,8 @@ export function ReviewForm() {
       alert("리뷰 내용을 작성해주세요.");
       return;
     }
-    if (tasteRating === 0 || serviceRating === 0 || atmosphereRating === 0 || valueRating === 0) {
-      alert("모든 평점을 선택해주세요.");
+    if (rating === 0 ) {
+      alert("평점을 선택해주세요.");
       return;
     }
     if (!reservation) {
@@ -74,10 +72,7 @@ export function ReviewForm() {
     formData.append("user_id", userId);
     formData.append("review_content", reviewContent);
     formData.append("restaurant_id", restaurantId);
-    formData.append("taste_rating", tasteRating);
-    formData.append("service_rating", serviceRating);
-    formData.append("atmosphere_rating", atmosphereRating);
-    formData.append("value_rating", valueRating);
+    formData.append("rating", rating);
     formData.append("reservation_id", reservation.reservationId);
 
     selectedFiles.forEach(file => {
@@ -92,6 +87,7 @@ export function ReviewForm() {
 
       if (response.ok) {
         alert("리뷰가 성공적으로 제출되었습니다.");
+        navigate("/ReservationStatus"); // 리뷰 제출 성공 후 이동
       } else {
         const errorData = await response.json();
         alert(`리뷰 제출에 실패했습니다: ${errorData.message || '서버 오류'}`);
@@ -164,6 +160,23 @@ export function ReviewForm() {
 
       <Card className="no-hover">
         <Card.Body>
+
+        <Form.Group className="mb-4">
+          <Form.Label className="fw-bold">평가 (1-5)</Form.Label>
+          
+          <div className="mt-3 d-flex">
+            {[1,2,3,4,5].map((starValue) => (
+              <img
+                key={starValue}
+                src={starValue <= rating ? "/icons/star.svg" : "/icons/star-regular.svg"}
+                alt=""
+                style={{ width: '40px', height: '40px', marginRight: '4px', cursor: 'pointer' }}
+                onClick={() => setRating(starValue)} // 별 클릭 시 해당 rating으로 설정
+              />
+            ))}
+          </div>
+        </Form.Group>
+
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formFile" className="mt-4">
               <Form.Label>이미지 업로드</Form.Label>
@@ -197,31 +210,6 @@ export function ReviewForm() {
               />
             </Form.Group>
 
-            <div className="js-ratings mt-4">
-              {["맛", "서비스", "분위기", "가성비"].map((label, index) => {
-                const rating = [tasteRating, serviceRating, atmosphereRating, valueRating][index];
-                const setter = [setTasteRating, setServiceRating, setAtmosphereRating, setValueRating][index];
-
-                return (
-                  <Form.Group key={label} className="mb-4">
-                    <Form.Label className="fw-bold">{label} 평가 (1-5)</Form.Label>
-                    <Row>
-                      {[1, 2, 3, 4, 5].map((ratingValue) => (
-                        <Col key={ratingValue} xs="auto">
-                          <Form.Check
-                            type="radio"
-                            label={ratingValue}
-                            value={ratingValue}
-                            checked={rating === ratingValue}
-                            onChange={handleRatingChange(setter)}
-                          />
-                        </Col>
-                      ))}
-                    </Row>
-                  </Form.Group>
-                );
-              })}
-            </div>
             <p className="mt-4  mb-0 fw-bold">예약시간</p>
             <p className="mb-0 small">{formatDateTime(reservation.reservationTime)}</p>
             <Button type="submit" variant="primary" className="mt-4 mb-4">리뷰 제출</Button>

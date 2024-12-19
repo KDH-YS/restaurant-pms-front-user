@@ -1,15 +1,52 @@
-/* 헤더 배경색 */
-.navbar{
-    background-color: #FF5733;
-    /* font-family: 'InkLipquid', sans-serif;     */
+/* 기본 컨테이너 크기 설정 및 패딩 조정 */
+.container-fluid {
+    max-width: 1320px; /* 최대 너비 */
+    margin: 0 auto; /* 중앙 정렬 */
 }
+
+/* 헤더 배경색 */
+.navbar-custom {
+    background-color: #FF5733;
+}
+
+/* 로고 이미지 스타일 */
+.navbar-custom > div > a > img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
 /* 헤더 폰트 설정 */
 .navbar-brand {
-    font-size: 2rem; 
-    color: black;
+    font-size: 2rem;
+    color: white !important;
     cursor: pointer;
-  }
+}
+
 /* 드롭다운 아이템 설정 */
 .dropdown-item {
     cursor: pointer;
+}
+
+/* 드롭다운 토글 아이콘 스타일 */
+.custom-dropdown-toggle img {
+    width: 32px;
+}
+.custom-dropdown-toggle::after {
+    display: none !important;
+}
+
+/* 드롭다운 토글 버튼을 오른쪽으로 정렬 */
+.ms-auto {
+    margin-left: auto !important;
+}
+
+/* 드롭다운 메뉴 위치 조정 */
+.custom-dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    text-align: left;
+    min-width: 150px;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }

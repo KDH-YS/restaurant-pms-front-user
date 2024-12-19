@@ -19,6 +19,10 @@ export function ShopReview() {
   const [reviews, setReviews] = useState([]);
   const [reviewImages, setReviewImages] = useState({});
   const [reviewToDelete, setReviewToDelete] = useState(null);
+  const [ratingDistribution, setRatingDistribution] = useState({});
+  const [ratingCount, setRatingCount] = useState({});
+  // 평점
+  const averageRating = reviews[0]?.averageRating || 0; // 평균 평점이 존재하면 사용, 없으면 0
   // 수정
   const [isEditing, setIsEditing] = useState(null); // 수정 중인 리뷰 ID
   const [editedContent, setEditedContent] = useState(""); // 수정 중인 내용
@@ -84,17 +88,23 @@ export function ShopReview() {
   
         // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
         const reviewsData = data.reviews.map(reviewData => ({
-          ...reviewData.review, // 리뷰 관련 필드
-          isHelpful: reviewData.isHelpful // 좋아요 여부 필드 추가
+          ...reviewData.review,
+          isHelpful: reviewData.isHelpful,
+          helpfulCount: reviewData.helpfulCount
         }));
   
         setReviews(reviewsData);
         setReviewImages(data.reviewImages);
   
+        // 평점 비율 계산 및 상태 업데이트
+        const { ratingCount, ratingDistribution } = calculateRatingDistribution(reviewsData);
+        setRatingCount(ratingCount);
+        setRatingDistribution(ratingDistribution);
+  
         // 좋아요 상태 설정
         const helpfulStatus = {};
         reviewsData.forEach(review => {
-          helpfulStatus[review.reviewId] = review.isHelpful; // 서버에서 가져온 좋아요 상태 반영
+          helpfulStatus[review.reviewId] = review.isHelpful;
         });
         setHelpfulReviews(helpfulStatus);
       } else {
@@ -103,6 +113,24 @@ export function ShopReview() {
     } catch (error) {
       console.error("리뷰 정보를 가져오는 중 오류 발생:", error);
     }
+  };
+  // 평점 비율 계산 함수
+  const calculateRatingDistribution = (reviews) => {
+    const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const totalReviews = reviews.length;
+
+    reviews.forEach((review) => {
+      if (ratingCount[review.rating] !== undefined) {
+        ratingCount[review.rating] += 1;
+      }
+    });
+
+    const ratingDistribution = {};
+    for (let i = 1; i <= 5; i++) {
+      ratingDistribution[i] = totalReviews > 0 ? Math.round((ratingCount[i] / totalReviews) * 100) : 0;
+    }
+
+    return { ratingCount, ratingDistribution };
   };
 
   const fetchUsers = async () => {
@@ -201,11 +229,25 @@ export function ShopReview() {
       setShowLoginModal(true);
       return;
     }
-    const currentStatus = helpfulReviews[reviewId];
+  
+    const currentStatus = helpfulReviews[reviewId]; // 현재 좋아요 상태
+    const updatedReviews = reviews.map((review) => {
+      if (review.reviewId === reviewId) {
+        return {
+          ...review,
+          helpfulCount: currentStatus
+            ? review.helpfulCount - 1 // 현재 좋아요 상태일 때 취소
+            : review.helpfulCount + 1, // 좋아요 추가
+        };
+      }
+      return review;
+    });
+  
     try {
       const url = currentStatus
         ? `http://localhost:8080/api/reviews/${reviewId}/helpful?userId=${userId}`
         : `http://localhost:8080/api/reviews/${reviewId}/helpful`;
+  
       const options = {
         method: currentStatus ? "DELETE" : "POST",
         headers: {
@@ -217,42 +259,39 @@ export function ShopReview() {
       if (!currentStatus) {
         options.body = JSON.stringify({
           userId: userId,
-          state: 1
+          state: 1,
         });
       }
   
-      // 서버 요청 전 UI 상태 업데이트 (로딩 상태 표현)
+      // 서버 요청 전 UI를 바로 반영
       setHelpfulReviews((prev) => ({
         ...prev,
-        [reviewId]: null,  // null 값으로 설정하여 로딩 중인 상태 표시
+        [reviewId]: !currentStatus,
       }));
+      setReviews(updatedReviews);
   
       const response = await fetch(url, options);
   
-      // 서버 응답이 성공적일 때만 상태를 업데이트
-      if (response.ok) {
-        setHelpfulReviews((prev) => ({
-          ...prev,
-          [reviewId]: !currentStatus,
-        }));
-        console.log(currentStatus ? "도움이 취소되었습니다." : "도움이 되었습니다.");
-      } else {
-        // 서버 요청 실패 시 원래 상태 복구
+      if (!response.ok) {
+        // 서버 오류 시 원래 상태로 복구
         setHelpfulReviews((prev) => ({
           ...prev,
           [reviewId]: currentStatus,
         }));
-        console.error("도움이 되었습니다/취소를 처리하는 데 실패했습니다.");
+        setReviews(reviews);
+        console.error("서버 오류로 인해 좋아요 처리가 실패했습니다.");
       }
     } catch (error) {
-      // 에러 발생 시 원래 상태 복구
+      // 에러 시 상태 복구
       setHelpfulReviews((prev) => ({
         ...prev,
         [reviewId]: currentStatus,
       }));
+      setReviews(reviews);
       console.error("도움이 되었습니다/취소를 처리하는 중 오류 발생:", error);
     }
   };
+  
 
   const confirmDelete = async () => {
     try {
@@ -332,14 +371,14 @@ export function ShopReview() {
         <Row md={12} className="text-center js-rating-section">
           <Col md={4} className="js-star-rating">
             <span className="fs-1 text-warning">★</span>
-            <span className="fs-3 fw-bold">4.5</span>
+            <span className="fs-3 fw-bold">{averageRating}</span>
           </Col>
           <Col>
-            <ProgressBar now={80} label="5점 (100개)" className="mb-2" />
-            <ProgressBar now={10} label="4점 (10개)" className="mb-2" />
-            <ProgressBar now={5} label="3점 (5개)" className="mb-2" />
-            <ProgressBar now={2} label="2점 (2개)" className="mb-2" />
-            <ProgressBar now={1} label="1점 (1개)" />
+            <ProgressBar now={ratingDistribution[5]} label={`5점 (${ratingCount[5]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[4]} label={`4점 (${ratingCount[4]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[3]} label={`3점 (${ratingCount[3]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[2]} label={`2점 (${ratingCount[2]}개)`} className="mb-2" />
+            <ProgressBar now={ratingDistribution[1]} label={`1점 (${ratingCount[1]}개)`} />
           </Col>
         </Row>
       </Row>
@@ -387,18 +426,19 @@ export function ShopReview() {
                     <p className="mb-0 fw-bold">{users[review.userId]}</p>
                     <p className="text-muted small mb-0">{formatDate(review.createdAt)}</p>
                   </Col>
-                  <Col className="d-flex justify-content-end align-items-start">
-                    <img
-                      src="/icons/siren.png"
-                      alt="신고하기"
-                      onClick={() => handleReportClick(review.reviewId)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
+                  <Col className="d-flex justify-content-end align-items-start gap-2">
                     <img
                       src={helpfulReviews[review.reviewId] ? "/icons/heart.svg" : "/icons/heart-regular.svg"}
                       alt="좋아요"
                       onClick={() => handleHelpfulClick(review.reviewId)}
                       style={{ cursor: "pointer" }}
+                    />
+                    <p className="small text-muted">{review.helpfulCount}명의 좋아요</p>
+                    <img
+                      src="/icons/siren.png"
+                      alt="신고하기"
+                      onClick={() => handleReportClick(review.reviewId)}
+                      style={{ cursor: "pointer", marginRight: "10px" }}
                     />
                   </Col>
                   {/* 리뷰 이미지가 있을 경우 표시 */}
@@ -476,7 +516,7 @@ export function ShopReview() {
       </Row>
 
       {/* 리뷰 삭제 모달 */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>리뷰 삭제</Modal.Title>
         </Modal.Header>
@@ -492,7 +532,7 @@ export function ShopReview() {
       </Modal>
 
       {/* 신고 작성 모달 */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>리뷰 신고하기</Modal.Title>
         </Modal.Header>

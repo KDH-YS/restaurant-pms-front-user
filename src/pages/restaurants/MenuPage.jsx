@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Row, Col, Card } from 'react-bootstrap';
+import { Button, Row, Col, Card, Container } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchRestaurants, getRestaurantImages, searchRestaurants } from './api'; 
 import SearchBar from '../../components/restaurants/SearchBar';  
@@ -23,6 +23,7 @@ const MenuPage = () => {
     page: 1,
     size: 24,
   });
+  const [totalRestaurants, setTotalRestaurants] = useState(0);  // 총 레스토랑 수 상태
   const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지
   const [totalPages, setTotalPages] = useState(1);    // 총 페이지 수
   const [restaurantImages, setRestaurantImages] = useState({});  // 레스토랑 이미지
@@ -31,71 +32,27 @@ const MenuPage = () => {
   const location = useLocation();
   const defaultImage = '/fc7ece8e8ee1f5db97577a4622f33975.jpg';  // 기본 이미지 경로
 
-  // API 요청 함수: 레스토랑 검색
-  const fetchRestaurantsByQuery = async (query, page = 1) => {
-    if (isRequestPending.current) return;
 
+  const fetchRestaurantsData = async (page) => {
+    if (isRequestPending.current) return;
+  
     isRequestPending.current = true;
     setLoading(true);
     setError(null);
-
-    try {
-      const response = await searchRestaurants({ query, page, size: 24 });
-      if (response.content) {
-        setRestaurants(response.content);
-        setTotalPages(response.totalPages);
-      } else {
-        setRestaurants([]);
-        setTotalPages(1);
-      }
-    } catch (err) {
-      console.error('검색 오류:', err);
-      setError('검색 중 오류가 발생했습니다.');
-    } finally {
-      setLoading(false);
-      isRequestPending.current = false;
-    }
-  };
-
-  // 전체 레스토랑 데이터 가져오기
-  const fetchRestaurantsData = async (page = 1) => {
-    if (isRequestPending.current) return;
-
-    isRequestPending.current = true;
-    setLoading(true);
-    setError(null);
-
+  
     try {
       const response = await fetchRestaurants(page, 24);
       if (response.content) {
         setRestaurants(response.content);
+        loadRestaurantImages(response.content);
         setTotalPages(response.totalPages);
-        
-        // 각 레스토랑에 대한 이미지 요청 (병렬 처리)
-        const imagesData = await Promise.all(
-          response.content.map(async (restaurant) => {
-            const images = await getRestaurantImages(restaurant.restaurantId);
-            const representativeImage = images.find(image => image.imageOrder);  // 대표 이미지가 있으면 그것을 사용
-            
-            // 대표 이미지가 없으면 첫 번째 이미지를 사용
-          const imageUrl = representativeImage ? representativeImage.imageUrl : (images.length > 0 ? images[0].imageUrl : defaultImage);
+        setTotalRestaurants(response.totalElements);  // 전체 레스토랑 수 업데이트
 
-            return {
-              restaurantId: restaurant.restaurantId,
-              imageUrl: imageUrl,
-            };
-          })
-        );
-
-        // 이미지 데이터를 restaurantImages 상태에 병합
-        const imagesMap = imagesData.reduce((acc, { restaurantId, imageUrl }) => {
-          acc[restaurantId] = imageUrl;
-          return acc;
-        }, {});
-        setRestaurantImages(imagesMap);
+        // 이미지는 별도의 함수에서 처리
       } else {
         setRestaurants([]);
         setTotalPages(1);
+        setTotalRestaurants(0);  // 전체 레스토랑 수 업데이트
       }
     } catch (err) {
       console.error('레스토랑 목록을 가져오는 데 실패했습니다:', err);
@@ -105,7 +62,33 @@ const MenuPage = () => {
       isRequestPending.current = false;
     }
   };
+  
 
+  const loadRestaurantImages = async (restaurants) => {
+    const imagesData = await Promise.all(
+      restaurants.map(async (restaurant) => {
+        const images = await getRestaurantImages(restaurant.restaurantId);
+        const representativeImage = images.find(image => image.imageOrder);  // 대표 이미지가 있으면 그것을 사용
+  
+        const imageUrl = representativeImage ? representativeImage.imageUrl : (images.length > 0 ? images[0].imageUrl : defaultImage);
+  
+        return {
+          restaurantId: restaurant.restaurantId,
+          imageUrl: imageUrl,
+        };
+      })
+    );
+  
+    // 이미지 데이터를 restaurantImages 상태에 병합
+    const imagesMap = imagesData.reduce((acc, { restaurantId, imageUrl }) => {
+      acc[restaurantId] = imageUrl;
+      return acc;
+    }, {});
+    
+    setRestaurantImages(imagesMap);
+  };
+
+  
   // 검색어 입력 시 상태 업데이트
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -123,17 +106,18 @@ const MenuPage = () => {
       [name]: checked ? true : "",  // 체크되면 'true', 체크 해제되면 '' (비어있는 상태)
     }));
   };
-
+  const handleFilterToggle = (filter) => {
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      [filter]: prevParams[filter] ? false : true,  // 기존 값이 true면 false로, 아니면 true로 변경
+    }));
+  };
   // 페이지 변경 시 호출되는 함수
   const handlePageChange = async (page) => {
-    setCurrentPage(page);
+    if(page === currentPage) return;
 
-    if (searchParams.query) {
-      await handleSearch(page);
-    } else {
-      await fetchRestaurantsData(page);
-    }
-    
+    setCurrentPage(page);
+    await handleSearch(page);
     window.scrollTo(0, 0);
   };
 
@@ -151,15 +135,11 @@ const MenuPage = () => {
       size: 24,
     };
 
-    if (query && searchOption === 'all') {
-      params.query = query;
-    } else {
-      if (query) {
-        if (searchOption === 'name') params.name = query;
-        if (searchOption === 'city') params.city = query;
-        if (searchOption === 'district') params.district = query;
-        if (searchOption === 'neighborhood') params.neighborhood = query;
-        if (searchOption === 'foodType') params.foodType = query;
+    if (query) {
+      if (searchOption === 'all') {
+        params.query = query;
+      } else {
+        params[searchOption] = query;  // 예: searchOption === 'name'일 경우 params.name = query
       }
     }
 
@@ -172,11 +152,17 @@ const MenuPage = () => {
 
       if (response.content) {
         setRestaurants(response.content);
+        loadRestaurantImages(response.content);
         setTotalPages(response.totalPages);
+        setTotalRestaurants(response.totalElements);  // 검색 조건에 맞는 레스토랑 수 업데이트
+        setCurrentPage(page);  // 검색 후 currentPage를 올바르게 업데이트
       } else {
         setRestaurants([]);
         setTotalPages(1);
+        setTotalRestaurants(0);
+        setCurrentPage(1);  // 검색 결과가 없으면 1페이지로 설정
       }
+      
     } catch (err) {
       console.error('검색 오류:', err);
       setError('검색 중 오류가 발생했습니다.');
@@ -193,43 +179,105 @@ const MenuPage = () => {
 
   // 전체 목록 보기
   const handleViewAll = () => {
+     setSearchParams({
+      query: '',
+      searchOption: 'name',
+      name: '',
+      city: '',
+      district: '',
+      neighborhood: '',
+      foodType: '',
+      parkingAvailable: false,
+      reservationAvailable: false,
+      page: 1,
+      size: 24,
+    });
     setCurrentPage(1);
     fetchRestaurantsData(1);
   };
+
+const clearQueryInUrl = () => {
+  const currentPath = location.pathname; // 현재 경로 가져오기
+  const params = new URLSearchParams(location.search);
+  params.delete('query'); // 'query' 파라미터만 삭제
+
+  // 변경된 URL로 이동하되, 쿼리값은 비워둡니다.
+  navigate(`${currentPath}?${params.toString()}`, { replace: true });
+};
 
   useEffect(() => {
     const loadData = async () => {
       const params = new URLSearchParams(location.search);
       const query = params.get('query') || '';
+      const page = parseInt(params.get('page')) || 1;  // page가 없으면 기본값 1
+
       setSearchParams((prevParams) => ({
         ...prevParams,
         query: query,
+        page: page
       }));
-
-      if (query) {
-        await fetchRestaurantsByQuery(query, currentPage);
-      } else {
-        await fetchRestaurantsData(currentPage);
-      }
-    };
-
+      // query가 있으면 검색 실행, 없으면 전체 레스토랑 로드
+    if (query) {
+      console.log("검색 실행");
+      await fetchRestaurantsByQuery(query, page);
+      clearQueryInUrl();  
+    } else {
+      console.log("전체 레스토랑 로드");
+      await fetchRestaurantsData(1);  // 전체 레스토랑 로드
+    }
+  };
+  
     loadData();
-  }, [location.search, currentPage]);
+  }, []);
 
+  
+  /// API 요청 함수: URL에서 query 값을 받아서 검색하는 함수
+const fetchRestaurantsByQuery = async (query, page = 1) => {
+  if (isRequestPending.current) return; // 요청이 이미 진행 중이면 중단
+
+  isRequestPending.current = true; // 요청 시작
+  setLoading(true); // 로딩 시작
+  setError(null); // 이전 에러 초기화
+
+  try {
+    const response = await searchRestaurants({ query, page, size: 24 });
+    if (response.content) {
+      setRestaurants(response.content);  // 검색된 레스토랑 목록 업데이트
+      setTotalPages(response.totalPages);  // 총 페이지 수 설정
+      setTotalRestaurants(response.totalElements);  // 총 레스토랑 수 설정
+    } else {
+      setRestaurants([]);
+      setTotalPages(1);
+      setTotalRestaurants(0);
+    }
+  } catch (err) {
+    console.error('검색 오류:', err);
+    setError('검색 중 오류가 발생했습니다.');
+  } finally {
+    setLoading(false); // 로딩 종료
+    isRequestPending.current = false; // 요청 종료
+  }
+  
+};
   return (
     <div>
-      <h2>레스토랑 검색</h2>
+    <Container>
+      {/* <h2>레스토랑 검색</h2> */}
 
       <SearchBar
         searchParams={searchParams}
         handleInputChange={handleInputChange}
-        handleCheckboxChange={handleCheckboxChange}
+        handleFilterToggle={handleFilterToggle}
         handleSearch={handleSearch}
       />
-
-      <Row className="align-items-center">
-        <Col><h1>레스토랑 목록</h1></Col>
-        <Col className="d-flex justify-content-end">
+    </Container>
+    <hr className='border-dark mt-4'/>
+    <Container>
+      <Row className="align-items-center mt-4">
+        <Col><div className="mb-3">
+      <strong>'{searchParams.query || '전체'}' {totalRestaurants}개의 레스토랑</strong>
+    </div></Col>
+        <Col className="d-flex justify-content-end mb-3">
           <Button variant="secondary" onClick={handleViewAll}>전체 목록 보기</Button>
         </Col>
       </Row>
@@ -248,13 +296,23 @@ const MenuPage = () => {
                     <Card.Img variant="top" src={imageUrl} className="cardImage" />
                   </div>
                   <Card.Body>
-                    <Card.Title>{restaurant.name}</Card.Title>
-                    <Card.Text><strong>주소:</strong> {restaurant.roadAddr || restaurant.jibunAddr}</Card.Text>
-                    <Card.Text><strong>음식 종류:</strong> {restaurant.foodType}</Card.Text>
-                    <Card.Text><strong>전화:</strong> {restaurant.phone}</Card.Text>
-                    <Card.Text><strong>주차 가능:</strong> {restaurant.parkingAvailable ? '가능' : '불가능'}</Card.Text>
-                    <Card.Text><strong>예약 가능:</strong> {restaurant.reservationAvailable ? '가능' : '불가능'}</Card.Text>
-                    <Card.Text><strong>평균 평점:</strong> {restaurant.averageRating || '없음'}</Card.Text>
+                    {/* <Card.Text><strong>전화:</strong> {restaurant.phone}</Card.Text> */}
+                    <Card.Title className='listNameJh mb-0'>{restaurant.name}</Card.Title>
+                    <Card.Text className='listFoodJh text-muted small'> {restaurant.foodType}</Card.Text>
+                    <Card.Text className='listAddrJh small'> {restaurant.roadAddr || restaurant.jibunAddr}</Card.Text>
+                    <Card.Text className='small'>
+                      <span 
+                        className={`badge ${restaurant.reservationAvailable ? 'bg-danger' : ''} rounded-pill me-1 px-2 py-2`}
+                      >
+                        {restaurant.reservationAvailable ? '예약가능' : ''}
+                      </span>
+                      <span 
+                          className={`badge ${restaurant.parkingAvailable ? 'bg-success' : ''} rounded-pill me-1 px-2 py-2`}
+                        >
+                          {restaurant.parkingAvailable ? '주차가능' : ''}
+                        </span>
+                    </Card.Text>
+                    {/* <Card.Text><strong>평균 평점:</strong> {restaurant.averageRating || '없음'}</Card.Text> */}
                   </Card.Body>
                 </Card>
               </Col>
@@ -270,6 +328,7 @@ const MenuPage = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+    </Container>
     </div>
   );
 };

@@ -1,15 +1,15 @@
-import Inquiry from "../components/Js/Inquiry"
+import NoticeBoard from "../components/Js/NoticeBoard"
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-function InquiryPage() {
+function NoticeBoardPage() {
     return (
         <>
         <Header/>
-        <Inquiry/>
+        <NoticeBoard/>
         <Footer/>
         </>
     );
   }
 
-export default InquiryPage;
+export default NoticeBoardPage;

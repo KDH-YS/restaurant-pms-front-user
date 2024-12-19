@@ -43,9 +43,6 @@ function Login() {
   
         // Zustand에 저장 (자동 로그인 여부에 따라)
         setToken(token, rememberMe); // rememberMe 값에 따라 로컬 또는 세션 스토리지에 저장
-        setUserName(userName, rememberMe);
-        setName(name, rememberMe);
-        setUserRole(userRole, rememberMe); // userRole 저장 추가
         console.log(userRole);
         // 상태가 모두 저장된 후에 리다이렉트
         setTimeout(() => {

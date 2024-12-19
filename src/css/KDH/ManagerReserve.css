@@ -25,14 +25,14 @@
   }
   
   .custom-calendar .react-calendar__tile--active {
-    background: #006edc;
+    background: #7babdb;
     color: white;
   }
   
   .reservation-count {
     font-size: 0.8em;
     font-weight: bold;
-    color: #006edc;
+    color: rgb(0, 218, 0);
     margin: 0;
   }
   
