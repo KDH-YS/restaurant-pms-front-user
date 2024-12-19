@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 import "../../css/main.css";
 import "../../css/ReviewForm.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export function ReviewForm() {
   const [reviewContent, setReviewContent] = useState("");
@@ -16,6 +16,7 @@ export function ReviewForm() {
   const fileInputRef = useRef(null); // Ref for file input
   
   const { restaurantId,reservationId } = useParams();
+  const navigate = useNavigate(); // 네비게이트 훅 사용
 
   const fetchRestaurant = async () => {
     try {
@@ -86,6 +87,7 @@ export function ReviewForm() {
 
       if (response.ok) {
         alert("리뷰가 성공적으로 제출되었습니다.");
+        navigate("/ReservationStatus"); // 리뷰 제출 성공 후 이동
       } else {
         const errorData = await response.json();
         alert(`리뷰 제출에 실패했습니다: ${errorData.message || '서버 오류'}`);
