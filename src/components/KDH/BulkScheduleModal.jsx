@@ -36,11 +36,11 @@ const BulkScheduleModal = ({ show, onHide, onSave, generateTimeOptions, savedSch
     onSave(dateRange[0], dateRange[1], scheduleDetails);
     onHide();
   };
-
+  const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>일괄 일정 입력</Modal.Title>
+        <Modal.Title >일괄 일정 입력</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -51,6 +51,7 @@ const BulkScheduleModal = ({ show, onHide, onSave, generateTimeOptions, savedSch
               value={dateRange}
               selectRange={true}
               className="w-100"
+              tileClassName={tileClassName}
             />
           </Form.Group>
           {existingSchedules.length > 0 && (
