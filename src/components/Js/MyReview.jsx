@@ -342,7 +342,7 @@ export function MyReview() {
                             // 수정 중일 때 textarea 표시
                             <textarea
                               ref={textareaRef} // 참조 추가
-                              className="form-control js-review-textarea"
+                              className="form-control js-review-textarea mt-4"
                               value={editedContent}
                               onChange={(e) => {
                                 setEditedContent(e.target.value);

@@ -516,7 +516,7 @@ export function ShopReview() {
       </Row>
 
       {/* 리뷰 삭제 모달 */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>리뷰 삭제</Modal.Title>
         </Modal.Header>
@@ -532,7 +532,7 @@ export function ShopReview() {
       </Modal>
 
       {/* 신고 작성 모달 */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>리뷰 신고하기</Modal.Title>
         </Modal.Header>
