@@ -17,44 +17,62 @@ const ReservationStatus = () => {
   const [newPeople, setNewPeople] = useState(''); // 새로 입력된 인원수
   const [newRequest, setNewRequest] = useState(''); // 새로 입력된 요청사항
   const { token } = useAuthStore();
+  const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
 
-    const { currentPage, setCurrentPage,  setTotalPages, pageGroup } = usePaginationStore();
+  const itemsPerPage = 8;  //  한 페이지에 보여줄 아이템 수
+  const itemsPerGroup = 40; // 한 그룹당 보여줄 아이템 수
+  const history = useNavigate();
+  const statusLabels = {
+    COMPLETED: '방문 완료',
+    RESERVING: '예약 중',
+    PENDING: '결제 대기중',
+    NOSHOW: '노쇼',
+  };
 
-    const itemsPerPage = 8;  //  한 페이지에 보여줄 아이템 수
-    const itemsPerGroup = 40; // 한 그룹당 보여줄 아이템 수
-    const history = useNavigate();
-
-
-
-const fetchReservations = async () => {
-  try {
-    const userId = jwtDecode(token).userId;
-    
-    // API 요청
-    const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${pageGroup}&size=${itemsPerGroup}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
-        'Content-Type': 'application/json'
+  const fetchReservations = async () => {
+    try {
+      const userId = jwtDecode(token).userId;
+  
+      // API 요청
+      const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${pageGroup}&size=300`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      // 응답 상태 확인
+      if (!response.ok) {
+        throw new Error(`예약 데이터를 가져오는 중 오류 발생: ${response.statusText}`);
       }
-    });
-
-    // 응답 상태 확인
-    if (!response.ok) {
-      throw new Error(`예약 데이터를 가져오는 중 오류 발생: ${response.statusText}`);
+  
+      // 응답 본문을 JSON으로 파싱
+      const data = await response.json();
+  
+      // 예약 시간 비교 및 정렬
+      const currentTime = new Date();  // 현재 시간
+      const sortedReservations = data.list.sort((a, b) => {
+        const reservationTimeA = new Date(a.reservationTime);
+        const reservationTimeB = new Date(b.reservationTime);
+  
+        // 예약 시간이 지난 경우 후순위로 미루기 위해, 예약 시간이 더 가까운 것을 먼저 배치
+        if (reservationTimeA < currentTime && reservationTimeB >= currentTime) {
+          return 1;  // 예약시간이 지난 A는 후순위로
+        } else if (reservationTimeA >= currentTime && reservationTimeB < currentTime) {
+          return -1; // 예약시간이 지난 B는 후순위로
+        }
+  
+        return reservationTimeA - reservationTimeB; // 예약 시간이 가까운 것부터 우선적으로 정렬
+      });
+  
+      // 정렬된 예약 데이터를 상태로 설정
+      setReservations(sortedReservations);
+      setTotalPages(Math.ceil(data.total / itemsPerPage));
+    } catch (error) {
+      console.error('예약 데이터를 가져오는 중 오류 발생:', error);
     }
-
-    // 응답 본문을 JSON으로 파싱
-    const data = await response.json();
-
-    // 데이터 처리
-    setReservations(data.list);
-    setTotalPages(Math.ceil(data.total / itemsPerPage));
-  } catch (error) {
-    console.error('예약 데이터를 가져오는 중 오류 발생:', error);
-  }
-};
-
+  };
   
     useEffect(() => {
       fetchReservations();
@@ -83,7 +101,6 @@ const fetchReservations = async () => {
           'Content-Type': 'application/json'
           },
       });
-
       if (response.ok) {
         alert('예약이 취소되었습니다.');
         fetchReservations();
@@ -241,65 +258,59 @@ const fetchReservations = async () => {
     </Col>
   </Row>
 
-  <Row>
-    {currentReservations.map((reservation) => (
-      <Col md={6} key={reservation.reservationId} className="mb-3">
-        <Card>
-          <Card.Header className="fs-5">예약</Card.Header>
-          <Card.Body style={{ cursor: "default" }}>
-            {/* 상단 이미지와 예약 정보 나란히 배치 */}
-            <div className="d-flex">
-              {/* 이미지 부분 */}
-              <img
-                src={reservation.restaurantImage} // 주스탠드에서 받아올 이미지 URL
-                alt={reservation.restaurantName}
-                style={{
-                  width: '120px',
-                  height: '80px',
-                  objectFit: 'cover',
-                  borderRadius: '5px',
-                  marginRight: '20px'
-                }}/>
-
-              {/* 예약 정보 부분 */}
-              <div>
-                <Card.Text>
-                  <strong>레스토랑:</strong> {reservation.restaurantName}<br />
-                  {reservation.reservationTime.split('T')[0]} / {reservation.reservationTime.split('T')[1].substring(0, 5)} / {reservation.numberOfPeople}명<br />
-                  <strong>{reservation.status === "CANCELREQUEST" && "취소 요청"}
-                  {reservation.status === "COMPLETE" && "방문 완료"}
-                  {reservation.status === "RESERVING" && "예약 중"}
-                  {reservation.status === "PENDING" && "결제 대기중"}
-                  {reservation.status === "NOSHOW" && "노쇼"}</strong><br />
-                  <strong>요청 사항 :</strong> {reservation.request}
-                </Card.Text>
+  <Row className="g-4">
+      {currentReservations.map((reservation) => (
+        <Col md={6} key={reservation.reservationId}>
+          <Card className="h-100 d-flex flex-column">
+            <Card.Header className="fs-5">예약</Card.Header>
+            <Card.Body className="d-flex flex-column" style={{ cursor: "default" }}>
+              <div className="d-flex mb-3">
+                <img
+                  src={reservation.restaurantImage}
+                  alt={reservation.restaurantName}
+                  style={{
+                    width: '120px',
+                    height: '80px',
+                    objectFit: 'cover',
+                    borderRadius: '5px',
+                    marginRight: '20px'
+                  }}
+                />
+                <div>
+                  <Card.Text>
+                    <strong>레스토랑:</strong> {reservation.restaurantName}<br />
+                    {reservation.reservationTime.split('T')[0]} / {reservation.reservationTime.split('T')[1].substring(0, 5)} / {reservation.numberOfPeople}명<br />
+                    <strong>{statusLabels[reservation.status]}</strong><br />
+                    <strong>요청 사항 :</strong> {reservation.request}
+                  </Card.Text>
+                </div>
               </div>
-            </div>
-          </Card.Body>
-
-          {/* 예약 취소 및 예약 변경 버튼을 오른쪽 아래로 배치 */}
-          <div className="d-flex justify-content-end p-3">
-            {!isPast(new Date(reservation.reservationTime)) && (
-              <>
-                <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)}>예약 취소</Button>&ensp;
-                <Button variant="secondary" onClick={() => handleOpenChangeModal(reservation)}>예약 변경</Button>&ensp;
-              </>
-            )}
-            {reservation.status === "PENDING" && (
-              <Button variant="primary" onClick={() => handlePay(reservation)}>결제</Button>
-            )}
-            {reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && (
-              <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>
-            )}
-          </div>
-        </Card>
-      </Col>
-    ))}
-  </Row>
+              <div className="mt-auto">
+                <Container className="d-flex justify-content-end p-0">
+                  {!isPast(new Date(reservation.reservationTime)) && (
+                    <>
+                      <Button variant="danger" onClick={() => handleCancelReservation(reservation.reservationId)} className="me-2">예약 취소</Button>
+                      <Button variant="secondary" onClick={() => handleOpenChangeModal(reservation)} className="me-2">예약 변경</Button>
+                    </>
+                  )}
+                  {reservation.status === "PENDING" && (
+                    <Button variant="primary" onClick={() => handlePay(reservation)} className="me-2">결제</Button>
+                  )}
+                  {reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && (
+                    <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>
+                  )}
+                </Container>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
+    </Row>
 
   {/* 페이지네이션 컴포넌트 */}
-  <PaginationComponent onPageChange={handlePageChange} />
-
+  <Container className='mt-4'>
+  <PaginationComponent  onPageChange={handlePageChange} />
+  </Container>
   {/* 예약 변경 Modal */}
   <Modal show={showModal} onHide={handleCloseModal}>
     <Modal.Header closeButton>

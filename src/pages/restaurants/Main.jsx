@@ -247,7 +247,7 @@ const fetchNoticeDetail = (bbsId, nttId) => {
             <h2 className="section-title">공지사항</h2>
           </Col>
           <Col xs="auto">
-            <Link to="http://13.124.43.252/" className="mb-0 d-flex align-items-center" style={{color:"gray"}}>
+            <Link to="http://13.124.43.252/inform/notice" className="mb-0 d-flex align-items-center" style={{color:"gray"}}>
               전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" />
             </Link>
           </Col>

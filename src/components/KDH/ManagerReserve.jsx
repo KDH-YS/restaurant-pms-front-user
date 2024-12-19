@@ -18,6 +18,7 @@ const ManagerReserve = () => {
   const itemsPerGroup = 300;
   const statusOptions = ['전체', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
   const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
+
   useEffect(() => {
     fetchReservations();
   }, []);
@@ -26,26 +27,48 @@ const ManagerReserve = () => {
     filterReservations(statusFilter, selectedDate);
   }, [statusFilter, selectedDate, reservations]);
 
-  const fetchReservations = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      const data = await response.json();
-      setReservations(data.list || []);
-      setFilteredReservations(data.list || []);
-      setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
-    } catch (error) {
-      console.error('예약 정보를 가져오는 중 오류 발생:', error);
-    }
+  const getSessionData = (key) => {
+    const data = sessionStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
   };
 
+  const setSessionData = (key, value) => {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  };
+
+  const fetchReservations = async () => {
+    const cachedData = getSessionData('reservations');
+    const currentTime = new Date().getTime();
+
+    if (cachedData && currentTime - cachedData.timestamp < 60000) {
+      setReservations(cachedData.data.list || []);
+      setFilteredReservations(cachedData.data.list || []);
+      setTotalPages(Math.ceil((cachedData.data.total || 0) / itemsPerPage));
+    } else {
+      try {
+        const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        
+console.log(response)
+        const data = await response.json();
+        setReservations(data.list || []);
+        setFilteredReservations(data.list || []);
+        setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
+        
+        // Save to session storage
+        setSessionData('reservations', { data, timestamp: currentTime });
+      } catch (error) {
+        console.error('예약 정보를 가져오는 중 오류 발생:', error);
+      }
+    }
+  };
   const filterReservations = (status, date) => {
     let filtered = reservations;
     if (status !== '전체') {

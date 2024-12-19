@@ -14,7 +14,7 @@ export function MyReview() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [user, setUser] = useState({});
   const [reviewsToShow, setReviewsToShow] = useState(2);
-  const { token } = useAuthStore();
+  const { token,userId } = useAuthStore();
   const [restaurant, setRestaurant] = useState([]);
   // 신고
   const [reports, setReports] = useState([]); // 신고된 리뷰 목록
@@ -24,8 +24,6 @@ export function MyReview() {
 
   const [loading, setLoading] = useState(false);
 
-  // 주스탠드
-  const userId = jwtDecode(token).userId;
   const textareaRef = useRef(null); // textarea 요소 참조
 
   const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "reports"
@@ -57,7 +55,6 @@ export function MyReview() {
   // 내 리뷰를 가져오는 API
   const fetchMyReviews = async () => {
     try {
-      const userId = jwtDecode(token).userId;
       const response = await fetch(
         `http://localhost:8080/api/reviews/mypage/${userId}`,
         {
