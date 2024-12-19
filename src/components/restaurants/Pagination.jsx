@@ -3,31 +3,13 @@ import { Pagination } from 'react-bootstrap';
 import '../../css/restaurants/pagination.css';
 
 const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
-  // 페이지 범위 계산 (최대 10개 페이지 버튼을 보여주기 위한 함수)
-  const calculatePageRange = (currentPage, totalPages) => {
-    const pagesToShow = 10;  // 최대 10개까지 페이지를 보이게 한다
-    const leftRange = 4; // 왼쪽 4 페이지
-    const rightRange = 5; // 오른쪽 5 페이지
-    let startPage = currentPage - leftRange; // 시작은 현재에서 왼쪽 4
-    let endPage = currentPage + rightRange; // 끝은 현재에서 오른쪽 5
+  const pagesPerRange = 10;  // 한 페이지 범위에 보여줄 페이지 수
+  const currentRangeStart = Math.floor((currentPage - 1) / pagesPerRange) * pagesPerRange + 1; // 현재 페이지의 시작 범위
+  const currentRangeEnd = Math.min(currentRangeStart + pagesPerRange - 1, totalPages); // 현재 페이지의 끝 범위
 
-    if (startPage <= 0) {
-      startPage = 1;
-      endPage = Math.min(pagesToShow, totalPages);
-    }
-    if (endPage > totalPages) {
-      endPage = totalPages;
-      startPage = Math.max(1, totalPages - pagesToShow + 1);
-    }
-
-    return [startPage, endPage];
-  };
-
-  // 페이지 범위 계산
-  const [startPage, endPage] = calculatePageRange(currentPage, totalPages);
+  // 페이지 번호 생성
   const pageNumbers = [];
-
-  for (let i = startPage; i <= endPage; i++) {
+  for (let i = currentRangeStart; i <= currentRangeEnd; i++) {
     pageNumbers.push(i);
   }
 
@@ -36,18 +18,38 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
     return null; // 페이지네이션이 필요 없으면 null 반환
   }
 
+  const handlePrevRange = () => {
+    if (currentRangeStart > 1) {
+      onPageChange(currentRangeStart - pagesPerRange);
+    }
+  };
+
+  const handleNextRange = () => {
+    if (currentRangeEnd < totalPages) {
+      onPageChange(currentRangeStart + pagesPerRange);
+    }
+  };
+
+  const handleFirstPage = () => {
+    onPageChange(1); // 첫 페이지로 이동
+  };
+
+  const handleLastPage = () => {
+    onPageChange(totalPages); // 마지막 페이지로 이동
+  };
+
   return (
     <Pagination className="d-flex justify-content-center mt-4 mb-4">
       {/* 첫 페이지 버튼 */}
       <Pagination.First
-        onClick={() => onPageChange(1)}
+        onClick={handleFirstPage}
         disabled={currentPage === 1}
       />
       
-      {/* 이전 페이지 버튼 */}
+      {/* 이전 10개 버튼 */}
       <Pagination.Prev
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        onClick={handlePrevRange}
+        disabled={currentRangeStart === 1}
       />
 
       {/* 페이지 번호 버튼 */}
@@ -61,15 +63,15 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
         </Pagination.Item>
       ))}
 
-      {/* 다음 페이지 버튼 */}
+      {/* 다음 10개 버튼 */}
       <Pagination.Next
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        onClick={handleNextRange}
+        disabled={currentRangeEnd === totalPages}
       />
       
       {/* 마지막 페이지 버튼 */}
       <Pagination.Last
-        onClick={() => onPageChange(totalPages)}
+        onClick={handleLastPage}
         disabled={currentPage === totalPages}
       />
     </Pagination>

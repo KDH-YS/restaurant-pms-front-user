@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal,Button, Form, Container, Row, Col, ListGroupItem, ListGroup } from 'react-bootstrap';
+import { Modal,Button, Form, Container, Row, Col, ListGroupItem, ListGroup,Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
 import { fetchRestaurants, getRestaurantImages } from './api';
@@ -28,39 +28,40 @@ function Main() {
   };
 
   // 전체 레스토랑 데이터 가져오기
-  const fetchRestaurantsData = async () => {
+  const fetchRestaurantsData = async (page = 1, pageSize = 4) => {
     if (isRequestPending.current) return;
-
+  
     isRequestPending.current = true;
     setLoading(true);
     setError(null);
-
+  
     try {
-      const response = await fetchRestaurants(5);
+      const response = await fetchRestaurants(page, pageSize);
       if (response.content) {
-        const limitedRestaurants = response.content.slice(0, 5); // 처음 5개 가져오기
+        // 레스토랑 목록 설정
+        const limitedRestaurants = response.content.slice(0, pageSize); // 페이지 크기만큼 데이터 가져오기
         setRestaurants(limitedRestaurants);
-
+  
         // 각 레스토랑에 대한 이미지 요청 (병렬 처리)
         const imagesData = await Promise.all(
           limitedRestaurants.map(async (restaurant) => {
             const images = await getRestaurantImages(restaurant.restaurantId);
             const representativeImage = images.find((image) => image.imageOrder);
-
+  
             // 대표 이미지가 없으면 첫 번째 이미지를 사용
             const imageUrl = representativeImage
               ? representativeImage.imageUrl
               : images.length > 0
               ? images[0].imageUrl
               : defaultImage;
-
+  
             return {
               restaurantId: restaurant.restaurantId,
               imageUrl: imageUrl,
             };
           })
         );
-
+  
         // 이미지 데이터를 restaurantImages 상태에 병합
         const imagesMap = imagesData.reduce((acc, { restaurantId, imageUrl }) => {
           acc[restaurantId] = imageUrl;
@@ -71,14 +72,14 @@ function Main() {
         setRestaurants([]);
       }
     } catch (err) {
-      console.error("레스토랑 목록을 가져오는 데 실패했습니다:", err);
-      setError("레스토랑 목록을 가져오는 데 실패했습니다.");
+      console.error('레스토랑 목록을 가져오는 데 실패했습니다:', err);
+      setError('레스토랑 목록을 가져오는 데 실패했습니다.');
     } finally {
       setLoading(false);
       isRequestPending.current = false;
     }
   };
-
+  
   useEffect(() => {
     fetchRestaurantsData(); 
     fetchNotices()
@@ -151,6 +152,61 @@ const fetchNoticeDetail = (bbsId, nttId) => {
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20241103_88%2F17306136505694RmW9_JPEG%2F1000009833.jpg",
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fsearchad-phinf.pstatic.net%2FMjAyNDAyMjRfMjMg%2FMDAxNzA4NzQzMjUzNTA3.RQ5AtZR_ik2FheavCnJ0nA-XAd_l5w62-VGrSEuI_KUg.R8I2Z7_aBfbhUMEGJfX3nQmbnrWrxnIr2W1JDRLvUWkg.PNG%2F3038352-982b6b0c-f66c-49db-aed7-eff835913286.png%26_type%3Dad"
   ];
+
+  // 레스토랑 데이터 가져오기
+  // const fetchRestaurantsData = async (page = 1) => {
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     const response = await fetchRestaurants(page, 4);
+  //     if (response.content) {
+  //       setRestaurants(response.content);
+  //       loadRestaurantImages(response.content);
+  //     } else {
+  //       setRestaurants([]);
+  //     }
+  //   } catch (err) {
+  //     console.error('레스토랑 목록을 가져오는 데 실패했습니다:', err);
+  //     setError('레스토랑 목록을 가져오는 데 실패했습니다.');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+   // 레스토랑 카드 클릭 시 상세 페이지로 이동
+   const handleCardClick = (restaurantId) => {
+    navigate(`/restaurant/${restaurantId}`);
+  };
+
+  const loadRestaurantImages = async (restaurants) => {
+    const imagesData = await Promise.all(
+      restaurants.map(async (restaurant) => {
+        const images = await getRestaurantImages(restaurant.restaurantId);
+        const representativeImage = images.find(image => image.imageOrder);  // 대표 이미지가 있으면 그것을 사용
+  
+        const imageUrl = representativeImage ? representativeImage.imageUrl : (images.length > 0 ? images[0].imageUrl : defaultImage);
+  
+        return {
+          restaurantId: restaurant.restaurantId,
+          imageUrl: imageUrl,
+        };
+      })
+    );
+  
+    // 이미지 데이터를 restaurantImages 상태에 병합
+    const imagesMap = imagesData.reduce((acc, { restaurantId, imageUrl }) => {
+      acc[restaurantId] = imageUrl;
+      return acc;
+    }, {});
+    
+    setRestaurantImages(imagesMap);
+  };
+
+  useEffect(() => {
+      fetchRestaurantsData();  // 전체 레스토랑 페이지네이션
+  }, []);
+
   return (
     <div className="App">
       <Container fluid className="main-banner p-0">
@@ -207,19 +263,42 @@ const fetchNoticeDetail = (bbsId, nttId) => {
           <h2 className="section-title">레스토랑</h2>
           <Link to="/restaurant" className="mb-0 d-flex align-items-center">전체보기 <img src="/icons/right.svg" alt="" className="js-right ms-2" /></Link>
         </div>
-        <Row>
-          {[1, 2, 3].map((_, index) => (
-            <Col key={index} md={4} className="restaurant-card">
-              <div className="card border-0 shadow-sm">
-                <img src="/img/foodimg1.jpg" alt="Restaurant" className="card-img-top" />
-                <div className="card-body">
-                  <h5 className="card-title">가게이름 {index + 1}</h5>
-                  <p className="card-title">설명</p>
-                </div>
-              </div>
-            </Col>
-          ))}
-        </Row>
+      <Row xs={1} sm={2} md={2} lg={4} xl={4} className="g-4 mt-3 restaurant-card">
+        {restaurants.length > 0 ? (
+          restaurants.map((restaurant) => {
+            const imageUrl = restaurantImages[restaurant.restaurantId] || defaultImage;
+            return (
+              <Col key={restaurant.restaurantId}>
+                <Card onClick={() => handleCardClick(restaurant.restaurantId)}>
+                  <div className="cardImageContainer">
+                    <Card.Img variant="top" src={imageUrl} className="cardImage" />
+                  </div>
+                  <Card.Body>
+                    <Card.Title className='listNameJh mb-0'>{restaurant.name}</Card.Title>
+                    <Card.Text className='listFoodJh text-muted small'> {restaurant.foodType}</Card.Text>
+                    <Card.Text className='listAddrJh small'> {restaurant.roadAddr || restaurant.jibunAddr}</Card.Text>
+                    <Card.Text className='small'>
+                      <span 
+                        className={`badge ${restaurant.reservationAvailable ? 'bg-danger' : ''} rounded-pill me-1 px-2 py-2`}
+                      >
+                        {restaurant.reservationAvailable ? '예약가능' : ''}
+                      </span>
+                      <span 
+                          className={`badge ${restaurant.parkingAvailable ? 'bg-success' : ''} rounded-pill me-1 px-2 py-2`}
+                        >
+                          {restaurant.parkingAvailable ? '주차가능' : ''}
+                        </span>
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })
+        ) : (
+          <p>레스토랑이 없습니다.</p>
+        )}
+      </Row>
+
       </Container>
 
       {/* 배너 섹션 */}
@@ -232,7 +311,7 @@ const fetchNoticeDetail = (bbsId, nttId) => {
               <br/> 편리한 예약 시스템을 이용 해보세요.
             </p>
           </div>
-          <a href="/가게등록" className="d-flex align-items-center js-together">
+          <a href="/myPage" className="d-flex align-items-center js-together">
             <p className="">Rechelin과 함께하기</p>
             <img src="/icons/right-white.svg" alt=""/>
           </a>
