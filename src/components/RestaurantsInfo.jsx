@@ -178,16 +178,17 @@ function RestaurantsInfo() {
         {/* 부족한 이미지를 기본 이미지로 채워주기 */}
         {images.length < 3 && (
           Array.from({ length: 3 - images.length }).map((_, index) => (
-            <Col key={`default-${index}`} xs={4} sm={4} md={4} lg={4} className="mb-4 p-0">
-              <Card className="galleryCardJh">
-                <div className="galleryImageContainerJh">
+            <Col key={`default-${index}`} xs={4} sm={4} md={4} lg={4} className="mb-4 p-0"style={{maxHeight:"500px"}}>
+              <Card className="galleryCardJh"style={{maxHeight:"500px"}}>
+                <Container className="galleryImageContainerJh">
                   <Card.Img
+                  style={{maxHeight:"500px"}}
                     variant="top"
                     src='/fc7ece8e8ee1f5db97577a4622f33975.jpg' // 기본 이미지
                     alt="기본 식당 이미지"
                     className="galleryImageJh"
                   />
-                </div>
+                </Container>
               </Card>
             </Col>
           ))
@@ -231,16 +232,17 @@ function RestaurantsInfo() {
       <Row>
         {/* 기본 이미지 3개 추가 */}
         {Array.from({ length: 3 }).map((_, index) => (
-          <Col key={`default-${index}`} xs={4} sm={4} md={4} lg={4} className="mb-4 p-0">
-            <Card className="galleryCardJh">
-              <div className="galleryImageContainerJh ">
+          <Col key={`default-${index}`} xs={4} sm={4} md={4} lg={4} className="mb-4 p-0"style={{maxHeight:"500px"}}>
+            <Card className="galleryCardJh"style={{maxHeight:"500px"}}>
+              <Container className="galleryImageContainerJh ">
                 <Card.Img
+                style={{maxHeight:"500px"}}
                   variant="top"
                   src='/fc7ece8e8ee1f5db97577a4622f33975.jpg' // 기본 이미지
                   alt="기본 식당 이미지"
                   className="galleryImageJh"
                 />
-              </div>
+              </Container>
             </Card>
           </Col>
         ))}
