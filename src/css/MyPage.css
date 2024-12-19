@@ -1,19 +1,25 @@
-/* Title */
+/* 타이틀 */
 .HjMypageTitle {
   margin-left: 30px;
   font-size: 45px;
+  margin-bottom: 20px;
 }
 
-/* UserProfile */
+/* 프로필 상단(사진, 닉네임, 수정 버튼) */
 .HjUserProfile {
   margin: 0 30px;
   margin-bottom: 30px;
   padding: 15px;
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .HjUserProfile img {
-  width: 250px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .HjUserName {
@@ -28,82 +34,26 @@
   color: blue;
 }
 
-/* Reservation */
-.HjReservation {
+/* 섹션 스타일 */
+.HjMyPageSection {
   border: solid 1px black;
   border-radius: 12px;
-  margin: 0 30px;
-  margin-bottom: 30px;
+  margin: 0 30px 30px 30px;
   padding: 15px;
 }
 
-.HjReservationHeader {
+.HjMyPageSectionHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-.HjReservationHistory {
-  margin-left: auto;
-  text-decoration: none;
-  color: blue;
+.HjMyPageSectionTitle {
+  margin: 0;
 }
 
-/* MyReviewList */
-.HjMyReviewList {
-  border: solid 1px black;
-  border-radius: 12px;
-  margin: 0 30px;
-  margin-bottom: 30px;
-  padding: 15px;
-}
-
-.HjMyReviewListHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.HjMyReviewListAll {
-  text-decoration: none;
-  color: blue;
-}
-
-.HjMyReviewList-list {
-  border: solid 1px black;
-  width: 100%;
-  padding: 5px;
-  margin-top: 10px;
-}
-
-.HjMyReviewList-detail {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  width: 100%;
-}
-
-.HjCreateDate {
-  margin-left: auto;
-}
-
-/* Favorites */
-.HjFavorites {
-  border: solid 1px black;
-  border-radius: 12px;
-  margin: 0 30px;
-  margin-bottom: 30px;
-  padding: 15px;
-}
-
-.HjFavoritesHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.HjFavoritesAll {
-  margin-left: auto;
+.HjMyPageSectionLink {
   text-decoration: none;
   color: blue;
 }

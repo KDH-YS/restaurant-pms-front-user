@@ -15,7 +15,7 @@ export const useAuthStore = create((set) => ({
   userId: getDecodedTokenValue("userId"),
   userName: getDecodedTokenValue("userName"),
   name: getDecodedTokenValue("name"),
-  userRole: getDecodedTokenValue("auth"),
+  userRole: getDecodedTokenValue("userRole"),
   restaurantId: getDecodedTokenValue("restaurantId"),
 
   // 상태 업데이트 액션

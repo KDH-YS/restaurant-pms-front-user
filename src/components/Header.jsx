@@ -17,28 +17,29 @@ const CustomDropdownMenu = styled(Dropdown.Menu)`
 `;
 
 export function Header() {
-    const { token, name, clearAuth,userRole } = useAuthStore();
+    const { token, name, clearAuth, userRole } = useAuthStore();
     const [restaurantId, setRestaurantId] = useState(null);
+    console.log("userRole:", userRole);
 
     useEffect(() => {
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
                 setRestaurantId(decodedToken.restaurantId);
-
+    
             } catch (error) {
                 console.error("Invalid token:", error);
             }
         }
     }, [token]); // token이 변경될 때만 실행
-
+    
     const handleLogout = () => {
         clearAuth();
         localStorage.removeItem("token");
         alert("로그아웃되었습니다.");
         window.location.href = "/"; // 메인페이지로 이동
     };
-
+    
     return (
         <Navbar expand="lg" className="navbar-custom">
             <Container fluid>
@@ -49,7 +50,7 @@ export function Header() {
                     <CustomDropdownToggle drop="start" variant="link">
                         <img src={menubuger} alt="메뉴 아이콘" />
                     </CustomDropdownToggle>
-
+    
                     <CustomDropdownMenu>
                         {token ? (
                             <>
@@ -66,7 +67,7 @@ export function Header() {
                         )}
                         <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
                         <Dropdown.Item as={Link} to="/inquiry">문의하기</Dropdown.Item>
-
+    
                         {/* restaurantId가 존재할 경우 레스토랑 관련 메뉴 추가 */}
                         {restaurantId && (
                             <>
@@ -75,7 +76,7 @@ export function Header() {
                                 <Dropdown.Item as={Link} to="/manager/reserve">레스토랑 예약현황</Dropdown.Item>
                             </>
                         )}
-
+    
                         {token && userRole=='ROLE_ADMIN' && (
                             <>
                                 <Dropdown.Divider />
