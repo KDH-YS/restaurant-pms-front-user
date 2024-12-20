@@ -371,7 +371,7 @@ export function ShopReview() {
         <Row md={12} className="text-center js-rating-section">
           <Col md={4} className="js-star-rating">
             <span className="fs-1 text-warning">★</span>
-            <span className="fs-3 fw-bold">{averageRating}</span>
+            <span className="fs-3 fw-bold">{parseFloat(averageRating).toFixed(1)}</span>
           </Col>
           <Col>
             <ProgressBar now={ratingDistribution[5]} label={`5점 (${ratingCount[5]}개)`} className="mb-2" />
