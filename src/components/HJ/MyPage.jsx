@@ -24,7 +24,7 @@ function MyPage() {
           </div>
 
           {/* 내 레스토랑: 오너만 보임 */}
-          {userRole=='ROLE_ADMIN' && (
+          {userRole=='ROLE_OWNER' && (
             <div className="HjMyPageSection">
               <div className="HjMyPageSectionHeader">
                 <p className="HjMyPageSectionTitle">내 레스토랑</p>
