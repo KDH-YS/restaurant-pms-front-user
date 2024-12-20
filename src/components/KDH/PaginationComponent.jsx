@@ -1,74 +1,86 @@
 import React from 'react';
 import { Pagination } from 'react-bootstrap';
-import usePaginationStore from 'store/pagination';
 
-// PaginationComponent는 페이지네이션 UI를 렌더링하고 동작을 제어하는 컴포넌트입니다.
-const PaginationComponent = ({ onPageChange }) => {
-  // `usePaginationStore`를 사용하여 현재 페이지, 총 페이지 수, 페이지 그룹 등을 가져옵니다.
-  const { currentPage, totalPages, pageGroup, setCurrentPage, setPageGroup } = usePaginationStore();
+const PaginationComponent = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
+  // 전체 페이지 수 계산
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  // 한 그룹당 페이지 수
+  const pagesPerGroup = 5;
+  
+  // 현재 페이지가 속한 그룹 계산
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  
+  // 현재 그룹의 시작 페이지와 끝 페이지 계산
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(currentGroup * pagesPerGroup, totalPages);
 
-  // 페이지네이션 UI를 생성하는 함수입니다.
-  const handlePagination = () => {
-    // 현재 페이지 그룹의 시작 페이지와 끝 페이지를 계산합니다.
-    const pageStart = (pageGroup - 1) * 5 + 1; // 페이지 그룹의 첫 번째 페이지
-    const pageEnd = Math.min(pageStart + 4, totalPages); // 페이지 그룹의 마지막 페이지 (총 페이지 수를 초과하지 않도록 제한)
-
-    // 이전 페이지 그룹으로 이동하는 함수입니다.
-    const handlePrevGroup = () => {
-      if (pageGroup > 1) { // 현재 페이지 그룹이 1보다 크면 이전 그룹으로 이동 가능
-        const newPageGroup = pageGroup - 1; // 이전 페이지 그룹
-        setPageGroup(newPageGroup); // 페이지 그룹 상태를 업데이트
-        setCurrentPage(newPageGroup * 5); // 새로운 페이지 그룹의 마지막 페이지로 이동
-        onPageChange(newPageGroup * 5); // 부모 컴포넌트에 페이지 변경 이벤트 알림
-      }
-    };
-
-    // 다음 페이지 그룹으로 이동하는 함수입니다.
-    const handleNextGroup = () => {
-      if (pageGroup * 5 < totalPages) { // 현재 페이지 그룹이 총 페이지 수를 초과하지 않으면 다음 그룹으로 이동 가능
-        const newPageGroup = pageGroup + 1; // 다음 페이지 그룹
-        setPageGroup(newPageGroup); // 페이지 그룹 상태를 업데이트
-        setCurrentPage((newPageGroup - 1) * 5 + 1); // 새로운 페이지 그룹의 첫 번째 페이지로 이동
-        onPageChange((newPageGroup - 1) * 5 + 1); // 부모 컴포넌트에 페이지 변경 이벤트 알림
-      }
-    };
-
-    // 페이지네이션 UI 요소를 반환합니다.
-    return (
-      <>
-        {/* 이전 그룹으로 이동 버튼 */}
-        <Pagination.Prev
-          disabled={pageGroup === 1} // 페이지 그룹이 첫 번째 그룹일 경우 비활성화
-          onClick={handlePrevGroup} // 클릭 시 이전 그룹으로 이동
-        />
-        {/* 현재 페이지 그룹 내 페이지 번호를 렌더링 */}
-        {[...Array(pageEnd - pageStart + 1)].map((_, index) => (
-          <Pagination.Item
-            key={pageStart + index} // 페이지 번호를 키로 사용
-            active={pageStart + index === currentPage} // 현재 페이지인 경우 활성화 표시
-            onClick={() => {
-              setCurrentPage(pageStart + index); // 클릭한 페이지를 현재 페이지로 설정
-              onPageChange(pageStart + index); // 부모 컴포넌트에 페이지 변경 이벤트 알림
-            }}
-          >
-            {pageStart + index} {/* 페이지 번호 출력 */}
-          </Pagination.Item>
-        ))}
-        {/* 다음 그룹으로 이동 버튼 */}
-        <Pagination.Next
-          disabled={pageGroup * 5 >= totalPages} // 현재 페이지 그룹이 마지막 그룹일 경우 비활성화
-          onClick={handleNextGroup} // 클릭 시 다음 그룹으로 이동
-        />
-      </>
-    );
+  // 페이지 클릭 핸들러
+  const handlePageClick = (page) => {
+    if (page !== currentPage) {
+      onPageChange(page);
+    }
   };
 
-  // 최종적으로 Pagination 컴포넌트를 렌더링합니다.
+  // 그룹 이동 핸들러 (이전/다음)
+  const handleGroupMove = (direction) => {
+    const newPage = direction === 'prev' 
+      ? Math.max(1, startPage - pagesPerGroup)
+      : Math.min(totalPages, endPage + 1);
+    onPageChange(newPage);
+  };
+
+  // 페이지 아이템 렌더링 함수
+  const renderPageItems = () => {
+    const pageItems = [];
+
+    // 현재 그룹의 페이지 번호들을 렌더링
+    for (let i = startPage; i <= endPage; i++) {
+      pageItems.push(
+        <Pagination.Item
+          key={i}
+          active={i === currentPage}
+          onClick={() => handlePageClick(i)}
+        >
+          {i}
+        </Pagination.Item>
+      );
+    }
+
+    return pageItems;
+  };
+
   return (
     <Pagination>
-      {handlePagination()} {/* 페이지네이션 UI를 포함 */}
+      {/* 첫 페이지로 이동 버튼 */}
+      <Pagination.First
+        disabled={currentPage === 1}
+        onClick={() => handlePageClick(1)}
+      />
+      
+      {/* 이전 그룹으로 이동 버튼 */}
+      <Pagination.Prev
+        disabled={currentGroup === 1}
+        onClick={() => handleGroupMove('prev')}
+      />
+      
+      {/* 페이지 번호 버튼들 */}
+      {renderPageItems()}
+      
+      {/* 다음 그룹으로 이동 버튼 */}
+      <Pagination.Next
+        disabled={currentGroup === Math.ceil(totalPages / pagesPerGroup)}
+        onClick={() => handleGroupMove('next')}
+      />
+      
+      {/* 마지막 페이지로 이동 버튼 */}
+      <Pagination.Last
+        disabled={currentPage === totalPages}
+        onClick={() => handlePageClick(totalPages)}
+      />
     </Pagination>
   );
 };
 
 export default PaginationComponent;
+

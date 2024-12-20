@@ -24,7 +24,7 @@ import SchedulePage from './Router/SchedulePage.jsx';
 import NoticeBoardPage from 'Router/NoticeBoardPage';
 
 function App() {
-  const { token, userRole, restaurantId } = useAuthStore();
+  const { token } = useAuthStore();
 
   return (
     <BrowserRouter>
