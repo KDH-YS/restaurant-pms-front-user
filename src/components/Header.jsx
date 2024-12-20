@@ -6,8 +6,9 @@ import { jwtDecode } from 'jwt-decode';
 import '../css/Header.css'; // CSS 파일 import
 
 export function Header() {
-    const { token, name, clearAuth,userRole } = useAuthStore();
+    const { token, name, clearAuth, userRole } = useAuthStore();
     const [restaurantId, setRestaurantId] = useState(null);
+    console.log("userRole:", userRole);
 
     useEffect(() => {
         if (token) {
@@ -58,18 +59,18 @@ export function Header() {
                         <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
 
                         {userRole && userRole.split(',').includes('OWNER') && (
-    <>
-        <Dropdown.Divider />
-        <Dropdown.Item as={Link} to="/manager/schedule">레스토랑 스케줄</Dropdown.Item>
-        <Dropdown.Item as={Link} to="/manager/reserve">레스토랑 예약현황</Dropdown.Item>
-    </>
-)}
+                            <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item as={Link} to="/manager/schedule">레스토랑 스케줄</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/manager/reserve">레스토랑 예약현황</Dropdown.Item>
+                            </>
+                        )}
 
-{token && userRole && userRole.split(',').includes('ADMIN') && (
-    <>
-        <Dropdown.Divider />
-        <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
-    </>
+                        {token && userRole && userRole.split(',').includes('ADMIN') && (
+                            <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+                            </>
                         )}
                     </Dropdown.Menu>
                 </Dropdown>
