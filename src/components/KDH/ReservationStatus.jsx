@@ -28,10 +28,13 @@ const ReservationStatus = () => {
     NOSHOW: '노쇼',
   };
   const itemsPerPage = 8;
-
+  const pagesPerGroup = 5;
+  
+  // 현재 페이지가 속한 그룹 계산
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
   const fetchReservations = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=1&size=400`, {
+      const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${currentGroup}&size=400`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
