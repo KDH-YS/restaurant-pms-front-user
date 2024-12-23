@@ -216,6 +216,7 @@ export function ShopReview() {
           setReportContent("");
           setReportReason("OTHER");
           setShowReportModal(false);
+          alert("신고되었습니다.");
         } else {
           console.error("신고를 접수하는 데 실패했습니다.");
         }
