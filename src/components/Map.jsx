@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import 'css/Map.css';
 import axios from "axios";
 import { restaurantStore } from "store/restaurantStore";

@@ -22,7 +22,6 @@ import Update from "./pages/restaurants/Update.jsx";
 import ManagerReservePage from './Router/ManagerReservePage.jsx';
 import SchedulePage from './Router/SchedulePage.jsx';
 import NoticeBoardPage from 'Router/NoticeBoardPage';
-
 function App() {
   const { token } = useAuthStore();
 
@@ -30,7 +29,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/Restaurant" element={<Restaurant />} />
           <Route path="/Restaurant/:restaurantId" element={<RestaurantInfo />} />
@@ -63,7 +62,10 @@ function App() {
           />
           <Route path="/Login" element={<LoginRouter />} />
           <Route path="/Signup" element={<SignupRouter />} />
-          <Route path="/Mypage" element={<Mypage />} />
+          <Route path="/Mypage" element={
+                          <ProtectedRoute>
+                          <Mypage />
+                        </ProtectedRoute>} />
           <Route path="/editUserProfile" element={<EditUser />} />
           <Route 
             path="/review/myreview" 
