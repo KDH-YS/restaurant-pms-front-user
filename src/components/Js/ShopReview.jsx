@@ -349,7 +349,7 @@ export function ShopReview() {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}.${month}.${day}`;
   };
-console.log(reviewImages);
+
   return (
     <Container className="mt-4">
       {/* 가게 정보 섹션 */}
