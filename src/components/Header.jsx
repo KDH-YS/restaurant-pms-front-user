@@ -6,8 +6,6 @@ import '../css/Header.css'; // CSS 파일 import
 
 export function Header() {
     const { token, name, clearAuth, userRole, restaurantId } = useAuthStore();
-    console.log("userRole:", restaurantId);
-
 
     const handleLogout = () => {
         clearAuth();

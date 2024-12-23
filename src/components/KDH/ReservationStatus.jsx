@@ -237,7 +237,6 @@ const ReservationStatus = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredReservations.slice(indexOfFirstItem, indexOfLastItem);
-console.log(currentItems)
   return (
     <Container className="reservation-status-container">
       <Row className="mb-3">
