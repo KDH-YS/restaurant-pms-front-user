@@ -47,7 +47,6 @@ const ReservationStatus = () => {
       }
 
       const data = await response.json();
-
       const currentTime = new Date();
       const sortedReservations = data.list.sort((a, b) => {
         const reservationTimeA = new Date(a.reservationTime);
@@ -218,7 +217,6 @@ const ReservationStatus = () => {
       alert("결제 중 오류가 발생했습니다.");
     }
   };
-
   const handleReviewClick = (reservation) => {
     const reservationTime = new Date(reservation.reservationTime);
     const currentTime = new Date();
@@ -239,7 +237,7 @@ const ReservationStatus = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredReservations.slice(indexOfFirstItem, indexOfLastItem);
-
+console.log(currentItems)
   return (
     <Container className="reservation-status-container">
       <Row className="mb-3">
@@ -309,9 +307,9 @@ const ReservationStatus = () => {
                     {reservation.status === "PENDING" && (
                       <Button variant="primary" onClick={() => handlePay(reservation)} className="me-2">결제</Button>
                     )}
-                    {reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && (
-                      <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>
-                    )}
+{reservation.status !== "NOSHOW" && reservation.status !== "PENDING" && !reservation.reviewId && (
+  <Button variant="success" onClick={() => handleReviewClick(reservation)}>리뷰 작성</Button>
+        )}
                   </Container>
                 </div>
               </Card.Body>
