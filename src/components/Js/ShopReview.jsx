@@ -88,12 +88,13 @@ export function ShopReview() {
         const data = await response.json();
   
         // 리뷰 데이터가 존재하는지 확인
-        const reviewsData = (data.reviews || []).map(reviewData => ({
-          ...reviewData.review,
-          isHelpful: reviewData.isHelpful || false,
-          helpfulCount: reviewData.helpfulCount || 0
-        }));
-  
+        const reviewsData = (data.reviews || []).map(reviewData => {
+          const reviewId = reviewData.review.reviewId;
+          return {
+            ...reviewData.review,
+            helpfulCount: data.helpfulCounts[reviewId] || 0 // 여기서 올바르게 매핑
+          };
+        });
         setReviews(reviewsData);
   
         // 리뷰 이미지가 존재하는지 확인
@@ -106,11 +107,7 @@ export function ShopReview() {
         setRatingDistribution(ratingDistribution);
   
         // 좋아요 상태 설정
-        const helpfulStatus = {};
-        reviewsData.forEach(review => {
-          helpfulStatus[review.reviewId] = review.isHelpful || false;
-        });
-        setHelpfulReviews(helpfulStatus);
+        setHelpfulReviews(data.isHelpful || {});
       } else {
         console.error("리뷰 정보를 가져오는 데 실패했습니다.");
       }
