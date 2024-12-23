@@ -4,12 +4,13 @@ import "../../css/main.css";
 import "../../css/ReviewForm.css";
 import { useParams, useNavigate } from "react-router-dom";
 
+import { useAuthStore } from "store/authStore";
+
 export function ReviewForm() {
   const [reviewContent, setReviewContent] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [rating, setRating] = useState(0);
-  const [userId] = useState(1);
   const [restaurant, setRestaurant] = useState(null);
   const [restaurantImg, setRestaurantImg] = useState(null);
   const [reservation, setReservation] = useState(null);
@@ -17,6 +18,23 @@ export function ReviewForm() {
   
   const { restaurantId,reservationId } = useParams();
   const navigate = useNavigate(); // 네비게이트 훅 사용
+
+  const { token } = useAuthStore();
+  const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
+
+  // JWT 파싱 함수
+  function parseJwt(token) {
+    if (!token) return null;
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  }
 
   const fetchRestaurant = async () => {
     try {
