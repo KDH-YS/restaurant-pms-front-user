@@ -1,25 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAuthStore } from '../store/authStore';
 import { Navbar, Dropdown, Container } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
 import '../css/Header.css'; // CSS 파일 import
 
 export function Header() {
-    const { token, name, clearAuth, userRole } = useAuthStore();
-    const [restaurantId, setRestaurantId] = useState(null);
-    console.log("userRole:", userRole);
-
-    useEffect(() => {
-        if (token) {
-            try {
-                const decodedToken = jwtDecode(token);
-                setRestaurantId(decodedToken.restaurantId);
-            } catch (error) {
-                console.error("Invalid token:", error);
-            }
-        }
-    }, [token]);
+    const { token, name, clearAuth, userRole, restaurantId } = useAuthStore();
 
     const handleLogout = () => {
         clearAuth();

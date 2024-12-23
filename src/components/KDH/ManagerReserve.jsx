@@ -69,7 +69,6 @@ const ManagerReserve = () => {
         );
         const data = await response.json();
         
-        console.log(data);
         setReservations(data.list || []);
         setTotalItems(data.size);
 
