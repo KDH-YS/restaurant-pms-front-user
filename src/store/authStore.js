@@ -25,48 +25,13 @@ export const useAuthStore = create((set) => ({
     storage.setItem("token", newToken);
     set({ token: newToken });
   },
-
-  setRestaurantId: (newRestaurantId, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("restaurantId", newRestaurantId);
-    set({ restaurantId: newRestaurantId });
-  },
-
-  setUserId: (newUserId, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("userId", newUserId);
-    set({ userId: newUserId });
-  },
-
-  setUserName: (newUserName, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("userName", newUserName);
-    set({ userName: newUserName });
-  },
-
-  setName: (newName, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("name", newName);
-    set({ name: newName });
-  },
-
-  setName: (newEmail, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("email", newEmail);
-    set({ email: newEmail });
-  },
-
-  setName: (newPhone, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("phone", newPhone);
-    set({ phone: newPhone });
-  },
-
-  setUserRole: (newUserRole, rememberMe = false) => {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("auth", newUserRole);
-    set({ userRole: newUserRole });
-  },
+  setRestaurantId: (newRestaurantId) => set({ restaurantId: newRestaurantId }),
+  setUserId: (newUserId) => set({ userId: newUserId }),
+  setUserName: (newUserName) => set({ userName: newUserName }),
+  setName: (newName) => set({ name: newName }),
+  setEmail: (newEmail) => set({ email: newEmail }),
+  setPhone: (newPhone) => set({ phone: newPhone }),
+  setUserRole: (newUserRole) => set({ userRole: newUserRole }),
 
   clearAuth: () => {
     ["token", "userId", "userName", "name", "email", "phone", "userRole", "restaurantId"].forEach(key => {
