@@ -56,7 +56,7 @@ const handleUpdate = async (e) => {
 
   try {
     const response = await axios.put(
-      "http://localhost:8080/api/users/me",
+      `http://localhost:8080/api/users/me/editProfile/${userId}`,
       formData,
       {
         headers: {

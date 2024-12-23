@@ -15,6 +15,8 @@ export const useAuthStore = create((set) => ({
   userId: getDecodedTokenValue("userId"),
   userName: getDecodedTokenValue("userName"),
   name: getDecodedTokenValue("name"),
+  email: getDecodedTokenValue("email"),
+  phone: getDecodedTokenValue("phone"),
   userRole: getDecodedTokenValue("auth"),
   restaurantId: getDecodedTokenValue("restaurantId")?.[0]?.restaurantId || null,// 레스토랑이 여러개일경우 처리 필요
 
@@ -38,7 +40,7 @@ export const useAuthStore = create((set) => ({
 
   setUserName: (newUserName, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("sub", newUserName);
+    storage.setItem("userName", newUserName);
     set({ userName: newUserName });
   },
 
@@ -48,6 +50,18 @@ export const useAuthStore = create((set) => ({
     set({ name: newName });
   },
 
+  setName: (newEmail, rememberMe = false) => {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem("email", newEmail);
+    set({ email: newEmail });
+  },
+
+  setName: (newPhone, rememberMe = false) => {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem("phone", newPhone);
+    set({ phone: newPhone });
+  },
+
   setUserRole: (newUserRole, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage;
     storage.setItem("auth", newUserRole);
@@ -55,7 +69,7 @@ export const useAuthStore = create((set) => ({
   },
 
   clearAuth: () => {
-    ["token", "userId", "userName", "name", "userRole", "restaurantId"].forEach(key => {
+    ["token", "userId", "userName", "name", "email", "phone", "userRole", "restaurantId"].forEach(key => {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
     });
@@ -65,6 +79,8 @@ export const useAuthStore = create((set) => ({
       userId: null,
       userName: null,
       name: null,
+      email: null,
+      phone: null,
       userRole: null,
       restaurantId: null,
     });
