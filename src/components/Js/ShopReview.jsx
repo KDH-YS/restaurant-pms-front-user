@@ -100,7 +100,6 @@ export function ShopReview() {
         // 리뷰 이미지가 존재하는지 확인
         const reviewImagesData = data.images || {};
         setReviewImages(reviewImagesData);
-  
         // 평점 비율 계산 및 상태 업데이트
         const { ratingCount, ratingDistribution } = calculateRatingDistribution(reviewsData);
         setRatingCount(ratingCount);
@@ -350,7 +349,7 @@ export function ShopReview() {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}.${month}.${day}`;
   };
-
+console.log(reviewImages);
   return (
     <Container className="mt-4">
       {/* 가게 정보 섹션 */}
@@ -395,8 +394,9 @@ export function ShopReview() {
         <Col>
           <h3 className="js-section-title">사진/영상 리뷰</h3>
           <Row>
-            {reviews.slice(0, showPhotosCount)
-              .filter(review => reviewImages[review.reviewId] && reviewImages[review.reviewId].length > 0) // 필터링 추가
+            {reviews
+              .filter(review => reviewImages[review.reviewId]?.length > 0) // 이미지를 가진 리뷰만 필터링
+              .slice(0, showPhotosCount) // 표시할 사진 수 제한
               .map((review, index) => (
                 <Col md={4} className="mb-3" key={index}>
                   <img
