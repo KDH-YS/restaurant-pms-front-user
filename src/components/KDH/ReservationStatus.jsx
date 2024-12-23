@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card, Form, Modal, Dropdown } from 'react-bootstrap';
 import * as PortOne from '@portone/browser-sdk/v2';
 import { useNavigate } from 'react-router-dom';
-import usePaginationStore from 'store/pagination';
 import PaginationComponent from './PaginationComponent';
 import { useAuthStore } from 'store/authStore';
 import { isPast, format } from 'date-fns';
@@ -17,11 +16,10 @@ const ReservationStatus = () => {
   const [newPeople, setNewPeople] = useState('');
   const [newRequest, setNewRequest] = useState('');
   const { token, userId } = useAuthStore();
-  const { currentPage, setCurrentPage, setTotalPages, pageGroup } = usePaginationStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const statusOptions = ['전체', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
   const [statusFilter, setStatusFilter] = useState('전체');
-  const itemsPerPage = 8;
-  const itemsPerGroup = 40;
   const history = useNavigate();
   const statusLabels = {
     COMPLETED: '방문 완료',
@@ -29,10 +27,14 @@ const ReservationStatus = () => {
     PENDING: '결제 대기중',
     NOSHOW: '노쇼',
   };
-
+  const itemsPerPage = 8;
+  const pagesPerGroup = 5;
+  
+  // 현재 페이지가 속한 그룹 계산
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
   const fetchReservations = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${pageGroup}&size=400`, {
+      const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${currentGroup}&size=400`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -61,6 +63,7 @@ const ReservationStatus = () => {
       });
 
       setReservations(sortedReservations);
+      setTotalItems(sortedReservations.length);
       filterReservations(sortedReservations, statusFilter);
     } catch (error) {
       console.error('예약 데이터를 가져오는 중 오류 발생:', error);
@@ -69,7 +72,7 @@ const ReservationStatus = () => {
 
   useEffect(() => {
     fetchReservations();
-  }, [pageGroup]);
+  }, []);
 
   useEffect(() => {
     filterReservations(reservations, statusFilter);
@@ -83,8 +86,8 @@ const ReservationStatus = () => {
       );
     }
     setFilteredReservations(filtered);
-    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
-    setCurrentPage(1);  // Reset to first page when filter changes
+    setTotalItems(filtered.length);
+    setCurrentPage(1);
   };
 
   const handleOpenChangeModal = (reservation) => {
@@ -128,6 +131,10 @@ const ReservationStatus = () => {
       alert('이전 날짜와 시간은 선택할 수 없습니다.');
       return;
     }
+    if(newPeople>5){
+      alert('6명이상 단체손님은 가게에 직접문의해주시기 바랍니다.');
+      return;
+    }
     const updatedReservation = {
       restaurantName: selectedReservation.restaurantName,
       reservationTime: `${newDate}T${newTime}:00`,
@@ -140,15 +147,16 @@ const ReservationStatus = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/reservations/${selectedReservation.reservationId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {          
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json'
+         },
         body: JSON.stringify(updatedReservation),
       });
 
       if (response.ok) {
         alert('예약이 변경되었습니다.');
-        setReservations(reservations.map((res) =>
-          res.reservationId === selectedReservation.reservationId ? updatedReservation : res
-        ));
+        fetchReservations();
         handleCloseModal();
       } else {
         alert('예약 변경 실패');
@@ -191,16 +199,16 @@ const ReservationStatus = () => {
         throw new Error("결제 데이터 전송 실패");
       }
 
-      const updateResponse = await fetch(`http://localhost:8080/payment`, {
+      const updateResponse = await fetch(`http://localhost:8080/api/reservations/${reservation.reservationId}`, { // 수정된 부분
         method: "PATCH",
         headers: { 
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json" },
-        body: JSON.stringify(reservation.reservationId),
+        body: JSON.stringify({ status: "RESERVING" }), // 수정된 부분
       });
 
       if (updateResponse.ok) {
-        window.location.reload();
+        fetchReservations();
         alert("결제가 성공적으로 완료되었습니다!");
       } else {
         alert("결제는 성공했으나 상태 업데이트에 실패했습니다.");
@@ -215,23 +223,22 @@ const ReservationStatus = () => {
     const reservationTime = new Date(reservation.reservationTime);
     const currentTime = new Date();
     const timeDifference = currentTime - reservationTime;
-    const oneHour = 60 * 30 * 1000;
+    const oneHour = 60 * 60 * 1000; // 수정: 30분 -> 1시간
 
     if (timeDifference >= oneHour) {
       history(`/review/reviewform/${reservation.restaurantId}/${reservation.reservationId}`);
     } else {
-      alert("리뷰는 예약 시간으로부터 30분이 지난 후에 작성 가능합니다.");
+      alert("리뷰는 예약 시간으로부터 1시간이 지난 후에 작성 가능합니다."); // 수정: 30분 -> 1시간
     }
   };
-
-  const currentReservations = filteredReservations.slice(
-    (currentPage - 1) * itemsPerPage, 
-    currentPage * itemsPerPage
-  );
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredReservations.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <Container className="reservation-status-container">
@@ -265,7 +272,7 @@ const ReservationStatus = () => {
       </Row>
 
       <Row className="g-4">
-        {currentReservations.map((reservation) => (
+        {currentItems.map((reservation) => (
           <Col md={6} key={reservation.reservationId}>
             <Card className="h-100 d-flex flex-column">
               <Card.Header className="fs-5">예약</Card.Header>
@@ -316,7 +323,8 @@ const ReservationStatus = () => {
       <Container className='mt-4'>
         <PaginationComponent 
           currentPage={currentPage}
-          totalPages={Math.ceil(filteredReservations.length / itemsPerPage)}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
           onPageChange={handlePageChange} 
         />
       </Container>
