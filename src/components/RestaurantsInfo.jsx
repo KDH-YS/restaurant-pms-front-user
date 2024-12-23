@@ -135,6 +135,7 @@ function RestaurantsInfo() {
           style={{backgroundColor: "#f28d28", border:"none"}}
           className="reservation-btn"
           title="가게에 문의해주세요"
+          disabled
         >
           예약하기
         </Button>
