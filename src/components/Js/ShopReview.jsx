@@ -33,19 +33,19 @@ export function ShopReview() {
   const [reportReason, setReportReason] = useState("OTHER");
   // 도움
   const [helpfulReviews, setHelpfulReviews] = useState({});
-
   // 주스탠드
   const { restaurant } = restaurantStore();
   const restaurantId = restaurant.restaurantId
   const { token } = useAuthStore();
   const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
-
   // 프론트 상태관리
   const [showReviewsCount, setShowReviewsCount] = useState(5);
   const [showPhotosCount, setShowPhotosCount] = useState(3);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPhotoReviewsOnly, setShowPhotoReviewsOnly] = useState(false);
   const navigate = useNavigate();
+  
+  const imgUrl = "https://storage.cofile.co.kr/ysit24restaurant-bucket/";
   
   // JWT 파싱 함수
   function parseJwt(token) {
@@ -87,15 +87,18 @@ export function ShopReview() {
       if (response.ok) {
         const data = await response.json();
   
-        // 리뷰와 좋아요 상태를 함께 포함한 데이터를 가져오기
-        const reviewsData = data.reviews.map(reviewData => ({
+        // 리뷰 데이터가 존재하는지 확인
+        const reviewsData = (data.reviews || []).map(reviewData => ({
           ...reviewData.review,
-          isHelpful: reviewData.isHelpful,
-          helpfulCount: reviewData.helpfulCount
+          isHelpful: reviewData.isHelpful || false,
+          helpfulCount: reviewData.helpfulCount || 0
         }));
   
         setReviews(reviewsData);
-        setReviewImages(data.reviewImages);
+  
+        // 리뷰 이미지가 존재하는지 확인
+        const reviewImagesData = data.images || {};
+        setReviewImages(reviewImagesData);
   
         // 평점 비율 계산 및 상태 업데이트
         const { ratingCount, ratingDistribution } = calculateRatingDistribution(reviewsData);
@@ -105,7 +108,7 @@ export function ShopReview() {
         // 좋아요 상태 설정
         const helpfulStatus = {};
         reviewsData.forEach(review => {
-          helpfulStatus[review.reviewId] = review.isHelpful;
+          helpfulStatus[review.reviewId] = review.isHelpful || false;
         });
         setHelpfulReviews(helpfulStatus);
       } else {
@@ -115,6 +118,7 @@ export function ShopReview() {
       console.error("리뷰 정보를 가져오는 중 오류 발생:", error);
     }
   };
+
   // 평점 비율 계산 함수
   const calculateRatingDistribution = (reviews) => {
     const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -357,7 +361,7 @@ export function ShopReview() {
           <div className="js-shop-info">
             {restaurantImg.length > 0 ? (
               <img
-                src={restaurantImg[0].imageUrl || "https://via.placeholder.com/648x400"}
+                src={imgUrl + restaurantImg[0].imageUrl}
                 alt="가게 이미지"
                 className="img-fluid mb-3 rounded"
               />
@@ -398,7 +402,7 @@ export function ShopReview() {
               .map((review, index) => (
                 <Col md={4} className="mb-3" key={index}>
                   <img
-                    src={reviewImages[review.reviewId][0].imageUrl}
+                    src={imgUrl + reviewImages[review.reviewId][0].imageUrl}
                     alt={`리뷰 이미지 ${index + 1}`}
                     className="img-fluid rounded shadow-sm"
                   />
@@ -464,7 +468,7 @@ export function ShopReview() {
                     {reviewImages[review.reviewId].map((image, index) => (
                       <img
                         key={index}
-                        src={image.imageUrl}
+                        src={imgUrl + image.imageUrl}
                         alt={`리뷰 이미지 ${index + 1}`}
                         className="img-fluid rounded"
                       />
