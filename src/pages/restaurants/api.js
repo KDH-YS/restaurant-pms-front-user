@@ -1,8 +1,7 @@
 // src/api.js
 import axios from 'axios';
-import baseUrlStore from "store/baseUrlStore";
 
-const {apiUrl} = baseUrlStore();
+const apiUrl = "http://localhost:8080";
 
 //레스토랑 리스트 반환
 export const fetchRestaurants = async (page = 1, size = 24) => {
