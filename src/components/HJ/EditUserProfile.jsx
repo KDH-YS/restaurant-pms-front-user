@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuthStore } from "../../store/authStore"
 
 function EditUserProfile() {
-
+const {token,userId}=useAuthStore();
   // 입력 값 상태
   const [formData, setFormData] = useState({
     userName: "",
@@ -13,8 +13,7 @@ function EditUserProfile() {
     phone: "",
   });
 
-  const token = useAuthStore((state) => state.token);
-  const userId = useAuthStore((state) => state.userId);
+
 
   // 초기 사용자 데이터 로드
   useEffect(() => {
@@ -22,7 +21,7 @@ function EditUserProfile() {
       try {
         const response = await axios.get(`http://localhost:8080/api/users/me/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });

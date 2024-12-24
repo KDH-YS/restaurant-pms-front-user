@@ -44,7 +44,7 @@ export function Header() {
                         )}
                         <Dropdown.Item as={Link} to="/restaurant">레스토랑</Dropdown.Item>
 
-                        {userRole && userRole.split(',').includes('OWNER') && (
+                        {userRole && userRole.split(',').includes('ROLE_OWNER') && (
                             <>
                                 <Dropdown.Divider />
                                 <Dropdown.Item as={Link} to="/manager/schedule">레스토랑 스케줄</Dropdown.Item>
@@ -52,7 +52,7 @@ export function Header() {
                             </>
                         )}
 
-                        {token && userRole && userRole.split(',').includes('ADMIN') && (
+                        {token && userRole && userRole.split(',').includes('ROLE_ADMIN') && (
                             <>
                                 <Dropdown.Divider />
                                 <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
