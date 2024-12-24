@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { restaurantStore } from 'store/restaurantStore';
 import { useAuthStore } from 'store/authStore';
 import { format } from 'date-fns';
+import baseUrlStore from "store/baseUrlStore";
 
 const StyledCard = styled.div`
   .form-control {
@@ -22,7 +23,7 @@ const StyledCard = styled.div`
 
 const Reserve = () => {
   
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   const { token,userId } = useAuthStore();
   const { restaurant } = restaurantStore();
   

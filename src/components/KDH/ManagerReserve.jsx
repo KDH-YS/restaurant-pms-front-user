@@ -3,7 +3,7 @@ import { Button, Container, Row, Col, Card, Dropdown } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import usePaginationStore from 'store/pagination';
+import baseUrlStore from "store/baseUrlStore";
 import PaginationComponent from './PaginationComponent';
 import 'css/KDH/ManagerReserve.css';
 import { useAuthStore } from 'store/authStore';
@@ -25,7 +25,7 @@ const ManagerReserve = () => {
   // 현재 페이지가 속한 그룹 계산
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
 
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // 컴포넌트가 마운트될 때 예약 정보를 가져옴
   useEffect(() => {
     fetchReservations();

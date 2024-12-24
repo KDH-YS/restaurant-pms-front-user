@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import '../../css/signup.css';
 import axios from "axios";
-import { useAuthStore } from "../../store/authStore"
+import { useAuthStore } from "../../store/authStore";
+import baseUrlStore from "store/baseUrlStore";
 
 function EditUserProfile() {
 const {token,userId}=useAuthStore();
-const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const {apiUrl} = baseUrlStore();
   // 입력 값 상태
   const [formData, setFormData] = useState({
     userName: "",

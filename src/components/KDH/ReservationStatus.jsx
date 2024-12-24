@@ -6,6 +6,7 @@ import PaginationComponent from './PaginationComponent';
 import { useAuthStore } from 'store/authStore';
 import { isPast, format } from 'date-fns';
 
+import baseUrlStore from "store/baseUrlStore";
 const ReservationStatus = () => {
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
@@ -29,7 +30,7 @@ const ReservationStatus = () => {
   };
   const itemsPerPage = 8;
   const pagesPerGroup = 5;
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // 현재 페이지가 속한 그룹 계산
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
   const fetchReservations = async () => {

@@ -6,6 +6,7 @@ import "../../css/shopReview.css";
 
 import { useAuthStore } from "store/authStore";
 import { restaurantStore } from 'store/restaurantStore';
+import baseUrlStore from "store/baseUrlStore";
 
 export function ShopReview() {
   // api상태관리
@@ -47,7 +48,7 @@ export function ShopReview() {
   
   const imgUrl = "https://storage.cofile.co.kr/ysit24restaurant-bucket/";
   
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // JWT 파싱 함수
   function parseJwt(token) {
     if (!token) return null;

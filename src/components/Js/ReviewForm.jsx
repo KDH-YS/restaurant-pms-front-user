@@ -4,6 +4,7 @@ import "../../css/main.css";
 import "../../css/ReviewForm.css";
 import { useParams, useNavigate } from "react-router-dom";
 
+import baseUrlStore from "store/baseUrlStore";
 import { useAuthStore } from "store/authStore";
 
 export function ReviewForm() {
@@ -22,7 +23,7 @@ export function ReviewForm() {
   const { token } = useAuthStore();
   const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
 
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // JWT 파싱 함수
   function parseJwt(token) {
     if (!token) return null;

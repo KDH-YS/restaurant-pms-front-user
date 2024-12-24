@@ -5,6 +5,7 @@ import { format, parseISO, isBefore, startOfWeek, endOfWeek, eachDayOfInterval, 
 import { useAuthStore } from 'store/authStore';
 import BulkScheduleModal from './BulkScheduleModal';
 import 'react-calendar/dist/Calendar.css';
+import baseUrlStore from "store/baseUrlStore";
 
 // 시간 옵션 생성 함수
 const generateTimeOptions = () => Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
@@ -26,7 +27,7 @@ const Manager = () => {
   const [showBulkModal, setShowBulkModal] = useState(false);
   const timeOptions = generateTimeOptions();
 
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // 토요일에 특별한 스타일을 적용하는 함수
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 

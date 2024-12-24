@@ -3,9 +3,10 @@ import '../../css/signup.css';
 import '../../css/signup.css';
 import { useState } from "react";
 import axios from "axios";
+import baseUrlStore from "store/baseUrlStore";
 
 function Signup() {
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // 모든 체크박스 상태를 관리
   const [checkboxState, setCheckboxState] = useState({
     HjSignupCheckOwner: false,

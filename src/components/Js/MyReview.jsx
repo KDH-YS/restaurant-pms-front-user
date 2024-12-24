@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, ListGroup, Modal, Badge } from "react-boot
 import "../../css/main.css";
 import "../../css/myreview.css";
 import { useAuthStore } from "store/authStore";
-import { jwtDecode } from "jwt-decode";
+import baseUrlStore from "store/baseUrlStore";
 
 export function MyReview() {
   const [reviews, setReviews] = useState([]);
@@ -23,7 +23,7 @@ export function MyReview() {
   const [showCancleModal, setShowCancleModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   const textareaRef = useRef(null); // textarea 요소 참조
 
   const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "reports"

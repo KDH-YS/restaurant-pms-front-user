@@ -1,7 +1,8 @@
 // src/api.js
 import axios from 'axios';
+import baseUrlStore from "store/baseUrlStore";
 
-const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const {apiUrl} = baseUrlStore();
 
 //레스토랑 리스트 반환
 export const fetchRestaurants = async (page = 1, size = 24) => {

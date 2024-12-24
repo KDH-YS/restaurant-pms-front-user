@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import { jwtDecode } from 'jwt-decode';
 import restaurantIcon from '../../img/restaurant_icon.png';
+import baseUrlStore from "store/baseUrlStore";
 
 function Login() {
 
@@ -17,7 +18,7 @@ function Login() {
   const [rememberMe,setRememberMe]= useState(false);
   // Zustand 스토어에서 상태 및 액션 가져오기
   const {setToken, setUserName, setName, setUserRole} = useAuthStore();
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const {apiUrl} = baseUrlStore();
   // 로그인 요청 처리
   const handleLogin = async (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
