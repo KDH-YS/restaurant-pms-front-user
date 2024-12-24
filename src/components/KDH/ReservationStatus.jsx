@@ -29,12 +29,12 @@ const ReservationStatus = () => {
   };
   const itemsPerPage = 8;
   const pagesPerGroup = 5;
-  
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // 현재 페이지가 속한 그룹 계산
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
   const fetchReservations = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations?userId=${userId}&page=${currentGroup}&size=400`, {
+      const response = await fetch(`${apiUrl}/api/reservations?userId=${userId}&page=${currentGroup}&size=400`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -105,7 +105,7 @@ const ReservationStatus = () => {
 
   const handleCancelReservation = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
+      const response = await fetch(`${apiUrl}/api/reservations/manager/${reservationId}`, {
         method: 'DELETE',
         headers:{
           'Authorization': `Bearer ${token}`,
@@ -144,7 +144,7 @@ const ReservationStatus = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/${selectedReservation.reservationId}`, {
+      const response = await fetch(`${apiUrl}/api/reservations/${selectedReservation.reservationId}`, {
         method: 'PUT',
         headers: {          
           'Authorization': `Bearer ${token}`, 
@@ -186,7 +186,7 @@ const ReservationStatus = () => {
 
       if (response.code) return alert(response.message);
 
-      const paymentResponse = await fetch(`http://localhost:8080/payment`, {
+      const paymentResponse = await fetch(`${apiUrl}/payment`, {
         method: "POST",
         headers: { 
         'Authorization': `Bearer ${token}`,
@@ -198,7 +198,7 @@ const ReservationStatus = () => {
         throw new Error("결제 데이터 전송 실패");
       }
 
-      const updateResponse = await fetch(`http://localhost:8080/api/reservations/${reservation.reservationId}`, { // 수정된 부분
+      const updateResponse = await fetch(`${apiUrl}/api/reservations/${reservation.reservationId}`, { // 수정된 부분
         method: "PATCH",
         headers: { 
         'Authorization': `Bearer ${token}`,

@@ -47,6 +47,7 @@ export function ShopReview() {
   
   const imgUrl = "https://storage.cofile.co.kr/ysit24restaurant-bucket/";
   
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // JWT 파싱 함수
   function parseJwt(token) {
     if (!token) return null;
@@ -63,7 +64,7 @@ export function ShopReview() {
 
   const fetchRestaurant = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurant.restaurantId}`);
+      const response = await fetch(`${apiUrl}/api/restaurants/${restaurant.restaurantId}`);
       if (response.ok) {
         const data = await response.json();
         setRestaurantData(data.restaurant);
@@ -78,7 +79,7 @@ export function ShopReview() {
 
   const fetchReviews = async () => {
     try {
-      let url = `http://localhost:8080/api/restaurants/${restaurant.restaurantId}/reviews`;
+      let url = `${apiUrl}/api/restaurants/${restaurant.restaurantId}/reviews`;
       if (userId) {
         url += `?userId=${userId}`;
       }
@@ -138,7 +139,7 @@ export function ShopReview() {
     if (restaurantId) {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/js/users/${restaurantId}`
+          `${apiUrl}/api/js/users/${restaurantId}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -161,7 +162,7 @@ export function ShopReview() {
   // 리뷰 수정 API 호출
   const handleEditSubmit = async (reviewId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reviews/${reviewId}`, {
+      const response = await fetch(`${apiUrl}/api/reviews/${reviewId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -196,7 +197,7 @@ export function ShopReview() {
   const handleReportSubmit = async () => {
     if (reportReviewId && reportContent) {
       try {
-        const response = await fetch(`http://localhost:8080/api/reviews/${reportReviewId}/report`, {
+        const response = await fetch(`${apiUrl}/api/reviews/${reportReviewId}/report`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -247,8 +248,8 @@ export function ShopReview() {
   
     try {
       const url = currentStatus
-        ? `http://localhost:8080/api/reviews/${reviewId}/helpful?userId=${userId}`
-        : `http://localhost:8080/api/reviews/${reviewId}/helpful`;
+        ? `${apiUrl}/api/reviews/${reviewId}/helpful?userId=${userId}`
+        : `${apiUrl}/api/reviews/${reviewId}/helpful`;
   
       const options = {
         method: currentStatus ? "DELETE" : "POST",
@@ -297,7 +298,7 @@ export function ShopReview() {
 
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reviews/${reviewToDelete}`, {
+      const response = await fetch(`${apiUrl}/api/reviews/${reviewToDelete}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

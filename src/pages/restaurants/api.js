@@ -1,12 +1,12 @@
 // src/api.js
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/api';
+const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
 //레스토랑 리스트 반환
 export const fetchRestaurants = async (page = 1, size = 24) => {
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant`, { params: { page, size } });
+    const response = await axios.get(`${apiUrl}/restaurant`, { params: { page, size } });
     return response.data;  // 응답 데이터 그대로 반환
   } catch (error) {
     console.error('Error fetching restaurants:', error);
@@ -18,7 +18,7 @@ export const fetchRestaurants = async (page = 1, size = 24) => {
 export const searchRestaurants = async (searchParams) => {
   try {
     console.log('API로 전달된 params:', searchParams);  // API로 전달되는 파라미터 확인
-    const response = await axios.get(`${BASE_URL}/restaurant/search`, {
+    const response = await axios.get(`${apiUrl}/restaurant/search`, {
       params: searchParams,  // 검색 조건을 params로 전달
     });
     
@@ -34,7 +34,7 @@ export const searchRestaurants = async (searchParams) => {
 export const fetchRestaurantDetail = async (restaurantId,token) => {
   const restaurantIdString = String(restaurantId);
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant/${restaurantId}`,{
+    const response = await axios.get(`${apiUrl}/restaurant/${restaurantId}`,{
       method:'get',
       headers:{
         'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
@@ -51,7 +51,7 @@ export const fetchRestaurantDetail = async (restaurantId,token) => {
 //메뉴 가져옥api
 export const fetchRestaurantMenu = async (restaurantId,token) => {
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant/menu/${restaurantId}`,{
+    const response = await axios.get(`${apiUrl}/restaurant/menu/${restaurantId}`,{
       method:'get',
       headers:{
         'Authorization': `Bearer ${token}`, // 인증 토큰을 추가
@@ -76,7 +76,7 @@ export const registerRestaurant = async (restaurantData) => {
 
     console.log("전송할 레스토랑 데이터:", dataToSend); // 데이터 확인
 
-    const response = await axios.post(`${BASE_URL}/restaurant/create`, dataToSend);
+    const response = await axios.post(`${apiUrl}/restaurant/create`, dataToSend);
     
     // 서버 응답 메시지 로그 출력
     console.log(response.data.message);
@@ -94,7 +94,7 @@ export const registerRestaurant = async (restaurantData) => {
 
 export const updateRestaurant = async (restaurantId, updatedData) => {
   try {
-    const response = await axios.put(`${BASE_URL}/restaurant/update/${restaurantId}`, updatedData);
+    const response = await axios.put(`${apiUrl}/restaurant/update/${restaurantId}`, updatedData);
 
     // 응답에서 message를 안전하게 반환
     if (response && response.data && response.data.message) {
@@ -113,7 +113,7 @@ export const updateRestaurant = async (restaurantId, updatedData) => {
 
 export const deleteRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/restaurant/delete/${restaurantId}`);
+    const response = await axios.delete(`${apiUrl}/restaurant/delete/${restaurantId}`);
     console.log(response.data.message);
   } catch (error) {
     console.error('레스토랑 삭제 실패:', error.response?.data?.error || error.message);
@@ -123,7 +123,7 @@ export const deleteRestaurant = async (restaurantId) => {
 //스케줄 가져옥api
 export const fetchRestaurantSchedule = async (restaurantId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/schedule/${restaurantId}`,{
+    const response = await axios.get(`${apiUrl}/schedule/${restaurantId}`,{
       method:'get',
       headers:{
         'Content-Type': 'application/json'
@@ -139,7 +139,7 @@ export const fetchRestaurantSchedule = async (restaurantId) => {
 // 메뉴 등록 함수
 export const insertMenu = async (restaurantId, menuData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/restaurant/menu/${restaurantId}/insert`, menuData);
+    const response = await axios.post(`${apiUrl}/restaurant/menu/${restaurantId}/insert`, menuData);
     return response;
   } catch (error) {
     console.error('메뉴 등록 실패:', error);
@@ -150,7 +150,7 @@ export const insertMenu = async (restaurantId, menuData) => {
 // 메뉴 삭제 함수
 export const deleteMenu = async (restaurantId, menuId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/restaurant/menu/${restaurantId}/${menuId}/delete`);
+    const response = await axios.delete(`${apiUrl}/restaurant/menu/${restaurantId}/${menuId}/delete`);
     return response;
   } catch (error) {
     console.error('메뉴 삭제 실패:', error);
@@ -161,7 +161,7 @@ export const deleteMenu = async (restaurantId, menuId) => {
 // 1. 레스토랑 이미지 조회
 export const getRestaurantImages = async (restaurantId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/restaurant/${restaurantId}/image`);
+    const response = await axios.get(`${apiUrl}/restaurant/${restaurantId}/image`);
     return response.data; // 이미지 목록 반환
   } catch (error) {
     console.error('Error fetching images:', error);
@@ -172,7 +172,7 @@ export const getRestaurantImages = async (restaurantId) => {
 export const insertImage = async (restaurantId, formData) => {
   try {
     // POST 요청 (multipart/form-data로 전송)
-    const response = await axios.post(`${BASE_URL}/restaurant/${restaurantId}/image/insert`, formData, {
+    const response = await axios.post(`${apiUrl}/restaurant/${restaurantId}/image/insert`, formData, {
       headers: {
         "Content-Type": "multipart/form-data", // 필수로 명시
       },
@@ -188,7 +188,7 @@ export const insertImage = async (restaurantId, formData) => {
 // 3. 이미지 삭제
 export const deleteImage = async (restaurantId, imageId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/restaurant/${restaurantId}/image/${imageId}/delete`);
+    const response = await axios.delete(`${apiUrl}/restaurant/${restaurantId}/image/${imageId}/delete`);
     return response;
   } catch (error) {
     console.error('Error deleting image:', error);
@@ -200,7 +200,7 @@ export const deleteImage = async (restaurantId, imageId) => {
 export const setMainImage = async (restaurantId, imageDTO) => {
   try { console.log(restaurantId);
     // PUT 요청으로 대표 이미지 설정
-    const response = await axios.put(`${BASE_URL}/restaurant/setMain`, imageDTO, {
+    const response = await axios.put(`${apiUrl}/restaurant/setMain`, imageDTO, {
       params: { restaurantId: Number(restaurantId) } // 여기서 int로 변환
     });
 

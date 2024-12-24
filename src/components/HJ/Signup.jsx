@@ -5,7 +5,7 @@ import { useState } from "react";
 import axios from "axios";
 
 function Signup() {
-
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // 모든 체크박스 상태를 관리
   const [checkboxState, setCheckboxState] = useState({
     HjSignupCheckOwner: false,
@@ -98,7 +98,7 @@ function Signup() {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/users/checkId/${userName}`
+        `${apiUrl}/api/users/checkId/${userName}`
       );
 
       if (response.data.success) {
@@ -165,7 +165,7 @@ function Signup() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/users/signup", {
+      const response = await axios.post(`${apiUrl}/api/users/signup`, {
         userName: formData.userName,
         password: formData.password,
         name: formData.name,
@@ -195,7 +195,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8080/api/users/verify-email", {
+      const response = await axios.post(`${apiUrl}/api/users/verify-email`, {
         email: formData.email,
       }, {
         headers: {
@@ -222,7 +222,7 @@ function Signup() {
     try {      
       console.log(formData.email);
       console.log(authNum);
-      const response = await axios.post("http://localhost:8080/api/users/verify-emailCheck", {
+      const response = await axios.post(`${apiUrl}/api/users/verify-emailCheck`, {
         email: formData.email,
         authNum: authNum
       }, {

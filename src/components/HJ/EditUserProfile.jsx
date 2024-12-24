@@ -5,6 +5,7 @@ import { useAuthStore } from "../../store/authStore"
 
 function EditUserProfile() {
 const {token,userId}=useAuthStore();
+const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // 입력 값 상태
   const [formData, setFormData] = useState({
     userName: "",
@@ -19,7 +20,7 @@ const {token,userId}=useAuthStore();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/users/me/${userId}`, {
+        const response = await axios.get(`${apiUrl}/api/users/me/${userId}`, {
           headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -55,7 +56,7 @@ const handleUpdate = async (e) => {
 
   try {
     const response = await axios.put(
-      `http://localhost:8080/api/users/me/editProfile/${userId}`,
+      `${apiUrl}/api/users/me/editProfile/${userId}`,
       formData,
       {
         headers: {
@@ -67,7 +68,7 @@ const handleUpdate = async (e) => {
 
     // 성공 메시지 출력
     alert("정보가 성공적으로 수정되었습니다.");
-    window.location.href = "http://localhost:3000/mypage"; // 홈 페이지로 이동
+    window.location.href = "/mypage"; // 홈 페이지로 이동
   } catch (error) {
     console.error("정보 수정 중 오류:", error);
     alert("정보 수정 중 오류가 발생했습니다.");

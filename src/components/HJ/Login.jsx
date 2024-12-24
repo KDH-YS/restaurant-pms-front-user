@@ -17,14 +17,14 @@ function Login() {
   const [rememberMe,setRememberMe]= useState(false);
   // Zustand 스토어에서 상태 및 액션 가져오기
   const {setToken, setUserName, setName, setUserRole} = useAuthStore();
-
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // 로그인 요청 처리
   const handleLogin = async (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
   
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/users/login",
+        `${apiUrl}/api/users/login`,
         {
           userName: username,
           password: password,
@@ -47,7 +47,7 @@ function Login() {
         // 상태가 모두 저장된 후에 리다이렉트
         setTimeout(() => {
           alert("로그인에 성공하였습니다.");
-          window.location.href = "http://localhost:3000"; // 홈 페이지로 이동
+          window.location.href = "/"; // 홈 페이지로 이동
         }, 100); // 약간의 딜레이를 추가
       } else {
         setError("아이디 또는 비밀번호가 잘못되었습니다.");

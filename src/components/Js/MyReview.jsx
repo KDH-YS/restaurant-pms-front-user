@@ -23,7 +23,7 @@ export function MyReview() {
   const [showCancleModal, setShowCancleModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
-
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   const textareaRef = useRef(null); // textarea 요소 참조
 
   const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "reports"
@@ -32,7 +32,7 @@ export function MyReview() {
   const fetchUser = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/js/user/${userId}`,
+        `${apiUrl}/api/js/user/${userId}`,
         {
           method: "GET",
           headers: {
@@ -56,7 +56,7 @@ export function MyReview() {
   const fetchMyReviews = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reviews/mypage/${userId}`,
+        `${apiUrl}/api/reviews/mypage/${userId}`,
         {
           method: "GET",
           headers: {
@@ -81,7 +81,7 @@ export function MyReview() {
   const confirmDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reviews/${reviewToDelete}`,
+        `${apiUrl}/api/reviews/${reviewToDelete}`,
         {
           method: "DELETE",
           headers: {
@@ -107,7 +107,7 @@ export function MyReview() {
   const handleEditSubmit = async (reviewId) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reviews/${reviewId}`,
+        `${apiUrl}/api/reviews/${reviewId}`,
         {
           method: "PUT",
           headers: {
@@ -142,7 +142,7 @@ export function MyReview() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/js/reports/mypage/${userId}`,
+        `${apiUrl}/api/js/reports/mypage/${userId}`,
         {
           method: "GET",
           headers: {
@@ -167,7 +167,7 @@ export function MyReview() {
   const confirmCancle = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reports/${reportToDelete}`,
+        `${apiUrl}/api/reports/${reportToDelete}`,
         { method: "DELETE" }
       );
       if (response.ok) {

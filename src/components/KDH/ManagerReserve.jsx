@@ -25,6 +25,7 @@ const ManagerReserve = () => {
   // 현재 페이지가 속한 그룹 계산
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
 
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // 컴포넌트가 마운트될 때 예약 정보를 가져옴
   useEffect(() => {
     fetchReservations();
@@ -58,7 +59,7 @@ const ManagerReserve = () => {
     } else {
       // 그렇지 않다면 API를 호출하여 새로운 데이터 가져오기
       try {
-        const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurantId}?page=${currentGroup}&size=${itemsPerGroup}`,
+        const response = await fetch(`${apiUrl}/api/reservations/manager/${restaurantId}?page=${currentGroup}&size=${itemsPerGroup}`,
           {
             method: 'GET',
             headers: {
@@ -101,7 +102,7 @@ const ManagerReserve = () => {
   // 예약을 취소하는 함수
   const handleCancelReservation = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
+      const response = await fetch(`${apiUrl}/api/reservations/manager/${reservationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -123,7 +124,7 @@ const ManagerReserve = () => {
   // 노쇼 처리하는 함수
   const handleNoShow = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}/no-show`, {
+      const response = await fetch(`${apiUrl}/api/reservations/manager/${reservationId}/no-show`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

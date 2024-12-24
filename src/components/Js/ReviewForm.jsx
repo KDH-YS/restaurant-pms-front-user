@@ -22,6 +22,7 @@ export function ReviewForm() {
   const { token } = useAuthStore();
   const userId = parseJwt(token)?.userId; // JWT에서 userId 추출
 
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // JWT 파싱 함수
   function parseJwt(token) {
     if (!token) return null;
@@ -38,7 +39,7 @@ export function ReviewForm() {
 
   const fetchRestaurant = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/${restaurantId}`,);
+      const response = await fetch(`${apiUrl}/api/restaurants/${restaurantId}`,);
       if (response.ok) {
         const data = await response.json();
         setRestaurant(data.restaurant);
@@ -53,7 +54,7 @@ export function ReviewForm() {
 
   const fetchReservation = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/js/reservation/${reservationId}`);
+      const response = await fetch(`${apiUrl}/api/js/reservation/${reservationId}`);
       if (response.ok) {
         const data = await response.json();
         setReservation(data);
@@ -98,7 +99,7 @@ export function ReviewForm() {
     });
 
     try {
-      const response = await fetch("http://localhost:8080/api/reviews", {
+      const response = await fetch(`${apiUrl}/api/reviews`, {
         method: "POST",
         body: formData,
       });

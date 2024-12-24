@@ -21,6 +21,8 @@ const StyledCard = styled.div`
 `;
 
 const Reserve = () => {
+  
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   const { token,userId } = useAuthStore();
   const { restaurant } = restaurantStore();
   
@@ -48,7 +50,7 @@ const Reserve = () => {
 
   const fetchSchedules = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/schedule?restaurantId=${restaurant.restaurantId}`, {
+      const response = await fetch(`${apiUrl}/api/restaurants/schedule?restaurantId=${restaurant.restaurantId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -138,7 +140,7 @@ const Reserve = () => {
     };
 
     try {
-      const reservationResponse = await fetch('http://localhost:8080/api/reservations', {
+      const reservationResponse = await fetch('${apiUrl}/api/reservations', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

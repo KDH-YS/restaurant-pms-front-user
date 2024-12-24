@@ -26,6 +26,7 @@ const Manager = () => {
   const [showBulkModal, setShowBulkModal] = useState(false);
   const timeOptions = generateTimeOptions();
 
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
   // 토요일에 특별한 스타일을 적용하는 함수
   const tileClassName = ({ date, view }) => (view === 'month' && date.getDay() === 6 ? 'saturday' : null);
 
@@ -71,7 +72,7 @@ const Manager = () => {
   // 저장된 스케줄을 불러오는 함수
   const fetchSavedSchedules = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/restaurants/schedule?restaurantId=${restaurantId}`, {
+      const response = await fetch(`${apiUrl}/api/restaurants/schedule?restaurantId=${restaurantId}`, {
         method: 'get',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -113,7 +114,7 @@ const Manager = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/restaurants/schedule', {
+      const response = await fetch(`${apiUrl}/api/restaurants/schedule`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -137,7 +138,7 @@ const Manager = () => {
   
     try {
       const response = await fetch(
-        `http://localhost:8080/api/restaurants/schedule/${scheduleId}`,
+        `${apiUrl}/api/restaurants/schedule/${scheduleId}`,
         {
           method: 'DELETE',
           headers: {
@@ -192,7 +193,7 @@ const Manager = () => {
       };
 
       try {
-        const response = await fetch('http://localhost:8080/api/restaurants/schedule', {
+        const response = await fetch(`${apiUrl}/api/restaurants/schedule`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

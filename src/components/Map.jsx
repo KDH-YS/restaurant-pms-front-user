@@ -16,9 +16,9 @@ function Map() {
   const searchmap = () => {
     // 요청할 도시 이름을 변수에 저장
     const address = restaurant.jibunAddr; // 원하는 도시 이름으로 변경
-
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
     // axios GET 요청 보내기
-    axios.get(`http://localhost:8080/api/map`, {
+    axios.get(`${apiUrl}/api/map`, {
       params: {
         address: address,  // 쿼리 파라미터에 도시 이름 전달
       }
