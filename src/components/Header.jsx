@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import '../css/Header.css'; // CSS 파일 import
 
 export function Header() {
-    const { token, name, clearAuth, userRole, restaurantId } = useAuthStore();
+    const { token, name, clearAuth, userRole } = useAuthStore();
 
     const handleLogout = () => {
         clearAuth();
@@ -13,6 +13,12 @@ export function Header() {
         alert("로그아웃되었습니다.");
         window.location.href = "/";
     };
+    // 관리자 페이지 이동시 토큰 url로 보내기
+    const handleExternalLink = () => {
+        const token =  localStorage.getItem('token') || sessionStorage.getItem('token') || null; // 세션에서 토큰 가져오기
+        const externalUrl = `http://localhost:3000?token=${encodeURIComponent(token)}`;
+        window.location.href = externalUrl; // 외부 URL로 리디렉션
+      };
     return (
         <Navbar expand="lg" className="navbar-custom">
             <Container fluid>
@@ -55,7 +61,7 @@ export function Header() {
                         {token && userRole && userRole.split(',').includes('ROLE_ADMIN') && (
                             <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item as={Link} to="/admin">관리자 페이지</Dropdown.Item>
+                                <Dropdown.Item onClick={handleExternalLink}>관리자 페이지</Dropdown.Item>
                             </>
                         )}
                     </Dropdown.Menu>
