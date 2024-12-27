@@ -16,7 +16,7 @@ export function Header() {
     // 관리자 페이지 이동시 토큰 url로 보내기
     const handleExternalLink = () => {
         const token =  localStorage.getItem('token') || sessionStorage.getItem('token') || null; // 세션에서 토큰 가져오기
-        const externalUrl = `http://localhost:3000?token=${encodeURIComponent(token)}`;
+        const externalUrl = `http://cofile.co.kr:8283?token=${encodeURIComponent(token)}`;
         window.location.href = externalUrl; // 외부 URL로 리디렉션
       };
     return (
