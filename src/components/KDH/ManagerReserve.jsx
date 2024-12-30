@@ -124,7 +124,7 @@ const ManagerReserve = () => {
   // 노쇼 처리하는 함수
   const handleNoShow = async (reservationId) => {
     try {
-      const response = await fetch(`${apiUrl}/api/reservations/manager/${reservationId}/no-show`, {
+      const response = await fetch(`${apiUrl}/api/reservations/${reservationId}/noshow`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
