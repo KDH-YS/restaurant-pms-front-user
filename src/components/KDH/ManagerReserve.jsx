@@ -7,7 +7,6 @@ import baseUrlStore from "store/baseUrlStore";
 import PaginationComponent from './PaginationComponent';
 import 'css/KDH/ManagerReserve.css';
 import { useAuthStore } from 'store/authStore';
-
 const ManagerReserve = () => {
   // 상태 관리를 위한 useState 훅 사용
   const { token, restaurantId } = useAuthStore();
@@ -15,71 +14,54 @@ const ManagerReserve = () => {
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [selectedDate, setSelectedDate] = useState(null);
-  const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 6;
   const itemsPerGroup = 300;
   const statusOptions = ['전체', '결제 대기중', '예약 중', '노쇼', '방문 완료'];
   const [currentPage, setCurrentPage] = useState(1);
-  const pagesPerGroup = 5;
-  
+  const pagesPerGroup = 5;  
   // 현재 페이지가 속한 그룹 계산
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
-
   const {apiUrl} = baseUrlStore();
   // 컴포넌트가 마운트될 때 예약 정보를 가져옴
   useEffect(() => {
-    fetchReservations();
-  }, []);
-
-  // 상태 필터나 날짜가 변경될 때마다 예약 목록을 필터링
-  useEffect(() => {
-    filterReservations(statusFilter, selectedDate);
-  }, [statusFilter, selectedDate, reservations]);
-
-  // 세션 스토리지에서 데이터를 가져오는 함수
-  const getSessionData = (key) => {
-    const data = sessionStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-  };
-
-  // 세션 스토리지에 데이터를 저장하는 함수
-  const setSessionData = (key, value) => {
-    sessionStorage.setItem(key, JSON.stringify(value));
-  };
-
-  // 예약 정보를 가져오는 함수
-  const fetchReservations = async () => {
-    const cachedData = getSessionData('reservations');
+    const cachedData = sessionStorage.getItem('reservations');
     const currentTime = new Date().getTime();
-
+    
     // 캐시된 데이터가 있고 1분이 지나지 않았다면 캐시된 데이터 사용
     if (cachedData && currentTime - cachedData.timestamp < 60000) {
       setReservations(cachedData.data.list || []);
       setFilteredReservations(cachedData.data.list || []);
     } else {
       // 그렇지 않다면 API를 호출하여 새로운 데이터 가져오기
-      try {
-        const response = await fetch(`${apiUrl}/api/reservations/manager/${restaurantId}?page=${currentGroup}&size=${itemsPerGroup}`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-        const data = await response.json();
-        
-        setReservations(data.list || []);
-        setTotalItems(data.size);
+      fetchReservations();
+    }
+  }, []);
+  // 상태 필터나 날짜가 변경될 때마다 예약 목록을 필터링
+  useEffect(() => {
+    filterReservations(statusFilter, selectedDate);
+  }, [statusFilter, selectedDate, reservations]);
 
-        setFilteredReservations(data.list || []);
-        
-        // 세션 스토리지에 새로운 데이터 저장
-        setSessionData('reservations', { data, timestamp: currentTime });
-      } catch (error) {
-        console.error('예약 정보를 가져오는 중 오류 발생:', error);
-      }
+
+  // 예약 정보를 가져오는 함수
+  const fetchReservations = async () => {
+    try {
+      const currentTime = new Date().getTime();
+      const response = await fetch(`${apiUrl}/api/reservations/manager/${restaurantId}?page=${currentGroup}&size=${itemsPerGroup}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      const data = await response.json();
+      setReservations(data.list || []);
+      setFilteredReservations(data.list || []);      
+      // 세션 스토리지에 현재시간과함께 새로운 데이터 저장
+      sessionStorage.setItem('reservations', { data, timestamp: currentTime });
+    } catch (error) {
+      console.error('예약 정보를 가져오는 중 오류 발생:', error);
     }
   };
 
@@ -178,11 +160,6 @@ const ManagerReserve = () => {
     setSelectedDate(date);
   };
 
-  // 날짜 필터 초기화 함수
-  const resetDateFilter = () => {
-    setSelectedDate(null);
-  };
-
   return (
     <Container className="reservation-status-container">
       <Row className="mb-3" style={{ marginTop: "20px" }}>
@@ -205,7 +182,7 @@ const ManagerReserve = () => {
       <Row className="mb-3 d-flex">
         <Col className='d-flex justify-content-start'>
           {/* 날짜 필터 초기화 버튼 */}
-          <Button variant="outline-secondary" onClick={resetDateFilter} className="me-2">
+          <Button variant="outline-secondary" onClick={()=>setSelectedDate(null)} className="me-2">
             전체 날짜보기
           </Button>
           </Col>
@@ -286,6 +263,4 @@ const ManagerReserve = () => {
     </Container>
   );
 };
-
 export default ManagerReserve;
-
