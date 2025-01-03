@@ -1,7 +1,7 @@
 // src/api.js
 import axios from 'axios';
 
-const apiUrl = "http://cofile.co.kr:8083";
+const apiUrl = "https://costly-phebe-skydv-03caccf4.koyeb.app";
 
 //레스토랑 리스트 반환
 export const fetchRestaurants = async (page = 1, size = 24) => {
