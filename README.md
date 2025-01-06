@@ -19,13 +19,9 @@
   - 사용자 예약 관리 및 실시간 통계 제공.  
   - 데이터베이스 최적화 및 속도 개선 성공.  
 
-[프로젝트 보기](https://github.com/username/restaurant-pms)
+[프로젝트 보기](https://rechelin.vercel.app)
 
-#### 2️⃣ 기타 프로젝트
-- [To-Do List 앱](https://github.com/username/todo-app)  
-- [E-Commerce 사이트 클론](https://github.com/username/ecommerce-clone)  
 
 ### 📫 Contact  
 - **이메일**: gloian@naver.com  
-- **GitHub**: [github.com/username](https://github.com/username)  
-- **LinkedIn**: [linkedin.com/in/yourname](https://rechelin.vercel.app)
+- **GitHub**: [github.com/username](https://github.com/KDH-YS/restaurant-pms-front-user) 
