@@ -101,5 +101,9 @@ Content-Type: application/json
 
 
 ### 게시판 GET 요청
-GET http://jennysoft.kr:8080/board?bbsId=BBSMSTR_AAAAAAAAAAAA&pageIndex=1&searchCnd=0&searchWrd= HTTP/1.1
+GET http://jennysoft.kr:8080/board?bbsId=BBSMSTR_AAAAAAAAAAAA&pageIndex=1&searchCnd=0&searchWrd=
 Content-Type: application/json
+
+
+###
+GET http://localhost:8080/api/notices
