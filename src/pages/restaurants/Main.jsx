@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../css/restaurants/MainPage.css';
 import { fetchRestaurants, getRestaurantImages } from './api';
 import axios from 'axios';
+import useBaseUrlStore from 'store/baseUrlStore';
 
 function Main() {
   const [query, setQuery] = useState('');
@@ -19,7 +20,7 @@ function Main() {
   const [selectedNotice, setSelectedNotice]= useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
+  const {apiUrl} = useBaseUrlStore();
   // 검색 이벤트 핸들러
   const handleInputChange = (e) => setQuery(e.target.value);
   const handleSearch = (e) => {
@@ -107,44 +108,42 @@ function Main() {
 
     return () => clearInterval(interval); // 정리 함수
   }, []);
-const fetchNotices = (pageIndex = 1) => {
-  axios.get('http://jennysoft.kr:8080/board', {
-    params: {
-      bbsId: 'BBSMSTR_AAAAAAAAAAAA',
-      pageIndex: pageIndex,
-      searchCnd: 0,
-      searchWrd: ' '
-    }
-  })
-  .then(response => {
-    if (response.data.resultCode === 200) {
-      const resultList = response.data.result.resultList.slice(0, 3); // 3개만 가져오기
-      const totalRecordCount = response.data.result.resultCnt;
-      const totalPages = Math.ceil(totalRecordCount / 10); // 페이지 수 계산
-      setNotices(resultList);
-      setTotalPages(totalPages);
-    } else {
-      throw new Error('API 응답 오류');
-    }
-  })
-  .catch(error => {
-    console.error('API 호출 중 오류 발생:', error);
-  });
-};
-const fetchNoticeDetail = (bbsId, nttId) => {
-  axios.get(`http://jennysoft.kr:8080/board/${bbsId}/${nttId}`)
+  const fetchNotices = (pageIndex = 1) => {
+    axios.get(`${apiUrl}/api/notices`, {
+      params: { pageIndex: pageIndex }
+    })
     .then(response => {
-      if (response.data.resultCode === 200) {
-        setSelectedNotice(response.data.result.boardVO); // 응답값에서 공지사항 데이터 추출
-        setShowModal(true); // 모달 열기
-      } else {
-        console.error('공지사항을 가져오는 데 실패했습니다.');
-      }
+      const data = response.data;
+      const latestNotices = data.result.resultList.slice(0, 3); // 최신 3개 공지 추출
+      setNotices(latestNotices); // 최신 공지로 상태 설정
+      setTotalPages(data.paginationInfo.totalPageCount);
     })
     .catch(error => {
-      console.error('공지사항 상세 정보를 가져오는 데 실패했습니다:', error);
+      console.error('API 호출 중 오류 발생:', error);
     });
-};
+  };
+  
+  
+  const fetchNoticeDetail = (bbsId, nttId) => {
+    axios.get(`${apiUrl}/api/notices/detail`,{
+      params: {
+        bbsId: bbsId,
+        nttId: nttId
+      }
+  })
+      .then(response => {
+        const data = response.data.result.boardVO;
+        if (response.status === 200) {
+          setSelectedNotice(data); // Spring Boot에서 전달받은 공지사항 데이터 설정
+          setShowModal(true); // 모달 열기
+        } else {
+          console.error('공지사항을 가져오는 데 실패했습니다.');
+        }
+      })
+      .catch(error => {
+        console.error('공지사항 상세 정보를 가져오는 데 실패했습니다:', error);
+      });
+  };
   const ResImg = [
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20221114_279%2F1668411417939IQUlP_JPEG%2F601522EE-8C9D-48E6-9205-D10B8887E07F.jpeg",
     "https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220505_190%2F165169820357548FLT_JPEG%2FScreenshot_20210825-093244_Instagram_resized.jpg",

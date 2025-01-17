@@ -199,12 +199,11 @@ const ReservationStatus = () => {
         throw new Error("결제 데이터 전송 실패");
       }
 
-      const updateResponse = await fetch(`${apiUrl}/api/reservations/${reservation.reservationId}`, { // 수정된 부분
+      const updateResponse = await fetch(`${apiUrl}/payment/${reservation.reservationId}`, { // 수정된 부분
         method: "PATCH",
         headers: { 
         'Authorization': `Bearer ${token}`,
-        "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "RESERVING" }), // 수정된 부분
+        "Content-Type": "application/json" } // 수정된 부분
       });
 
       if (updateResponse.ok) {

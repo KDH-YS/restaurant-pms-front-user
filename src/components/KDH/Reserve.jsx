@@ -141,7 +141,7 @@ const Reserve = () => {
     };
 
     try {
-      const reservationResponse = await fetch('${apiUrl}/api/reservations', {
+      const reservationResponse = await fetch(`${apiUrl}/api/reservations`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
