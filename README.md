@@ -20,7 +20,9 @@
   - **REST API 기반 프론트엔드 & 백엔드 분리 개발**  
   - React(프론트엔드)와 Spring Boot(백엔드)를 독립적으로 운영하여 유지보수성과 확장성을 높임.  
   - MyBatis와 MySQL을 활용한 데이터 최적화 및 속도 개선.  
-
+- **배포**
+  - 백엔드 : Koyeb을 이용하여 배포
+  - 프론트엔드 : Vercel을 이용하여 배포
 🔗 **[프로젝트 보기](https://rechelin.vercel.app)**  
 
 ### 📫 Contact  
