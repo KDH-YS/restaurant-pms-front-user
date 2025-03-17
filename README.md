@@ -23,6 +23,7 @@
 - **배포**
   - 백엔드 : Koyeb을 이용하여 배포
   - 프론트엔드 : Vercel을 이용하여 배포
+    
 🔗 **[프로젝트 보기](https://rechelin.vercel.app)**  
 
 ### 📫 Contact  
