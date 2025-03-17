@@ -27,4 +27,4 @@
 - **이메일**: gloian@naver.com  
 - **Frontend**: [Frontend](https://github.com/KDH-YS/restaurant-pms-front-user)  
 - **Backend**: [Backend](https://github.com/KDH-YS/restaurants-pms-back)
-- **관리자페이지Frontend**:[관리자페이지Frontend](https://github.com/KDH-YS/restaurant-pms-front-admin)
+- **관리자페이지**:[관리자페이지](https://github.com/KDH-YS/restaurant-pms-front-admin)
